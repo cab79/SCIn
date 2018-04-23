@@ -71,7 +71,7 @@ s.rowofoutput (1, 1) = s.trial;
 s.rowofoutput (1, 2) = s.StimulusLevel;
 s.rowofoutput (1, 3) = s.actStimulusLevel;
 s.rowofoutput (1, 4) = s.change;
-% here I upddate the count for the up-s.down motion
+% here I update the count for the up-s.down motion
 if s.change == 1
     if s.isstep == 1
         s.StimulusLevel = s.StimulusLevel + s.actualstep;
@@ -80,36 +80,36 @@ if s.change == 1
     end
 else
     s.StimulusLevel = h.Settings.threshold.startinglevel;
-    %if s.isstep == 1
-    %    s.StimulusLevel = s.StimulusLevel + s.actualstep;
-    %else
-    %    s.StimulusLevel = s.StimulusLevel * s.actualstep;
-    %end
 end
 
 % additional attenutation from GUI or settings
-if isfield(h,'vol_atten')
-    try
-        inten_atten = str2double(get(h.vol_atten,'string'));
-    catch
-        inten_atten = str2double(h.vol_atten);
+if strcmp(h.Settings.stim(h.sn).control,'PsychPortAudio') || strcmp(h.Settings.stim(h.sn).control,'audioplayer')
+    if isfield(h,'vol_atten')
+        try
+            inten_atten = str2double(get(h.vol_atten,'string'));
+        catch
+            inten_atten = str2double(h.vol_atten);
+        end
+    else
+        inten_atten = h.Settings.atten; 
     end
-else
-    inten_atten = h.Settings.atten; 
+    s.actStimulusLevel = min(h.Settings.threshold.maxinten,inten_atten+s.StimulusLevel);
 end
-% additional intensity (e.g. GUI control of base tactile intensity)
-if isfield(h,'baseinten')
-    baseinten = h.baseinten(1);
-else
-    baseinten = 0; 
+if strcmp(h.Settings.stim(h.sn).control,'labjack') || strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
+    % additional intensity (e.g. GUI control of base tactile intensity)
+    if isfield(h,'baseinten')
+        baseinten = h.baseinten(1);
+    else
+        baseinten = 0; 
+    end
+    s.actStimulusLevel = min(h.Settings.threshold.maxinten,baseinten+s.StimulusLevel);
 end
-s.actStimulusLevel = min(h.Settings.threshold.maxinten,baseinten+inten_atten+s.StimulusLevel);
 
 % UPDATE THE ROWOFOUTPUT
 s.trial = s.trial + 1;
 
 %disp(['length_blockthresh = ' num2str(length(s.blockthresholds))]);
-disp(['Current trial level = ' num2str(s.actStimulusLevel)]);
+%disp(['Next trial level = ' num2str(s.actStimulusLevel)]);
 
 % threshold calculation
 s.expthresholds=0;

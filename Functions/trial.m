@@ -47,10 +47,10 @@ if isfield(h.Settings,'oddballmethod')
 end
 
 % select channels
-if isfield(h.Settings.stim,'chan')
-    h.chan = h.Settings.stim(h.trialstimnum).chan;
+if isfield(h.Settings.stim(h.sn),'chan')
+    h.chan = h.Settings.stim(h.sn).chan;
 else
-    h.chan = 1:h.Settings.stim(h.trialstimnum).nrchannels; % use all channels by default
+    h.chan = 1:h.Settings.stim(h.sn).nrchannels; % use all channels by default
 end
 
 % find trial(s) for which to create wave
@@ -95,9 +95,9 @@ for tr = h.trials
             h = contruct_wave(h);
     end
     try
-        disp(['STIMTYPE = ' num2str(h.trialstimnum) ', INTEN = ' num2str(h.inten_out) ', MEAN = ' num2str(h.inten_mean) ', DIFF = ' num2str(h.inten_diff)]);
+        disp(['STIMTYPE = ' num2str(h.sn) ', INTEN = ' num2str(h.stim(h.sn).inten_out) ', MEAN = ' num2str(h.stim(h.sn).inten_mean) ', DIFF = ' num2str(h.stim(h.sn).inten_diff)]);
     catch
-        disp(['STIMTYPE = ' num2str(h.trialstimnum) ', INTEN = ' num2str(h.inten_out)]);
+        disp(['STIMTYPE = ' num2str(h.sn) ', INTEN = ' num2str(h.stim(h.sn).inten_out)]);
     end
     
 end

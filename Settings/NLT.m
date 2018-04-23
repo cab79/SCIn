@@ -51,32 +51,23 @@ switch opt
     h.Settings.totdur = 0; 
     % duration of trial in seconds
     h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
-    % duration of stimulus in seconds
-    h.Settings.stimdur = 0; % modified by oddball settings
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.patternmethod = '';
-    h.Settings.patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
-    h.Settings.stimdurtype = 'reg'; % not needed unless 'rand'
-    % Binarual beats frequency: creates right ear frequency of f0+df
-    %h.Settings.df = 0; % 10Hz = alpha. Other options: 1Hz, 25Hz, 40Hz.
-    % Monaural beats instead? 
-    %h.Settings.monaural = 0; 
-    % attenuation level in decibels
-    %h.Settings.atten = -30; 
-    % pitch
-    %h.Settings.f0 = 200; % Left ear carrier frequency (pitch)
-    %intensity
-    h.Settings.inten = []; % value between 2 and 1000mA for Digitimer DS8R
-    h.Settings.maxinten = 200;
-    %intensity
-    h.Settings.inten_diff = []; % value between 2 and 1000mA for Digitimer DS8R
-    % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
-    % Tactile: within-trial frequency (Hz) 
-    h.Settings.t_freq=[]; 
+    h.Settings.wait=0; % within-trial frequency (Hz); one value per nstim 
     
-   
+    %%stimulus: tactile
+    h.Settings.stim(1).dur = 0; % duration of stimulus in seconds; modified by oddball settings
+    h.Settings.stim(1).patternmethod = '';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(1).patternvalue = []; % one per stimdur
+    h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
+    h.Settings.stim(1).inten = []; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
+    h.Settings.stim(1).chan = [6]; h.Settings.stim(1).chanforLJ = 1;
+    h.Settings.stim(1).nrchannels = 1; % total number of channels, e.g. on sound card
+    h.Settings.stim(1).npulses_train = 1; % Tactile: number of pulses in a train; set to zero to be determined by stimdur
+    h.Settings.stim(1).p_freq=[];% Tactile: within-train frequency (Hz)
+    h.Settings.stim(1).labjack_timer=1; % Use timer to control frequency of labjack outputs? Otherwise uses software timing. must use if there are a large number of pulses (e.g. >4)
     
     %% CHANGING STIMULUS INTENSITY EVERY X PULSES
     % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
@@ -93,22 +84,6 @@ switch opt
     
     %% SEQUENCE
     h.Settings.ntrials = 500;
-    % Change probablity (CP): each condition is in rows
-    %h.Settings.oddprob = [
-        % standard (left) vs oddball (right)=
-    %    ];
-    % index of row of oddprob that are standards and oddballs
-    %h.Settings.standardind = 1; % does not apply to 'roving oddball' design
-    % keep oddball trials apart by at least sep_odd standards
-    %h.Settings.sep_odd = [2 1]; % for each CP condition
-    % for each set, ensure a number of leading standards 
-    %h.Settings.std_lead = [0 0]; % for each CP condition
-    % number of minimum sets to randomise together
-    %h.Settings.n_set = [1 1]; % 1 = use min set size, for each CP condition
-    % min number of oddballs within each CP condition
-    %h.Settings.n_odd = [20, 20]; % overrides h.Settings.totdur
-    % min number of oddballs per randomised set, per CP
-    %h.Settings.n_odd_set = [5, 5]; % overrides h.Settings.totdur
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
@@ -120,9 +95,11 @@ switch opt
     
     %% THRESHOLDING
     % starting level and step size
+    %h.Settings.threshold.type = 'intensity'; % for intensity
     h.Settings.threshold.startinglevel = 0; % for intensity)
     h.Settings.threshold.step = 2;
     h.Settings.threshold.signalval = [1 2]; % 2 = carrying on increasing; 1 = decrease
+    h.Settings.threshold.maxinten = h.Settings.stim(1).maxinten; % 0 is the max
     
 case 'Adaptive'
 
@@ -168,29 +145,23 @@ case 'Adaptive'
     h.Settings.totdur = 0; 
     % duration of trial in seconds
     h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
-    % duration of stimulus in seconds
-    h.Settings.stimdur = 0; % modified by oddball settings
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.patternmethod = '';
-    h.Settings.patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
-    h.Settings.stimdurtype = 'reg'; % not needed unless 'rand'
-    % Binarual beats frequency: creates right ear frequency of f0+df
-    %h.Settings.df = 0; % 10Hz = alpha. Other options: 1Hz, 25Hz, 40Hz.
-    % Monaural beats instead? 
-    %h.Settings.monaural = 0; 
-    % attenuation level in decibels
-    %h.Settings.atten = -30; 
-    % pitch
-    %h.Settings.f0 = 200; % Left ear carrier frequency (pitch)
-    %intensity
-    h.Settings.inten = []; % value between 2 and 1000mA for Digitimer DS8R
-    h.Settings.inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
-    h.Settings.maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
-    % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
-    % Tactile: within-trial frequency (Hz) 
-    h.Settings.t_freq=[]; 
+    h.Settings.wait=0; % within-trial frequency (Hz); one value per nstim 
+    
+    %%stimulus: tactile
+    h.Settings.stim(1).dur = 0; % duration of stimulus in seconds; modified by oddball settings
+    h.Settings.stim(1).patternmethod = '';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(1).patternvalue = []; % one per stimdur
+    h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
+    h.Settings.stim(1).inten = []; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
+    h.Settings.stim(1).chan = [6]; h.Settings.stim(1).chanforLJ = 1;
+    h.Settings.stim(1).nrchannels = 1; % total number of channels, e.g. on sound card
+    h.Settings.stim(1).npulses_train = 1; % Tactile: number of pulses in a train; set to zero to be determined by stimdur
+    h.Settings.stim(1).p_freq=[];% Tactile: within-train frequency (Hz)
+    h.Settings.stim(1).labjack_timer=1; % Use timer to control frequency of labjack outputs? Otherwise uses software timing. must use if there are a large number of pulses (e.g. >4)
     
     
     %% CHANGING STIMULUS INTENSITY EVERY X PULSES
@@ -256,6 +227,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.seqtype = 'rand'; % 'alt' or 'rand'
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.stim = 1; % which stim to run adaptive on?
     
     %% ADAPTIVE 1
     h.Settings.adaptive(1).type = 'detect';
@@ -298,7 +270,7 @@ case 'Adaptive'
     % incorrect (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     %h.Settings.adaptive(1).meanadjustmax = 10;
     % maximum amount - for safety
-    h.Settings.adaptive(1).levelmax = h.Settings.maxinten; % should be value in mA. 
+    h.Settings.adaptive(1).levelmax = h.Settings.stim(1).maxinten; % should be value in mA. 
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -631,7 +603,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = 3; % if 0, consecutive stimuli will occur with no gap
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
@@ -639,11 +611,9 @@ case 'Adaptive'
     
     %% first stimulus: audio
     % duration of stimulus in seconds
-    h.Settings.stim(1).dur = 0.3; % modified by oddball settings
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.stim(1).patternmethod = '';
-    h.Settings.stim(1).patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
+    h.Settings.stim(1).dur = [0.15 0.15]; % duration of stimulus in seconds; modified by oddball settings
+    h.Settings.stim(1).patternmethod = 'pitch';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(1).patternvalue = {[540 500],[460 500]}; % one per stimdur in each cell; one cell per oddball value
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
@@ -651,22 +621,19 @@ case 'Adaptive'
     h.Settings.stim(1).f0 = 500; % pitch
     h.Settings.stim(1).inten_type = 'dB'; % either 'dB' or 'abs'
     h.Settings.stim(1).df = 0;
-    h.Settings.stim(1).atten = 0; % attenuation level in decibels
+    h.Settings.stim(1).atten = {'inten_diff',1}; % attenuation level in decibels
     h.Settings.stim(1).attenchan = [1 2]; % apply attenuation (e.g. during thresholding) to these chans
     h.Settings.stim(1).control='PsychPortAudio'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
-    %h.Settings.labjack_DACport = 0;
-    %h.Settings.DAC_multiply = 0; % multiply DAC output by this (e.g. to get mA on DS8R)
     h.Settings.stim(1).chan = [1 2]; 
-    %h.Settings.stimchanforLJ = 0;
     h.Settings.stim(1).nrchannels = 2; % total number of channels, e.g. on sound card
+    h.Settings.stim(1).Tukey = 0.25; % Apply Tukey window?
+    h.Settings.stim(1).Tukeytype = 2; % 1 = apply to each tone within pattern; 2 = apply to whole pattern
 
     %% second stimulus: tactile
     % duration of stimulus in seconds
     h.Settings.stim(2).dur = 0; % modified by oddball settings
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.stim(2).patternmethod = '';
+    h.Settings.stim(2).patternmethod = '';% Pattern type method: intensity, pitch. Not supported: channel, duration
     h.Settings.stim(2).patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
     h.Settings.stim(2).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(2).inten = []; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
@@ -674,23 +641,20 @@ case 'Adaptive'
     h.Settings.stim(2).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
     h.Settings.stim(2).chan = [6]; h.Settings.stim(2).chanforLJ = 1;
     h.Settings.stim(2).nrchannels = 1; % total number of channels, e.g. on sound card
-    % Tactile: number of pulses in a train
-    h.Settings.stim(2).npulses_train = 1; % set to zero to be determined by stimdur
-    % Tactile: within-train frequency (Hz)
-    h.Settings.stim(2).p_freq=[];
-    % Use timer to control frequency of labjack outputs? Otherwise uses software timing.
-    h.Settings.stim(2).labjack_timer=1; % must use if there are a large number of pulses (e.g. >4)
+    h.Settings.stim(2).npulses_train = 1; % Tactile: number of pulses in a train; set to zero to be determined by stimdur
+    h.Settings.stim(2).p_freq=[];% Tactile: within-train frequency (Hz)
+    h.Settings.stim(2).labjack_timer=1; % Use timer to control frequency of labjack outputs? Otherwise uses software timing. must use if there are a large number of pulses (e.g. >4)
     
     %% CHANGING STIMULUS INTENSITY EVERY X PULSES
     % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
     
-    %% Condition-dependent stimulus parameters
+   %% Condition-dependent stimulus parameters
     % Condition method: intensity, pitch, channel
     h.Settings.conditionmethod = {};
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2], [1 2], [1 2], [1 2], [2 1], [1 2], [1 2], [1 2], [1 2], [2 1], [1 2], [1 2], [1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballvalue = {[1 2], [1 2],  [1 2], [2 1], [1 2],  [1 2], [1 2], [2 1], [1 2],  [1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
 
     %% SEQUENCE
@@ -699,17 +663,11 @@ case 'Adaptive'
         % standard (left) vs oddball (right)
         0.8 0.2
         0.5 0.5
-        0.5 0.5
-        0.5 0.5
         0.8 0.2
         0.8 0.2
         0.5 0.5
-        0.5 0.5
-        0.5 0.5
         0.8 0.2
         0.8 0.2
-        0.5 0.5
-        0.5 0.5
         0.5 0.5
         0.8 0.2
         ];
@@ -718,47 +676,48 @@ case 'Adaptive'
     h.Settings.standardind = 1; 
     h.Settings.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [2 0 0 0 2 2 0 0 0 2 2 0 0 0 2]; % for each CP condition
+    h.Settings.sep_odd = [2 0 2 2 0 2 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % for each CP condition
+    h.Settings.std_lead = [0 0 0 0 0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = [2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6]; % overrides h.Settings.totdur
+    h.Settings.n_odd = [4, 4, 4,  8, 8, 8,  12, 12, 12]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
     h.Settings.n_odd_set = h.Settings.n_odd; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]; 
+    h.Settings.rand_set = [1 1 1 1 1 1 1 1 1]; 
     % condition numbers
     h.Settings.condnum = [
         1 2
         3 4
-        3 4
-        3 4
         5 6
         1 2
         3 4
-        3 4
-        3 4
         5 6
         1 2
-        3 4
-        3 4
         3 4
         5 6
         ]; 
     
     %% associative learning experiments
-    % stimulus types to pair: column 1 - stimtype 1 (number = level), etc.
     h.Settings.assoc.pairing = {
-        [1 1], [2 2]; %pairing 1
-        [1 2], [2 1]; %pairing 2
-        }
+      % cue 1  cue 2
+        [1 3], [2 4]; %pairing option 1 (e.g. most probable in some blocks)
+        [2 4], [1 3]; %pairing option 2 (e.g. least probable)
+        }; % more than one number per pairing/cue: will be randomly assigned to each cue
+    % if there is more than on number per pairing/cue, what is their
+    % percent representation? (for each condnum)
+    %h.Settings.assoc.probstim = {[0.5 0.5],[0.5 0.5],[0.5 0.5],[0.5 0.5],[0.5 0.5],[0.5 0.5]}; % e.g. low intensity diff vs. high intensity diff
+    h.Settings.assoc.probstim = {[0.2 0.8],[1 0],[0.5 0.5],[0.5 0.5],[0.2 0.8],[1 0]}; % e.g. low intensity diff vs. high intensity diff
     % for each condnum, which pair to use?
     h.Settings.assoc.pair = [1 2 1 2 2 1];
+    % for each stimtype (unique value) within h.Settings.assoc.pairing, 
+    % what inten_diff multiplier to use?
+    h.Settings.assoc.intenstim = [1 -1 2 -2];
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1

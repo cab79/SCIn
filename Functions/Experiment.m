@@ -59,7 +59,7 @@ switch opt
             h.icontrol = find(~cellfun(@isempty,{h.Settings.stim(:).control}));
             if ~isempty(h.icontrol)
                 for i = 1:length(h.icontrol)
-                    h.trialstimnum = i;
+                    h.sn = i;
                     opt = 'setup';
                     h = stimtrain(h,opt);
                 end
@@ -234,7 +234,7 @@ while h.i<size(h.Seq.signal,2)
     if isfield(h.Settings.stim,'control')
         if ~isempty({h.Settings.stim(:).control})
             for i = 1:h.Settings.nstim_trial
-                h.trialstimnum = i;
+                h.sn = i;
                 if strcmp(h.Settings.stim(i).control,'PsychPortAudio') || strcmp(h.Settings.stim(i).control,'audioplayer');
                     opt = 'create';
                     h = stimtrain(h,opt); 

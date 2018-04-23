@@ -44,7 +44,7 @@ for b = 1:length(blockuni)
         for ct = 1:length(cuetype)
             cue_idx{ct} = find(h.Seq.signal(1,cond_ind{b}{c})==cuetype(ct));
             % get number of stims per stimtype and cuetype
-            stim_num{ct} = round(h.Settings.assoc.probstim * length(cue_idx{ct}));
+            stim_num{ct} = round(h.Settings.assoc.probstim{conduni(c)} * length(cue_idx{ct}));
             stim_idx{ct} = [];
             for i = 1:length(stim_num{ct})
                 stim_idx{ct} = [stim_idx{ct} i*ones(1,stim_num{ct}(i))];
@@ -71,4 +71,16 @@ for b = 1:length(blockuni)
     end
     
 end
+
+plot(h.Seq.condnum)
+hold on; 
+low = ismember(h.Seq.signal(2,:),[1 2]);
+condplot = nan(1,length(h.Seq.condnum));
+condplot(low) = h.Seq.condnum(low);
+scatter(1:length(h.Seq.condnum),condplot,'k');
+hold on; 
+high = ismember(h.Seq.signal(2,:),[3 4]);
+condplot = nan(1,length(h.Seq.condnum));
+condplot(high) = h.Seq.condnum(high);
+scatter(1:length(h.Seq.condnum),condplot,'r');
 

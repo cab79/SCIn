@@ -587,28 +587,6 @@ end
 
 
 
-function vol_atten_Callback(hObject, eventdata, h)
-% hObject    handle to vol_atten (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of vol_atten as text
-%        str2double(get(hObject,'String')) returns contents of vol_atten as a double
-h.volatten = get(hObject,'String');
-guidata(hObject, h)
-
-% --- Executes during object creation, after setting all properties.
-function vol_atten_CreateFcn(hObject, eventdata, h)
-% hObject    handle to vol_atten (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
 function entrainfreq_Callback(hObject, eventdata, h)
 % hObject    handle to entrainfreq (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -677,7 +655,27 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function vol_atten_Callback(hObject, eventdata, h)
+% hObject    handle to vol_atten (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
+% Hints: get(hObject,'String') returns contents of vol_atten as text
+%        str2double(get(hObject,'String')) returns contents of vol_atten as a double
+h.volatten = get(hObject,'String');
+guidata(hObject, h)
+
+% --- Executes during object creation, after setting all properties.
+function vol_atten_CreateFcn(hObject, eventdata, h)
+% hObject    handle to vol_atten (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 function AudDiff_Callback(hObject, eventdata, h)
 % hObject    handle to AudDiff (see GCBO)

@@ -275,7 +275,7 @@ else
 end
 s.rowofoutput (1, 7) = s.a(atype).expthresholds(s.block);
 s.rowofoutput (1, 8) = resfun; % the actual response meaning
-s.rowofoutput (1, 9) = h.inten; % absolute stimulus intensity
+s.rowofoutput (1, 9) = h.stim(h.sn).inten; % absolute stimulus intensity
 s.rowofoutput (1, 10) = atype; % absolute stimulus intensity
 s.rowofoutput (1, 11) = nan; % mean of moving averages - populated later if trend ends
 
