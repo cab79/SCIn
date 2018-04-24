@@ -154,7 +154,7 @@ switch h.Settings.stim(h.sn).control
         if ~isfield(h.Settings.stim(h.sn),'inten_type')
             h.Settings.stim(h.sn).inten_type = 'abs';
         end
-        if ~isfield(h.stim,'inten_diff') || length(h.stim)<h.sn
+        if ~isfield(h.stim,'inten_diff') || length(h.stim)<h.sn || isempty(h.stim(h.sn).inten_diff)
             if ~isfield(h,'aud_diff_gui')
                 h.stim(h.sn).inten_diff=0;
             else
