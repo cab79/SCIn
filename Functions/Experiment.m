@@ -235,7 +235,7 @@ while h.i<size(h.Seq.signal,2)
         if ~isempty({h.Settings.stim(:).control})
             for i = 1:h.Settings.nstim_trial
                 h.sn = i;
-                if strcmp(h.Settings.stim(i).control,'PsychPortAudio') || strcmp(h.Settings.stim(i).control,'audioplayer');
+                if strcmp(h.Settings.stim(i).control,'PsychPortAudio') || strcmp(h.Settings.stim(i).control,'audioplayer') || strcmp(h.Settings.stim(i).control,'ptb_visual');
                     opt = 'create';
                     h = stimtrain(h,opt); 
                 elseif strcmp(h.Settings.stim(i).control,'LJTick-DAQ') || strcmp(h.Settings.stim(i).control,'labjack')

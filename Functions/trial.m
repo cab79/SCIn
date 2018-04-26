@@ -13,6 +13,9 @@ function h=trial(h,opt)%(A,freq,phase,samplerate,active,figureon)
 % fMRI.
 
 dbstop if error
+if ~isfield(h.Settings.stim,'nrchannels')
+    h.Settings.stim(h.sn).nrchannels = 1;
+end
 
 % if THRESHOLD
 if isfield(h.Settings,'threshold')
@@ -93,6 +96,9 @@ for tr = h.trials
         case 'set&construct'
             h = trial_set_param(h);
             h = contruct_wave(h);
+    end
+    if ~isfield(h.stim,'inten_out') || isempty(h.stim(h.sn).inten_out) 
+        h.stim(h.sn).inten_out = h.stim(h.sn).inten;
     end
     try
         disp(['STIMTYPE = ' num2str(h.sn) ', INTEN = ' num2str(h.stim(h.sn).inten_out) ', MEAN = ' num2str(h.stim(h.sn).inten_mean) ', DIFF = ' num2str(h.stim(h.sn).inten_diff)]);

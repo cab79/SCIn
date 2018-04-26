@@ -7,6 +7,9 @@ switch h.Settings.stim(h.sn).control
         if ~isfield(h.Settings.stim(h.sn),'inten_diff')
             h.Settings.stim(h.sn).inten_diff = 0;
         end
+        if ~isfield(h.Settings.threshold,'stim')
+            h.Settings.threshold.stim = 1;
+        end
         h.dur = h.Settings.stim(h.sn).dur; 
        
         % set initial values from GUI or settings if not already
@@ -136,9 +139,9 @@ switch h.Settings.stim(h.sn).control
             h.Settings.stim(h.sn).maxinten = inf;
         end
         h.stim(h.sn).inten = min(h.stim(h.sn).inten,h.Settings.stim(h.sn).maxinten); 
-        h.stim(h.sn).inten_out = h.stim(h.sn).inten;
+        
 
-    case {'PsychPortAudio','audioplayer'}
+    case {'PsychPortAudio','audioplayer','ptb_visual'}
     
         % create temporary variables for intensity, pitch and duration
         h.stim(h.sn).inten = h.Settings.stim(h.sn).inten;
@@ -240,7 +243,7 @@ switch h.Settings.stim(h.sn).control
                 elseif strcmp(h.Settings.oddballmethod,'duration')
                     h.dur = oddval;
                 end
-            elseif (h.seqtype.adapt && h.Settings.adaptive_general.stim==h.sn) || h.seqtype.thresh
+            elseif (h.seqtype.adapt && h.Settings.adaptive_general.stim==h.sn) || (h.seqtype.thresh && h.Settings.threshold.stim==h.sn)
                 if isfield(h,'s')
                     h.varlevel = h.s.a(h.Seq.adapttype(h.i)).StimulusLevel;
                 else
