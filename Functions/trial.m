@@ -97,7 +97,7 @@ for tr = h.trials
             h = trial_set_param(h);
             h = contruct_wave(h);
     end
-    if ~isfield(h.stim,'inten_out') || isempty(h.stim(h.sn).inten_out) 
+    if ~strcmp(h.Settings.stim(h.sn).control,'PsychPortAudio') || ~strcmp(h.Settings.stim(h.sn).control,'audioplayer') 
         h.stim(h.sn).inten_out = h.stim(h.sn).inten;
     end
     try

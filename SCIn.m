@@ -371,6 +371,13 @@ end
 
 % check if the button is pressed
 if get(hObject, 'Value') == get(hObject, 'Max')
+    
+    
+    if ~isfield(h,'subID')
+        prompt = 'Enter subject ID';
+        h.subID = inputdlg(prompt,'Subject ID',1,{'test'});
+        h.subID = h.subID{:};
+    end
 
     % setup
     set(h.info, 'String', 'Setting up...');
@@ -396,11 +403,6 @@ if get(hObject, 'Value') == get(hObject, 'Max')
     
     % save run info
     set(h.info, 'String', 'Saving run info...');
-    if ~isfield(h,'subID')
-        prompt = 'Enter subject ID';
-        h.subID = inputdlg(prompt,'Subject ID',1,{'test'});
-        h.subID = h.subID{:};
-    end
     %runinfo.seqname = h.SeqName;
     %t_start = datestr(now,30);
     %fname = ['runinfo_' h.subID '_startblock' h.startblock '_' t_start];

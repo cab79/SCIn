@@ -74,7 +74,7 @@ switch h.Settings.stim(h.sn).control
                         end
                     end
                 % or set the adaptive starting level otherwise
-                elseif ~isempty(detect) && ~isfield(h,'s')
+                elseif ~isfield(h,'s')
                     h.Settings.adaptive(detect).startinglevel = h.stim(h.sn).inten_mean;
                 end
 
@@ -101,7 +101,7 @@ switch h.Settings.stim(h.sn).control
                 end
 
             % if adaptive is part of the sequence, but not this trial
-            elseif isnan(h.Seq.adapttype(h.i)) && h.Settings.adaptive_general.stim==h.sn
+            elseif isnan(h.Seq.adapttype(h.i))
                 detect_thresh =  find(h.out.adaptive(:,10)==detect);
                 discrim_thresh =  find(h.out.adaptive(:,10)==discrim);
                 if h.Seq.signal(h.sn,h.i)==1

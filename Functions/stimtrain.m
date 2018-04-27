@@ -352,7 +352,7 @@ switch h.Settings.stim(h.sn).control
     case 'ptb_visual'
         switch opt
             case 'setup'
-                %h=VisualStim(h,'blank');
+                h = PTBvisual(h);
 
             case 'getsample'
                 % not needed
@@ -361,9 +361,6 @@ switch h.Settings.stim(h.sn).control
                 h=trial(h,'set');
 
             case 'start' 
-                if h.i==1
-                    h = PTBvisual(h);
-                end
                 h=VisualStim(h,'stim');
         end
 end
