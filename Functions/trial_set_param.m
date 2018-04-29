@@ -48,7 +48,15 @@ switch h.Settings.stim(h.sn).control
             if ~any(h.stim(h.sn).inten_diff) && ~isempty(h.Settings.stim(h.sn).inten_diff)
                 h.stim(h.sn).inten_diff = h.Settings.stim(h.sn).inten_diff;
             end
-            h.stim(h.sn).inten_diff_start = h.stim(h.sn).inten_diff;
+            if ~isfield(h,'inten_diff_max_gui')
+                h.stim(h.sn).inten_diff_max=0;
+            else
+                h.stim(h.sn).inten_diff_max = str2double(h.inten_diff_max_gui);
+            end
+            if ~any(h.stim(h.sn).inten_diff_max) && ~isempty(h.Settings.stim(h.sn).inten_diff_max)
+                h.stim(h.sn).inten_diff_max = h.Settings.stim(h.sn).inten_diff_max;
+            end
+            h.stim(h.sn).inten_diff_start = h.stim(h.sn).inten_diff_max;
         end
 
         % modify according to procedure
@@ -110,6 +118,9 @@ switch h.Settings.stim(h.sn).control
                     h.stim(h.sn).inten = h.out.adaptive(detect_thresh(end),7) + h.out.adaptive(discrim_thresh(end),7) / 2;
                 end
             end
+        elseif h.seqtype.adapt && ~any(h.Settings.adaptive_general.stim==h.sn)
+            % do nothing - use GUI or settings
+            
         % Otherwise, use sequence to determine intensity
         else
             if strcmp(h.Settings.oddballmethod,'intensity')
@@ -123,15 +134,29 @@ switch h.Settings.stim(h.sn).control
                     h.stim(h.sn).inten = h.Settings.oddballvalue(h.Seq.signal(h.sn,h.tr),:);
                 end
             elseif strcmp(h.Settings.oddballmethod,'index')
-                if isfield(h.Settings,'assoc')
+                if isfield(h.Settings,'assoc') && any(ismember(h.Settings.assoc.stimnums, h.sn)) && isempty(h.stim(h.sn).inten_diff_max)
                     h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.Settings.assoc.intenstim(h.Seq.signal(h.sn,h.i)) * h.stim(h.sn).inten_diff/2;
-                else
+                elseif isfield(h.Settings,'assoc') && any(ismember(h.Settings.assoc.stimnums, h.sn)) && ~isempty(h.stim(h.sn).inten_diff_max)
+                    h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.Settings.assoc.intenstim(h.Seq.signal(h.sn,h.i)) * h.stim(h.sn).inten_diff/2;
+                    % calculate intensity
+                    if h.Seq.signal(h.sn,h.i)==1
+                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.stim(h.sn).inten_diff / 2;
+                    elseif h.Seq.signal(h.sn,h.i)==2
+                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.stim(h.sn).inten_diff / 2;
+                    elseif h.Seq.signal(h.sn,h.i)==3
+                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.stim(h.sn).inten_diff_max / 2;
+                    elseif h.Seq.signal(h.sn,h.i)==4
+                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.stim(h.sn).inten_diff_max / 2;
+                    end
+                elseif any(ismember(h.Settings.assoc.stimnums, h.sn))
                     % calculate intensity
                     if h.Seq.signal(h.sn,h.i)==1
                         h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.stim(h.sn).inten_diff / 2;
                     else
                         h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.stim(h.sn).inten_diff / 2;
                     end
+                else
+                    h.stim(h.sn).inten = h.Settings.stim(h.sn).inten;
                 end
             end
         end

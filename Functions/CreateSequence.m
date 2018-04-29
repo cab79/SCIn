@@ -73,7 +73,7 @@ if iscell(stimdur)
 else
     dursum = sum(stimdur,2);
 end
-totdur = sum(max(dursum,h.Settings.trialdur) .* mult(mult>0));% total duration of one set of all stim types
+totdur = sum(max(dursum,mean(h.Settings.trialdur)) .* mult(mult>0));% total duration of one set of all stim types
 
 % calculate number of sets that can provide at least h.Settings.totdur of stimulation AND n_odd oddballs per CP
 num_sets=0;

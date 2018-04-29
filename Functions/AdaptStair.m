@@ -275,7 +275,7 @@ else
 end
 s.rowofoutput (1, 7) = s.a(atype).expthresholds(s.block);
 s.rowofoutput (1, 8) = resfun; % the actual response meaning
-s.rowofoutput (1, 9) = h.stim(h.sn).inten; % absolute stimulus intensity
+s.rowofoutput (1, 9) = h.stim(stim).inten; % absolute stimulus intensity
 s.rowofoutput (1, 10) = atype; % absolute stimulus intensity
 s.rowofoutput (1, 11) = nan; % mean of moving averages - populated later if trend ends
 
@@ -350,7 +350,8 @@ if ~isempty(ind) && ~isempty(av_para)
     end
     if ~isnan(h.out.adaptive(end,11))
         scatter(length(ind),h.out.adaptive(end,11),'k','filled');
-        title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11))])
+        highval=h.out.adaptive(end,11)+2*std(thresh);
+        title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11)) ', high: ' num2str(highval)])
     end
     hold off
 end

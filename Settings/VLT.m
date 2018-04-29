@@ -62,6 +62,7 @@ switch opt
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = 1; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 1; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).f0 = 0; % freq
     h.Settings.stim(1).inten_type = 'abs'; % either 'dB' or 'abs'
@@ -84,6 +85,7 @@ switch opt
     h.Settings.stim(2).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(2).inten = 1; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).maxinten = 1; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).f0 = 0; % freq
     h.Settings.stim(2).inten_type = 'abs'; % either 'dB' or 'abs'
@@ -126,6 +128,7 @@ switch opt
     % starting level and step size
     h.Settings.threshold.type = 'intensity'; % for intensity
     h.Settings.threshold.stim = 1; % which stim to run adaptive on?
+    h.Settings.threshold.stimpart = 1; % which part of that stim to run adaptive on?
     h.Settings.threshold.startinglevel = 0; % for intensity, in dB (e.g. 10); for pitch, in Hz (e.g. 100) 
     h.Settings.threshold.step = 0.01;
     h.Settings.threshold.signalval = [1 2]; % 1 = carrying on increasing; 2 = decrease
@@ -188,6 +191,7 @@ case 'Adaptive'
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = 0.5; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 1; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).f0 = 0; % freq
     h.Settings.stim(1).inten_type = 'abs'; % either 'dB' or 'abs'
@@ -211,6 +215,7 @@ case 'Adaptive'
     h.Settings.stim(2).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(2).inten = 1; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).maxinten = 1; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).f0 = 0; % freq
     h.Settings.stim(2).inten_type = 'abs'; % either 'dB' or 'abs'
@@ -274,6 +279,12 @@ case 'Adaptive'
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
     h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    % how early after start of trial can button press trigger the next trial? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialmin = 0.1;
+    % when does next trial starts after button press? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialwait = 0.2:0.2:1;
     
     
     %% ADAPTIVE: General
@@ -285,6 +296,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
     h.Settings.adaptive_general.stim = 1; % which stim to run adaptive on?
+    h.Settings.adaptive_general.stimpart = 1; % which part of that stim to run adaptive on?
     
 %     %% ADAPTIVE 1
 %     h.Settings.adaptive(1).type = 'detect';
@@ -352,7 +364,7 @@ case 'Adaptive'
     % stepdir -1 = level decreases intensity; stepdir 1 = level increases intensity
     h.Settings.adaptive(1).stepdir = -1;
     % starting level of adaptive staircase
-    h.Settings.adaptive(1).startinglevel = 0.1; % should be a DIFFERENCE value in dB. Keep small as it will increase naturally over time.
+    h.Settings.adaptive(1).startinglevel = 0.3; % should be a DIFFERENCE value in dB. 
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
     h.Settings.adaptive(1).omit = 0; % 1 = omission is incorrect; 2 = omission is correct
     % which trials (or oddballs if oddonly selected) to start adaptive procedure if there is an omission?
@@ -372,131 +384,8 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmax = 0.5; % should be a DIFFERENCE value. 
     
     
-    case 'classical'
-
-    % set general options
-    h = setgeneral(h);
     
-    % FILENAME OF SEQUENCE CREATION FUNCTION (without .m)
-    h.SeqFun = 'CreateSequence';
-    
-    %% TRIALS or CONTINUOUS?
-    h.Settings.design = 'trials';
-    % if continuous, how many trials ahead should be in the player schedule?
-    % (applied to stimulation via soundcard only)
-    h.Settings.ntrialsahead = 0;  %0 = all trials
-    
-    %% EXPERIMENTAL CONDIITIONS
-    % name the settings that define orthogonal condtions at a different row
-    h.Settings.conds = {'oddprob'};
-    
-    %% Output options
-    % save sinwave from all trials as part of stim sequence file
-    %h.Settings.savesinwave = 0;
-    
-    %% BLOCKING/RUN OPTIONS
-    % 'divide' = equally divide trials by nblocks; 
-    % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'divide';
-    % further options for 'divide':
-        % number of blocks (containing multiple conditions)
-    %    h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
-        %distribute conditions equally among blocks
-    %    h.Settings.distblocks = 1;
-    % options to start sequence at beginning of every run
-    % 'msgbox', 'labjack', 'buttonpress', 'audio' - can have more than one in
-    % cell array
-    h.Settings.blockstart = {'buttonpress'}; % audio,labjack,audio
-    h.Settings.pauseeachblock = 0; % pause after every block?
-    % names of any audiofiles
-    h.Settings.audiofile = {};
-    
-    %% Condition-independent stimulus parameters - can be superceded by condition-dependent parameters
-    % duration of stimulus sequence in seconds
-    h.Settings.totdur = 0; 
-    % duration of trial in seconds
-    h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.patternmethod = '';
-    h.Settings.patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
-    h.Settings.stimdurtype = 'reg'; % not needed unless 'rand'
-    % Binarual beats frequency: creates right ear frequency of f0+df
-    %h.Settings.df = 0; % 10Hz = alpha. Other options: 1Hz, 25Hz, 40Hz.
-    % Monaural beats instead? 
-    %h.Settings.monaural = 0; 
-    % attenuation level in decibels
-    %h.Settings.atten = -30; 
-    % pitch
-    %h.Settings.f0 = 200; % Left ear carrier frequency (pitch)
-    %intensity
-    h.Settings.inten = 0; % value between 2 and 1000mA for Digitimer DS8R
-    h.Settings.inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
-    h.Settings.maxinten = 0; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
-    % Tactile: number of pulses per trial
-    %h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
-    % Tactile: within-trial frequency (Hz) 
-    %h.Settings.t_freq=[]; 
-    
-    
-    %% CHANGING STIMULUS INTENSITY EVERY X PULSES
-    % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
-    
-    %% Condition-dependent stimulus parameters
-    % Condition method: intensity, pitch, channel
-    h.Settings.conditionmethod = {};
-    h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
-    % Oddball method: intensity, index, pitch, channel
-    h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
-    h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
-
-    %% SEQUENCE
-    % Change probablity (CP): each condition is in rows
-    h.Settings.oddprob = [
-        % standard (left) vs oddball (right)
-        0.8 0.2
-        0.5 0.5
-        0.8 0.2
-        ];
-    % index of row of oddprob that are standards and oddballs. Can be
-    % overridden by h.Settings.oddballvalue if using index
-    h.Settings.standardind = 1; 
-    h.Settings.oddind = 2; 
-    % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [2 0 2]; % for each CP condition
-    % for sep_odd, which indices of h.Settings.oddballvalue to consider
-    % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2]};
-    % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0]; % for each CP condition
-    % number of sets to randomise together
-    h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
-    % min number of oddballs within each CP condition
-    h.Settings.n_odd = [12, 30, 12]; % overrides h.Settings.totdur
-    % min number of oddballs per randomised set, per CP
-    h.Settings.n_odd_set = [4, 10, 4]; % overrides h.Settings.totdur
-    % randomise sets?
-    h.Settings.rand_set = [1 1 1]; 
-    
-    %% RESPONSE PARAMETERS
-    % record responses during experiment? 0 or 1
-    h.Settings.record_response = 1;
-    % how to record responses?
-    h.Settings.record_response_type = {'all'}; %options: 'all','thistrial','previoustrial'
-    %intensity difference
-    % buttonpress options: key: keyboard inputs. Blank for no button press
-    h.Settings.buttontype='key';
-    % range of keyboard presses indicating a recordable response
-    h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
-    
-    %% THRESHOLDING
-    % starting level and step size
-    %h.Settings.threshold.startinglevel = 2; % for intensity)
-    %h.Settings.threshold.step = 2;
-    
-    
-    case 'assoc'
+    case 'Assoc'
 
     % set general options
     h = setgeneral(h);
@@ -541,9 +430,9 @@ case 'Adaptive'
     % duration of trial in seconds
     h.Settings.trialdur = 3; % if 0, consecutive stimuli will occur with no gap
     % Tactile: number of pulses per trial
-    h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
+    h.Settings.nstim_trial = 3; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
-    h.Settings.wait=[1 0]; % one value per nstim 
+    h.Settings.wait=[0.5 0.3 0]; % one value per nstim 
     
     %% first stimulus: audio
     h.Settings.stim(1).dur = [0.15 0.15]; % duration of stimulus in seconds; modified by oddball settings
@@ -552,6 +441,7 @@ case 'Adaptive'
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 0; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).f0 = 500; % pitch
     h.Settings.stim(1).inten_type = 'dB'; % either 'dB' or 'abs'
@@ -563,26 +453,54 @@ case 'Adaptive'
     h.Settings.stim(1).nrchannels = 2; % total number of channels, e.g. on sound card
     h.Settings.stim(1).Tukey = 0.25; % Apply Tukey window?
     h.Settings.stim(1).Tukeytype = 2; % 1 = apply to each tone within pattern; 2 = apply to whole pattern
-
-    %% second stimulus: audio
+    
+     %% first stimulus: colour dot
     % duration of stimulus in seconds
-    h.Settings.stim(2).dur = 0.3; % modified by oddball settings
-    h.Settings.stim(2).patternmethod = 'intensity';% Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.stim(2).patternvalue = []; % one per stimdur. Can leave empty if using "index" as oddball method with GUI to set inten_diff
+    h.Settings.stim(2).dur = 0; % modified by oddball settings
+    h.Settings.stim(2).patternmethod = '';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(2).patternvalue = {}; % one per stimdur in each cell; one cell per oddball value
     h.Settings.stim(2).durtype = 'reg'; % not needed unless 'rand'
-    h.Settings.stim(2).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).inten = 0.5; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
-    h.Settings.stim(2).maxinten = 0; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
-    h.Settings.stim(2).f0 = 500; % pitch
-    h.Settings.stim(2).inten_type = 'dB'; % either 'dB' or 'abs'
-    h.Settings.stim(2).df = 0;
-    h.Settings.stim(2).atten = {'inten_diff',1}; % attenuation level in decibels
-    h.Settings.stim(2).attenchan = [1 2]; % apply attenuation (e.g. during thresholding) to these chans
-    h.Settings.stim(2).control='PsychPortAudio'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
-    h.Settings.stim(2).chan = [1 2]; 
-    h.Settings.stim(2).nrchannels = 2; % total number of channels, e.g. on sound card
-    h.Settings.stim(2).Tukey = 0.25; % Apply Tukey window?
-    h.Settings.stim(2).Tukeytype = 2; % 1 = apply to each tone within pattern; 2 = apply to whole pattern
+    h.Settings.stim(2).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).maxinten = 1; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).f0 = 0; % freq
+    h.Settings.stim(2).inten_type = 'abs'; % either 'dB' or 'abs'
+    %h.Settings.stim(2).df = 0;
+    %h.Settings.stim(2).atten = 0; % attenuation level in decibels OR cell with variable and multiplier
+    %h.Settings.stim(2).attenchan = [1 2]; % apply attenuation (e.g. during thresholding) to these chans
+    h.Settings.stim(2).control='ptb_visual'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt, ptb_visual
+    %h.Settings.stim(2).chan = [1 2]; 
+    %h.Settings.stim(2).nrchannels = 2; % total number of channels, e.g. on sound card
+    %h.Settings.stim(2).Tukey = 0.25; % Apply Tukey window?
+    %h.Settings.stim(2).Tukeytype = 2; % 1 = apply to each tone within pattern; 2 = apply to whole pattern
+    h.Settings.stim(2).rectInt = [0.5,1];
+    h.Settings.stim(2).rectColor = [1 1 1; 1 1 1];
+    h.Settings.stim(2).rectSize = [0 0 200 200; 0 0 20 20];
+    
+    %% first stimulus: fixation dot
+    % duration of stimulus in seconds
+    h.Settings.stim(3).dur = 0; % modified by oddball settings
+    h.Settings.stim(3).patternmethod = '';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(3).patternvalue = {}; % one per stimdur in each cell; one cell per oddball value
+    h.Settings.stim(3).durtype = 'reg'; % not needed unless 'rand'
+    h.Settings.stim(3).inten = 1; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(3).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(3).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(3).maxinten = 1; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(3).f0 = 0; % freq
+    h.Settings.stim(3).inten_type = 'abs'; % either 'dB' or 'abs'
+    %h.Settings.stim(3).df = 0;
+    %h.Settings.stim(3).atten = 0; % attenuation level in decibels OR cell with variable and multiplier
+    %h.Settings.stim(3).attenchan = [1 2]; % apply attenuation (e.g. during thresholding) to these chans
+    h.Settings.stim(3).control='ptb_visual'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt, ptb_visual
+    %h.Settings.stim(3).chan = [1 2]; 
+    %h.Settings.stim(3).nrchannels = 2; % total number of channels, e.g. on sound card
+    %h.Settings.stim(3).Tukey = 0.25; % Apply Tukey window?
+    %h.Settings.stim(3).Tukeytype = 2; % 1 = apply to each tone within pattern; 2 = apply to whole pattern
+    h.Settings.stim(3).rectInt = 1;
+    h.Settings.stim(3).rectColor = [1 1 1];
+    h.Settings.stim(3).rectSize = [0 0 20 20];
     
     %% CHANGING STIMULUS INTENSITY EVERY X PULSES
     % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
@@ -656,7 +574,9 @@ case 'Adaptive'
     h.Settings.assoc.pair = [1 2 1 2 2 1];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
-    h.Settings.assoc.intenstim = [2 -2 4 -4];
+    h.Settings.assoc.intenstim = [1 -1 8 -8];
+    h.Settings.assoc.stimnums = [1 2]; % which two stimulus numbers relate to the two levels of h.Seq.signal?
+    h.Settings.assoc.stimpart = 1; % which part of the discriminative stim to run adaptive on?
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
@@ -668,6 +588,12 @@ case 'Adaptive'
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
     h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    % how early after start of trial can button press trigger the next trial? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialmin = 0.5;
+    % when does next trial starts after button press? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialwait = 0.2:0.2:1;
     
     %% THRESHOLDING
     % starting level and step size

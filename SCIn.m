@@ -657,6 +657,29 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function IntensityDiffMax_Callback(hObject, eventdata, h)
+% hObject    handle to IntensityDiffMax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of IntensityDiffMax as text
+%        str2double(get(hObject,'String')) returns contents of IntensityDiffMax as a double
+h.inten_diff_max_gui = get(hObject,'String');
+guidata(hObject, h)
+
+% --- Executes during object creation, after setting all properties.
+function IntensityDiffMax_CreateFcn(hObject, eventdata, h)
+% hObject    handle to IntensityDiffMax (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 function vol_atten_Callback(hObject, eventdata, h)
 % hObject    handle to vol_atten (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -798,5 +821,3 @@ function DutyCycle_CreateFcn(hObject, eventdata, h)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-

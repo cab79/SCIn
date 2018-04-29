@@ -158,6 +158,12 @@ switch opt
                 h = SeqRun(h);
         end
         
+        % for visual expts:
+        try
+            ShowCursor;
+            sca;
+        end
+        
     case {'pause','resume','stop'}
         if isfield(h.Settings.stim,'control')
             if ~isempty({h.Settings.stim(:).control})
@@ -281,12 +287,22 @@ while h.i<size(h.Seq.signal,2)
     
     
     % define the duration of this trial
-    h.trialdur = h.Settings.trialdur; % if stimdur is zero, will start next trial immediately after stimulus ends
+    if length(h.Settings.trialdur)>1
+        h.trialdur = h.Settings.trialdur(randperm(length(h.Settings.trialdur),1)); %randomly pick one possible duration
+    else
+        h.trialdur = h.Settings.trialdur; % if stimdur is zero, will start next trial immediately after stimulus ends
+    end
+    
+    % or define by time after button press
+    if isfield(h.Settings,'response_nexttrialwait')
+        h.nexttrialtime = h.Settings.response_nexttrialwait(randperm(length(h.Settings.response_nexttrialwait),1));
+    end
     
     % enter waiting time loop 
     h.stop=0;
     h.savedRT=0;
     h.savedi=0;
+    h.nexttrial=0;
     h = waitingloop(h);
     
     if h.stop || h.quit
@@ -294,7 +310,7 @@ while h.i<size(h.Seq.signal,2)
     end
     
     % record first and last responses on previous trial
-    h = record_response(h,'prev_trial');
+    %h = record_response(h,'prev_trial');
 end
 
 %plot figures
@@ -370,6 +386,7 @@ h.i=1;
 h.out.stimtime{h.i} = h.st;
 h.marktime = cell(1,size(h.Seq.signal,2));
 disp(['Block ' num2str(h.Seq.blocks(h.i)) '/' num2str(max(h.Seq.blocks)) ', Trial ' num2str(h.i) '/' num2str(size(h.Seq.signal,2)) '.']);
+h.nexttrial=0;
 h = waitingloop(h);
 
 function h = waitingloop(h)
@@ -400,20 +417,49 @@ while (h.ct-h.st)<h.trialdur
         h = ContFun(h);
     end
     
+    h.ct=GetSecs;
+    
     % record responses
     for rt = 1:length(h.Settings.record_response_type)
         h = record_response(h,h.Settings.record_response_type{rt});
-        if h.quit
+        if h.quit 
             return
         end
     end
+    
+    %if ~isempty(h.out.RT{h.i}) %&& h.Settings.record_response==1 %&& h.trialdur-(h.ct-h.st) > 0.1 % only save if 0.1s left, otherwise maybe too slow
+    if h.savedi ~=h.i % save on each new trial, but no later
+        [~,seqname,~] = fileparts(h.SeqName);
+        fname = ['Output_' h.subID '_' seqname '_startblock' num2str(h.startblock) '_' h.t_start '.mat'];
+        out = h.out;
+        save(fullfile(d.root,d.out,fname),'out');
+
+        % monitor what has just been saved so as not to save it again
+        % (speeds up the loop)
+        %h.savedRT =h.out.RT{h.i};
+        h.savedi =h.i;
+    end
+    
+    % update current time and exit if needed
+    if strcmp(h.Settings.design,'trials')
+        h.ct=GetSecs;
+        if (h.ct-h.st)>h.trialdur
+            break; 
+        end
+    end
+    
+    % exit if nexttrial
+    if h.nexttrial>0 && h.ct>h.out.presstime(end)+h.nexttrialtime
+        return
+    end
+   
 
     %only continue loop (which can be slow) if not too close to end of
     %trial. Increases accuracy of EEG markers.
     %if h.Settings.increase_isi_accuracy
-        t1=GetSecs;
+        h.ct=GetSecs;
         if h.i>1 && h.i<size(h.Seq.signal,2)
-            if h.out.projend{h.i}>t1+0.1
+            if h.out.projend{h.i}>h.ct+0.1
                 continue
             end
         end
@@ -632,38 +678,13 @@ while (h.ct-h.st)<h.trialdur
             tic
         end
     else
+        ShowCursor;
+        sca;
         disp('END OF EXPERIMENT');
         break
     end
 
-    % update current time and exit if needed
-    if strcmp(h.Settings.design,'trials')
-        h.ct=GetSecs;
-        if (h.ct-h.st)>h.trialdur
-            break; 
-        end
-    end
-
-    %if ~isempty(h.out.RT{h.i}) %&& h.Settings.record_response==1 %&& h.trialdur-(h.ct-h.st) > 0.1 % only save if 0.1s left, otherwise maybe too slow
-    if h.savedi ~=h.i % save on each new trial, but no later
-        [~,seqname,~] = fileparts(h.SeqName);
-        fname = ['Output_' h.subID '_' seqname '_startblock' num2str(h.startblock) '_' h.t_start '.mat'];
-        out = h.out;
-        save(fullfile(d.root,d.out,fname),'out');
-
-        % monitor what has just been saved so as not to save it again
-        % (speeds up the loop)
-        %h.savedRT =h.out.RT{h.i};
-        h.savedi =h.i;
-    end
     
-    % update current time and exit if needed
-    if strcmp(h.Settings.design,'trials')
-        h.ct=GetSecs;
-        if (h.ct-h.st)>h.trialdur
-            break; 
-        end
-    end
 end
 
 function h = ContFun(h)
@@ -672,7 +693,7 @@ if isfield(h.Settings.stim,'control')
     if ~isempty(h.Settings.stim.control)
         opt = 'getsample';
         h = stimtrain(h,opt);
-        if strcmp(h.Settings.stim.control,'LJTick-DAQ') || strcmp(h.Settings.stim.control,'labjack');
+        if strcmp(h.Settings.stim.control,'LJTick-DAQ') || strcmp(h.Settings.stim.control,'labjack')
             % pressure stim: set intensity if 
             opt = 'set';
             h = stimtrain(h,opt); % intensity via DAC
@@ -1007,6 +1028,10 @@ switch opt
                             % Flush Buffer so only new responses are recorded next
                             % time
                             KbQueueFlush; 
+                        end
+                        
+                        if h.ct-h.st > h.Settings.response_nexttrialmin
+                            h.nexttrial=h.out.presstime(end);
                         end
                            
                     end
