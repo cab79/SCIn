@@ -243,6 +243,12 @@ case 'Adaptive'
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
     h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    % how early after start of trial can button press trigger the next trial? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialmin = 0.1;
+    % when does next trial starts after button press? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialwait = 0.2:0.2:1;
     
     
     %% ADAPTIVE: General
@@ -254,6 +260,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
     h.Settings.adaptive_general.stim = 2; % which stim to run adaptive on?
+    h.Settings.adaptive_general.stimpart = 1; % which part of that stim to run adaptive on?
     
     %% ADAPTIVE 1
     h.Settings.adaptive(1).type = 'discrim';

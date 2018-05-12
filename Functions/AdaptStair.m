@@ -26,7 +26,14 @@ if isfield(h,'s')
     end
 end
 if create_s || create_a
-    s = AdaptStairParameters(h,atype); % see function at the end
+    
+    h.Settings.adaptive(atype).method = 'zest';
+    switch h.Settings.adaptive(atype).method
+        case 'staircase'
+            s = AdaptStairParameters(h,atype); % see function at the end
+        case 'zest'
+            s = ZestParameters(h,atype);
+    end
     h.s=s;
 else
     s=h.s;
@@ -133,10 +140,6 @@ end
 %else
 %    s.lasttrialrun = h.i;
 %end
-
-if size(s.a(atype).expplan,1)==s.a(atype).count_of_n_of_reversals
-    s.a(atype).expplan(end+1,:) = s.a(atype).expplan(end,:);
-end
     
 % evaluate the subject's response
 if strcmp(opt,'omitted')
@@ -185,98 +188,123 @@ s.rowofoutput (1, 1) = h.i; % was: s.block
 s.rowofoutput (1, 2) = s.trial;
 s.rowofoutput (1, 3) = s.a(atype).StimulusLevel;
 s.rowofoutput (1, 4) = s.SubjectAccuracy(s.trial);
-% update the count for the up-down motion
-go_down=0;go_up=0;
-if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
-    go_down=1;
-elseif strcmp(h.Settings.adaptive(atype).type,'detect') && resfun == 2
-    go_down=1;
-else
-    go_up=1;
-end
-if go_down
-    s.a(atype).n_down = s.a(atype).n_down + 1;
-    if s.a(atype).n_down == s.p(atype).down
-        s.a(atype).n_down = 0;
-        s.a(atype).pos = 1;
-        s.a(atype).trend = 1;
-        % update the count of the number of s.reversals and
-        % corresponding stepsize
-        if s.a(atype).pos ==1 && s.a(atype).neg == -1
-            s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
-            % calculate the threshold
-            s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
-            s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
-            s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
-            s.a(atype).pos = s.a(atype).trend;
-            s.a(atype).neg = s.a(atype).trend;
+
+% METHODS
+switch h.Settings.adaptive(atype).method
+    case 'staircase'
+        
+        if size(s.a(atype).expplan,1)==s.a(atype).count_of_n_of_reversals
+            s.a(atype).expplan(end+1,:) = s.a(atype).expplan(end,:);
         end
-        if s.p(atype).isstep == 1
-            s.a(atype).StimulusLevel = s.a(atype).StimulusLevel - s.a(atype).actualstep;
+
+        % update the count for the up-down motion
+        go_down=0;go_up=0;
+        if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
+            go_down=1;
+        elseif strcmp(h.Settings.adaptive(atype).type,'detect') && resfun == 2
+            go_down=1;
         else
-            s.a(atype).StimulusLevel = s.a(atype).StimulusLevel / s.a(atype).actualstep;
+            go_up=1;
         end
-    end
-elseif go_up
-    %error(['stopped at mintrialcount: ' num2str(s.mintrialcount)])
-    s.a(atype).neg = -1;
-    s.a(atype).trend = -1;
-    s.a(atype).n_down = 0;
-    % update the count of the number of s.reversals and
-    % corresponding stepsize
-    if s.a(atype).pos ==1 && s.a(atype).neg == -1
-        s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
-        % calculate the threshold
-        s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
-        s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
-        s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
-        s.a(atype).pos = s.a(atype).trend;
-        s.a(atype).neg = s.a(atype).trend;
-    end
-    if s.p(atype).isstep == 1
-        s.a(atype).StimulusLevel = s.a(atype).StimulusLevel + s.a(atype).actualstep;
-    else
-        s.a(atype).StimulusLevel = s.a(atype).StimulusLevel * s.a(atype).actualstep;
-    end
-    if isfield(h.Settings.adaptive(atype),'levelmax')
-        if h.Settings.adaptive(atype).levelmax>0
-            s.a(atype).StimulusLevel = min(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+        if go_down
+            s.a(atype).n_down = s.a(atype).n_down + 1;
+            if s.a(atype).n_down == s.p(atype).down
+                s.a(atype).n_down = 0;
+                s.a(atype).pos = 1;
+                s.a(atype).trend = 1;
+                % update the count of the number of s.reversals and
+                % corresponding stepsize
+                if s.a(atype).pos ==1 && s.a(atype).neg == -1
+                    s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
+                    % calculate the threshold
+                    s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
+                    s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
+                    s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
+                    s.a(atype).pos = s.a(atype).trend;
+                    s.a(atype).neg = s.a(atype).trend;
+                end
+                if s.p(atype).isstep == 1
+                    s.a(atype).StimulusLevel = s.a(atype).StimulusLevel - s.a(atype).actualstep;
+                else
+                    s.a(atype).StimulusLevel = s.a(atype).StimulusLevel / s.a(atype).actualstep;
+                end
+            end
+        elseif go_up
+            %error(['stopped at mintrialcount: ' num2str(s.mintrialcount)])
+            s.a(atype).neg = -1;
+            s.a(atype).trend = -1;
+            s.a(atype).n_down = 0;
+            % update the count of the number of s.reversals and
+            % corresponding stepsize
+            if s.a(atype).pos ==1 && s.a(atype).neg == -1
+                s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
+                % calculate the threshold
+                s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
+                s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
+                s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
+                s.a(atype).pos = s.a(atype).trend;
+                s.a(atype).neg = s.a(atype).trend;
+            end
+            if s.p(atype).isstep == 1
+                s.a(atype).StimulusLevel = s.a(atype).StimulusLevel + s.a(atype).actualstep;
+            else
+                s.a(atype).StimulusLevel = s.a(atype).StimulusLevel * s.a(atype).actualstep;
+            end
+            if isfield(h.Settings.adaptive(atype),'levelmax')
+                if h.Settings.adaptive(atype).levelmax>0
+                    s.a(atype).StimulusLevel = min(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+                else
+                    s.a(atype).StimulusLevel = max(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+                end
+            end
+        end
+
+        % UPDATE THE ROWOFOUTPUT
+        s.rowofoutput (1, 5) = s.a(atype).count_of_n_of_reversals;
+        s.rowofoutput (1, 6) = s.a(atype).actualstep;
+
+        %disp(['length_blockthresh = ' num2str(length(s.blockthresholds))]);
+        %disp(['nreversals = ' num2str(s.a(atype).count_of_n_of_reversals)]);
+        %disp(['next level = ' num2str(s.a(atype).StimulusLevel)]);
+
+        % threshold for the block
+        if length(s.a(atype).blockthresholds)>=s.p(atype).reversalForthresh
+            switch s.p(atype).thresholdtype
+                case 'Arithmetic'
+                    s.a(atype).expthresholds(s.block)=mean(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end));
+                case 'Geometric'
+                    s.a(atype).expthresholds(s.block)=prod(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end))^(1/length(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end)));
+                case 'Median'
+                    s.a(atype).expthresholds(s.block)=median(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end));
+                otherwise
+                    disp('Unknown calculation type.')
+            end
+            fprintf('Threshold equal to %1.3f\n', s.a(atype).expthresholds(s.block));
         else
-            s.a(atype).StimulusLevel = max(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+            s.a(atype).expthresholds(s.block)=NaN;
         end
-    end
+    
+    case 'zest'
+        if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
+            go_down=1;
+        elseif strcmp(h.Settings.adaptive(atype).type,'detect') && resfun == 2
+            go_down=1;
+        else
+            go_down=0;
+        end
+        s.a(atype).expthresholds(s.block) = -ZEST_marvit(go_down);
+        s.a(atype).StimulusLevel = s.a(atype).expthresholds(s.block);
 end
 
-% UPDATE THE ROWOFOUTPUT
-s.rowofoutput (1, 5) = s.a(atype).count_of_n_of_reversals;
-s.rowofoutput (1, 6) = s.a(atype).actualstep;
+
+
 % update the number of trials
 s.trial = s.trial + 1;
 
-%disp(['length_blockthresh = ' num2str(length(s.blockthresholds))]);
-%disp(['nreversals = ' num2str(s.a(atype).count_of_n_of_reversals)]);
-%disp(['next level = ' num2str(s.a(atype).StimulusLevel)]);
-
-% threshold for the block
-if length(s.a(atype).blockthresholds)>=s.p(atype).reversalForthresh
-    switch s.p(atype).thresholdtype
-        case 'Arithmetic'
-            s.a(atype).expthresholds(s.block)=mean(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end));
-        case 'Geometric'
-            s.a(atype).expthresholds(s.block)=prod(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end))^(1/length(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end)));
-        case 'Median'
-            s.a(atype).expthresholds(s.block)=median(s.a(atype).blockthresholds(end-(s.p(atype).reversalForthresh-1):end));
-        otherwise
-            disp('Unknown calculation type.')
-    end
-    fprintf('Threshold equal to %1.3f\n', s.a(atype).expthresholds(s.block));
-else
-    s.a(atype).expthresholds(s.block)=NaN;
-end
 s.rowofoutput (1, 7) = s.a(atype).expthresholds(s.block);
 s.rowofoutput (1, 8) = resfun; % the actual response meaning
 s.rowofoutput (1, 9) = h.stim(stim).inten; % absolute stimulus intensity
-s.rowofoutput (1, 10) = atype; % absolute stimulus intensity
+s.rowofoutput (1, 10) = atype; 
 s.rowofoutput (1, 11) = nan; % mean of moving averages - populated later if trend ends
 
 % UPDATE THE GLOBAL OUTPUT VARIABLE
@@ -431,4 +459,59 @@ if setup
     s.a(atype).trend = 30;
     s.a(atype).StimulusLevel = h.Settings.adaptive(atype).startinglevel;
     s.a(atype).actualstep = s.a(atype).expplan(1, 2);
+end
+
+
+function s = ZestParameters(h,atype)
+
+if isfield(h,'s')
+    s = h.s;
+else
+    s=struct;
+    s.out.adaptive = [];
+    s.trial = 1;
+    s.atypes = h.Settings.adaptive_general.adapttypes; % adaptive types to run to start with (can be modified later)
+end
+
+% if this is the first run, do some setup
+if ~isfield(s,'a') || length(s.a)<atype || isempty(s.a(atype).StimulusLevel)
+    setup = 1;
+else
+    setup=0;
+end
+if setup
+    % here I define the variable 'row of output' that contains all the output values of the
+    % function. In the current function the output is updated at the end of the while loop
+    % this are the values and the labels
+    s.a(atype).rowofoutput = zeros(1, 6);
+    s.a(atype).expthresholds = zeros(1, 1);
+    s.a(atype).n_threshold = 1;
+    s.a(atype).StimulusLevel = h.Settings.adaptive(atype).startinglevel;
+    
+    % ZEST params for initial p.d.f.
+    s.p(atype).init.zestA = 1;
+    s.p(atype).init.zestB = 1; % = .025; % B= 2.5 for Marvit et al., 2003
+    s.p(atype).init.zestC = 1; % = .1; %C = 2.5 for Marvit et al., 2003;
+    % CHANGE BACK TO LOG
+    s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(1).levelmax); % log of highest threshold value possible; 
+    s.p(atype).init.zestminrange = .01; % log of lowest threshold value possible; 
+
+    % Parameters for Response function (Weibull function) (P(yes) given stimulus)
+    s.p(atype).init.zestfa = 0.1;   %gamma in the text, false alarm rate (guess rate for 2AFC)
+    s.p(atype).init.zestmiss = 0.02; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
+    s.p(atype).init.zestbeta = 2; %10;    %beta in the text, slope of response function
+    s.p(atype).init.zesteta = 0;     %eta in the text, "sweat factor" or response criterion parameter
+
+    % Starting params
+    s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(1).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
+
+    % UNCOMMENT IF USING LOG
+    %s.p(atype).init.zestconvert = {'delta_L', 'sd_pdf'};
+    
+    % initialize p.d.f.
+    ZEST_marvit(NaN,s.p(atype).init);
+
+    %s.p(atype).max_trials = 20;
+    %s.p(atype).thresh_tol = .01;
+    
 end
