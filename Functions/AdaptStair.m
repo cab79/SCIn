@@ -472,7 +472,7 @@ if ~isempty(ind) && ~isempty(av_para)
             scatter(length(ind),av_thresh(av),col{av});
         end
     end
-    for sd = 1:length(ci_para)
+    for sd = 1:length(ci_para) 
         if length(ind)>ci_para(sd)
             scatter(length(ind),ci_thresh(sd,1),'g','filled');
             scatter(length(ind),ci_thresh(sd,2),'g');
