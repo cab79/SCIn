@@ -301,72 +301,72 @@ switch h.Settings.adaptive(atype).method
         else
             go_down=0;
         end
-        nochange=0;
-        if go_down
-            
-            s.a(atype).n_down = s.a(atype).n_down + 1;
-            if s.a(atype).n_down == s.p(atype).down
-                s.a(atype).n_down = 0;
-%                 s.a(atype).pos = 1;
-%                 s.a(atype).trend = 1;
-%                 % update the count of the number of s.reversals and
-%                 % corresponding stepsize
-%                 if s.a(atype).pos ==1 && s.a(atype).neg == -1
-%                     %s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
-% %                     % calculate the threshold
-% %                     s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
-% %                     s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
-% %                     s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
-%                     s.a(atype).pos = s.a(atype).trend;
-%                     s.a(atype).neg = s.a(atype).trend;
-%                 end
-%                 if s.p(atype).isstep == 1
-%                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel - s.a(atype).actualstep;
-%                 else
-%                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel / s.a(atype).actualstep;
-%                 end
-            else
-                nochange=1;
-            end
-        else
-            
-            %error(['stopped at mintrialcount: ' num2str(s.mintrialcount)])
-%             s.a(atype).neg = -1;
-%             s.a(atype).trend = -1;
-            s.a(atype).n_down = 0;
-            % update the count of the number of s.reversals and
-            % corresponding stepsize
-%             if s.a(atype).pos ==1 && s.a(atype).neg == -1
-% %                 s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
-% %                 % calculate the threshold
-% %                 s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
-% %                 s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
-% %                 s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
-%                 s.a(atype).pos = s.a(atype).trend;
-%                 s.a(atype).neg = s.a(atype).trend;
-%             end
-%             if s.p(atype).isstep == 1
-%                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel + s.a(atype).actualstep;
+%         nochange=0;
+%         if go_down
+%             
+%             s.a(atype).n_down = s.a(atype).n_down + 1;
+%             if s.a(atype).n_down == s.p(atype).down
+%                 s.a(atype).n_down = 0;
+% %                 s.a(atype).pos = 1;
+% %                 s.a(atype).trend = 1;
+% %                 % update the count of the number of s.reversals and
+% %                 % corresponding stepsize
+% %                 if s.a(atype).pos ==1 && s.a(atype).neg == -1
+% %                     %s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
+% % %                     % calculate the threshold
+% % %                     s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
+% % %                     s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
+% % %                     s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
+% %                     s.a(atype).pos = s.a(atype).trend;
+% %                     s.a(atype).neg = s.a(atype).trend;
+% %                 end
+% %                 if s.p(atype).isstep == 1
+% %                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel - s.a(atype).actualstep;
+% %                 else
+% %                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel / s.a(atype).actualstep;
+% %                 end
 %             else
-%                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel * s.a(atype).actualstep;
+%                 nochange=1;
 %             end
-%             if isfield(h.Settings.adaptive(atype),'levelmax')
-%                 if h.Settings.adaptive(atype).levelmax>0
-%                     s.a(atype).StimulusLevel = min(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
-%                 else
-%                     s.a(atype).StimulusLevel = max(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
-%                 end
-%             end
-        end
-        if ~nochange
+%         else
+%             
+%             %error(['stopped at mintrialcount: ' num2str(s.mintrialcount)])
+% %             s.a(atype).neg = -1;
+% %             s.a(atype).trend = -1;
+%             s.a(atype).n_down = 0;
+%             % update the count of the number of s.reversals and
+%             % corresponding stepsize
+% %             if s.a(atype).pos ==1 && s.a(atype).neg == -1
+% % %                 s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
+% % %                 % calculate the threshold
+% % %                 s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
+% % %                 s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
+% % %                 s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
+% %                 s.a(atype).pos = s.a(atype).trend;
+% %                 s.a(atype).neg = s.a(atype).trend;
+% %             end
+% %             if s.p(atype).isstep == 1
+% %                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel + s.a(atype).actualstep;
+% %             else
+% %                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel * s.a(atype).actualstep;
+% %             end
+% %             if isfield(h.Settings.adaptive(atype),'levelmax')
+% %                 if h.Settings.adaptive(atype).levelmax>0
+% %                     s.a(atype).StimulusLevel = min(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+% %                 else
+% %                     s.a(atype).StimulusLevel = max(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+% %                 end
+% %             end
+%         end
+%         if ~nochange
             s.a(atype).expthresholds(s.block) = ZEST_marvit(go_down);
             if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
                 s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);
             end
             s.a(atype).StimulusLevel = s.a(atype).expthresholds(s.block);
-        else
-            s.a(atype).expthresholds(s.block) = s.a(atype).StimulusLevel;
-        end
+%         else
+%             s.a(atype).expthresholds(s.block) = s.a(atype).StimulusLevel;
+%         end
 end
 
 
@@ -414,6 +414,29 @@ if ~isempty(av_para)
         end
     end
 end
+ci_para = h.Settings.adaptive(atype).ci_thresh;
+if ~isempty(ci_para)
+    % USE VARIANCE TERMINATION RULE
+    ci_thresh=nan(length(ci_para),3);
+    if ~isempty(ind) 
+        for sd = 1:length(ci_para)
+            if length(thresh)>=ci_para(sd)
+                x=thresh((end-ci_para(sd)+1):end);
+                SEM = std(x)/sqrt(length(x));               % Standard Error
+                ts = tinv([0.025  0.975],length(x)-1);      % T-Score
+                CI = mean(x) + ts*SEM;                      % Confidence Intervals
+                ci_thresh(sd,1) = mean(x);
+                ci_thresh(sd,2:3) = CI;
+                % TERMINATE
+                %if  && 
+                if (abs(CI(2)-CI(1)))<x(end)/ci_para && x(end)<CI(2) && x(end)>CI(1)
+                    s.out.adaptive(end, 11) = x(end);
+                    s.atypes(find(s.atypes==atype)) = [];
+                end
+            end
+        end
+    end
+end
 h.s =s;
 h.out.adaptive = s.out.adaptive;
 
@@ -443,10 +466,17 @@ if ~isempty(ind) && ~isempty(av_para)
         %eval(['figure(h.f' num2str(atype) ');']);
     end
     hold on
-    scatter(length(ind),thresh(end),'b');
+    scatter(length(ind),thresh(end),'b','filled');
     for av = 1:length(av_para)
         if length(ind)>av_para(av)
             scatter(length(ind),av_thresh(av),col{av});
+        end
+    end
+    for sd = 1:length(ci_para)
+        if length(ind)>ci_para(sd)
+            scatter(length(ind),ci_thresh(sd,1),'g','filled');
+            scatter(length(ind),ci_thresh(sd,2),'g');
+            scatter(length(ind),ci_thresh(sd,3),'g');
         end
     end
     if ~isnan(h.out.adaptive(end,11))
@@ -578,8 +608,8 @@ if setup
     s.p(atype).init.zestC = 5/range; % = .1; %C = 2.5 for Marvit et al., 2003;
 
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
-    s.p(atype).init.zestfa = 0.1;   %gamma in the text, false alarm rate (guess rate for 2AFC)
-    s.p(atype).init.zestmiss = 0.02; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
+    s.p(atype).init.zestfa = 0.05;   %gamma in the text, false alarm rate (guess rate for 2AFC)
+    s.p(atype).init.zestmiss = 0.05; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
     s.p(atype).init.zestbeta = 2; %10;    %beta in the text, slope of response function
     s.p(atype).init.zesteta = 0;     %eta in the text, "sweat factor" or response criterion parameter
 
