@@ -177,7 +177,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = 5; % if 0, consecutive stimuli will occur with no gap
     % Pattern type method: intensity, pitch. Not supported: channel, duration
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
