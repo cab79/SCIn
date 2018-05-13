@@ -285,6 +285,15 @@ switch h.Settings.adaptive(atype).method
         end
     
     case 'zest'
+%         if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
+%             go_down=1;
+%         elseif strcmp(h.Settings.adaptive(atype).type,'detect') && resfun == 2
+%             go_down=1;
+%         else
+%             go_down=0;
+%         end
+        % update the count for the up-down motion
+        go_down=0;go_up=0;
         if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
             go_down=1;
         elseif strcmp(h.Settings.adaptive(atype).type,'detect') && resfun == 2
@@ -292,8 +301,72 @@ switch h.Settings.adaptive(atype).method
         else
             go_down=0;
         end
-        s.a(atype).expthresholds(s.block) = -ZEST_marvit(go_down);
-        s.a(atype).StimulusLevel = s.a(atype).expthresholds(s.block);
+        nochange=0;
+        if go_down
+            
+            s.a(atype).n_down = s.a(atype).n_down + 1;
+            if s.a(atype).n_down == s.p(atype).down
+                s.a(atype).n_down = 0;
+%                 s.a(atype).pos = 1;
+%                 s.a(atype).trend = 1;
+%                 % update the count of the number of s.reversals and
+%                 % corresponding stepsize
+%                 if s.a(atype).pos ==1 && s.a(atype).neg == -1
+%                     %s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
+% %                     % calculate the threshold
+% %                     s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
+% %                     s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
+% %                     s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
+%                     s.a(atype).pos = s.a(atype).trend;
+%                     s.a(atype).neg = s.a(atype).trend;
+%                 end
+%                 if s.p(atype).isstep == 1
+%                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel - s.a(atype).actualstep;
+%                 else
+%                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel / s.a(atype).actualstep;
+%                 end
+            else
+                nochange=1;
+            end
+        else
+            
+            %error(['stopped at mintrialcount: ' num2str(s.mintrialcount)])
+%             s.a(atype).neg = -1;
+%             s.a(atype).trend = -1;
+            s.a(atype).n_down = 0;
+            % update the count of the number of s.reversals and
+            % corresponding stepsize
+%             if s.a(atype).pos ==1 && s.a(atype).neg == -1
+% %                 s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
+% %                 % calculate the threshold
+% %                 s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
+% %                 s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
+% %                 s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
+%                 s.a(atype).pos = s.a(atype).trend;
+%                 s.a(atype).neg = s.a(atype).trend;
+%             end
+%             if s.p(atype).isstep == 1
+%                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel + s.a(atype).actualstep;
+%             else
+%                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel * s.a(atype).actualstep;
+%             end
+%             if isfield(h.Settings.adaptive(atype),'levelmax')
+%                 if h.Settings.adaptive(atype).levelmax>0
+%                     s.a(atype).StimulusLevel = min(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+%                 else
+%                     s.a(atype).StimulusLevel = max(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
+%                 end
+%             end
+        end
+        if ~nochange
+            s.a(atype).expthresholds(s.block) = ZEST_marvit(go_down);
+            if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
+                s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);
+            end
+            s.a(atype).StimulusLevel = s.a(atype).expthresholds(s.block);
+        else
+            s.a(atype).expthresholds(s.block) = s.a(atype).StimulusLevel;
+        end
 end
 
 
@@ -483,18 +556,26 @@ if setup
     % here I define the variable 'row of output' that contains all the output values of the
     % function. In the current function the output is updated at the end of the while loop
     % this are the values and the labels
+    s.p(atype).up=h.Settings.adaptive(atype).updown(1);
+    s.p(atype).down=h.Settings.adaptive(atype).updown(2);
     s.a(atype).rowofoutput = zeros(1, 6);
     s.a(atype).expthresholds = zeros(1, 1);
     s.a(atype).n_threshold = 1;
     s.a(atype).StimulusLevel = h.Settings.adaptive(atype).startinglevel;
+    s.a(atype).n_down = 0;
+    % variable for count the positive and negative answers
+    s.a(atype).pos = 0;
+    s.a(atype).neg = 0;
+    s.a(atype).trend = 30;
+    
+    s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(1).levelmax); % highest threshold value possible; 
+    s.p(atype).init.zestminrange = abs(h.Settings.adaptive(1).levelmin); % lowest threshold value possible; 
+    range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
     
     % ZEST params for initial p.d.f.
     s.p(atype).init.zestA = 1;
-    s.p(atype).init.zestB = 1; % = .025; % B= 2.5 for Marvit et al., 2003
-    s.p(atype).init.zestC = 1; % = .1; %C = 2.5 for Marvit et al., 2003;
-    % CHANGE BACK TO LOG
-    s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(1).levelmax); % log of highest threshold value possible; 
-    s.p(atype).init.zestminrange = .01; % log of lowest threshold value possible; 
+    s.p(atype).init.zestB = 5/range; % = .025; % B= 2.5 for Marvit et al., 2003
+    s.p(atype).init.zestC = 5/range; % = .1; %C = 2.5 for Marvit et al., 2003;
 
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
     s.p(atype).init.zestfa = 0.1;   %gamma in the text, false alarm rate (guess rate for 2AFC)
