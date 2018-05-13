@@ -348,6 +348,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).nRuns = 12*100;
     % max number of thresh estimates to average over to get overall estimate
     h.Settings.adaptive(1).av_thresh = [50,75,100];
+    h.Settings.adaptive(1).ci_thresh = 20;
     % number of trials each run
     h.Settings.adaptive(1).trialsperrun = 1;
     % adaptive staircase: meanings of the buttonopt
@@ -382,6 +383,7 @@ case 'Adaptive'
     %h.Settings.adaptive(1).meanadjustmax = 10;
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(1).levelmax = 0.5; % should be a DIFFERENCE value. 
+    h.Settings.adaptive(1).levelmin = 0.01;
     
     
     

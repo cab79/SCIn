@@ -237,6 +237,7 @@ case 'Adaptive'
     % max number of thresh estimates to average over to get overall
     % estimate (for plotting only - red line)
     h.Settings.adaptive(1).av_thresh = [50,75,100];
+    h.Settings.adaptive(1).ci_thresh = 20;
     % number of trials each run
     h.Settings.adaptive(1).trialsperrun = 1;
     % adaptive staircase: meanings of the buttonopt
@@ -270,7 +271,8 @@ case 'Adaptive'
     % incorrect (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     %h.Settings.adaptive(1).meanadjustmax = 10;
     % maximum amount - for safety
-    h.Settings.adaptive(1).levelmax = h.Settings.stim(1).maxinten; % should be value in mA. 
+    h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
+    h.Settings.adaptive(1).levelmin = 2;
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -279,6 +281,7 @@ case 'Adaptive'
     h.Settings.adaptive(2).nRuns = 12*100;
     % max number of thresh estimates to average over to get overall estimate
     h.Settings.adaptive(2).av_thresh = [50,75,100];
+    h.Settings.adaptive(2).ci_thresh = 20;
     % number of trials each run
     h.Settings.adaptive(2).trialsperrun = 1;
     % adaptive staircase: meanings of the buttonopt
@@ -312,7 +315,8 @@ case 'Adaptive'
     % incorrect (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     %h.Settings.adaptive(2).meanadjustmax = 10;
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
-    h.Settings.adaptive(2).levelmax = 50; % should be a DIFFERENCE value in mA. 
+    h.Settings.adaptive(2).levelmax = 50; % should be a DIFFERENCE value in mA.
+    h.Settings.adaptive(2).levelmin = 0.1;
     
     case 'NLT_roving'
 
