@@ -435,10 +435,8 @@ if isfield(h.Settings,'adaptive')
                 order(bi) = order_bi(randperm(length(order_bi)));
             end
         elseif strcmp(h.Settings.adaptive_general.seqtype,'cond')
-            order=[];
-            for cp = 1:nCP
-                idx = ismember(h.Seq.condnum,condnum{cp}{:});
-                order(idx)=h.Settings.adaptive_general.seqtypecond(cp);
+            for cn = 1:nCP
+                h.Seq.condnum(setx_ind==cps) = condnum{cp}{s};
             end
         end
         

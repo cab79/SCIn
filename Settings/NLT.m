@@ -61,6 +61,7 @@ switch opt
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = []; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
     h.Settings.stim(1).chan = [6]; h.Settings.stim(1).chanforLJ = 1;
@@ -92,6 +93,12 @@ switch opt
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
     h.Settings.buttonopt = {'UpArrow','DownArrow'}; 
+    % how early after start of trial can button press trigger the next trial? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialmin = 0.2;
+    % when does next trial starts after button press? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialwait = [];
     
     %% THRESHOLDING
     % starting level and step size
@@ -126,7 +133,7 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'divide';
+    h.Settings.blockopt = 'cond';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 1; % must integer-divide each value in h.Settings.cond_rep_init
@@ -177,11 +184,16 @@ case 'Adaptive'
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
     h.Settings.oddballvalue = {[1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
-
+    
     %% SEQUENCE
     % Change probablity (CP): each condition is in rows
     h.Settings.oddprob = [
         % standard (left) vs oddball (right)
+        0.5 0.5
+        0.5 0.5
+        0.5 0.5
+        0.5 0.5
+        0.5 0.5
         0.5 0.5
         ];
     % index of row of oddprob that are standards and oddballs. Can be
@@ -189,20 +201,21 @@ case 'Adaptive'
     h.Settings.standardind = 1; 
     h.Settings.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [0]; % for each CP condition
+    h.Settings.sep_odd = [0 0 0 0 0 0]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2]};
+    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0]; % for each CP condition
+    h.Settings.std_lead = [0 0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = [100*12]; % overrides h.Settings.totdur
+    h.Settings.n_odd = 10*[12,12,12,12,12,12]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.n_odd_set = [100*12]; % overrides h.Settings.totdur
+    h.Settings.n_odd_set = 10*[12,12,12,12,12,12]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [0]; 
+    h.Settings.rand_set = [0 0 0 0 0 0]; 
+    
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
@@ -219,7 +232,7 @@ case 'Adaptive'
     h.Settings.response_nexttrialmin = 0.2;
     % when does next trial starts after button press? Empty if programmed
     % ISI
-    h.Settings.response_nexttrialwait = 0.2:0.2:1;
+    h.Settings.response_nexttrialwait = 0.6:0.2:1.6;
     
     %% THRESHOLDING
     % starting level and step size
@@ -231,21 +244,23 @@ case 'Adaptive'
     % which ones to run? (i.e. indices of h.Settings.adaptive)
     h.Settings.adaptive_general.adapttypes = [1 2];
     % alternate or randomise runs over types? Alt must have equal number of
-    % runs for each adapttype
-    h.Settings.adaptive_general.seqtype = 'rand'; % 'alt' or 'rand'
+    % runs for each adapttype. Cond = one type per CP block
+    h.Settings.adaptive_general.seqtype = 'cond'; % 'alt', 'rand', 'cond' 
+    h.Settings.adaptive_general.seqtypecond = [1 2 1 2 1 2]; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
-    h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.selectcond.cp = [1:6]; % which CP condition to run adaptive on?
     h.Settings.adaptive_general.stim = 1; % which stim to run adaptive on?
+    h.Settings.adaptive_general.terminate = 'block'; % terminate within each block only
     
     %% ADAPTIVE 1
     h.Settings.adaptive(1).type = 'detect';
     h.Settings.adaptive(1).updown = [1 1];
     % how many of each to run?
-    h.Settings.adaptive(1).nRuns = 12*100;
+    h.Settings.adaptive(1).nRuns = 100*12;
     % max number of thresh estimates to average over to get overall
     % estimate (for plotting only - red line)
     h.Settings.adaptive(1).av_thresh = [50,75,100];
-    h.Settings.adaptive(1).ci_thresh = 20;
+    h.Settings.adaptive(1).ci_thresh = 10;
     % number of trials each run
     h.Settings.adaptive(1).trialsperrun = 1;
     % adaptive staircase: meanings of the buttonopt
@@ -286,10 +301,10 @@ case 'Adaptive'
     h.Settings.adaptive(2).type = 'discrim';
     h.Settings.adaptive(2).updown = [1 2];
     % how many of each to run?
-    h.Settings.adaptive(2).nRuns = 12*100;
+    h.Settings.adaptive(2).nRuns = 100*12;
     % max number of thresh estimates to average over to get overall estimate
     h.Settings.adaptive(2).av_thresh = [50,75,100];
-    h.Settings.adaptive(2).ci_thresh = 20;
+    h.Settings.adaptive(2).ci_thresh = 10;
     % number of trials each run
     h.Settings.adaptive(2).trialsperrun = 1;
     % adaptive staircase: meanings of the buttonopt
@@ -732,7 +747,9 @@ case 'Adaptive'
     h.Settings.assoc.pair = [1 2 1 2 2 1];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
-    h.Settings.assoc.intenstim = [1 -1 2 -2];
+    h.Settings.assoc.intenstim = [1 -1 1.5 -1.5];
+    h.Settings.assoc.stimnums = [1 2]; % which two stimulus numbers relate to the two levels of h.Seq.signal?
+    h.Settings.assoc.stimpart = 1; % which part of the discriminative stim to run adaptive on?
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
@@ -749,7 +766,7 @@ case 'Adaptive'
     h.Settings.response_nexttrialmin = 0.2;
     % when does next trial starts after button press? Empty if programmed
     % ISI
-    h.Settings.response_nexttrialwait = 0.2:0.2:1;
+    h.Settings.response_nexttrialwait = 0.6:0.2:1.6;
     
     %% THRESHOLDING
     % starting level and step size

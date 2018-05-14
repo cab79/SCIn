@@ -159,7 +159,7 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'cond';
+    h.Settings.blockopt = 'divide';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 1; % must integer-divide each value in h.Settings.cond_rep_init
@@ -256,20 +256,20 @@ case 'Adaptive'
     h.Settings.standardind = 1; 
     h.Settings.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [0 0 0]; % for each CP condition
+    h.Settings.sep_odd = [0 0 0 0 0 0]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0]; % for each CP condition
+    h.Settings.std_lead = [0 0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = 10*[12,12,12]; % overrides h.Settings.totdur
+    h.Settings.n_odd = 10*[12,12,12,12,12,12]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.n_odd_set = 10*[12,12,12]; % overrides h.Settings.totdur
+    h.Settings.n_odd_set = 10*[12,12,12,12,12,12]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [0 0 0]; 
+    h.Settings.rand_set = [0 0 0 0 0 0]; 
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
@@ -286,21 +286,19 @@ case 'Adaptive'
     h.Settings.response_nexttrialmin = 0.2;
     % when does next trial starts after button press? Empty if programmed
     % ISI
-    h.Settings.response_nexttrialwait = 0.6:0.2:1.6;
+    h.Settings.response_nexttrialwait = 1.2:0.2:2;
     
     
     %% ADAPTIVE: General
     % which ones to run? (i.e. indices of h.Settings.adaptive)
     h.Settings.adaptive_general.adapttypes = [1];
     % alternate or randomise runs over types? Alt must have equal number of
-    % runs for each adapttype. Cond = one type per CP block
-    h.Settings.adaptive_general.seqtype = 'cond'; % 'alt', 'rand', 'cond' 
-    h.Settings.adaptive_general.seqtypecond = [1 1 1]; %if 'cond', associate each CP with an adaptive type
+    % runs for each adapttype
+    h.Settings.adaptive_general.seqtype = 'alt'; % 'alt' or 'rand'
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
-    h.Settings.adaptive_general.selectcond.cp = [1:3]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
     h.Settings.adaptive_general.stim = 1; % which stim to run adaptive on?
     h.Settings.adaptive_general.stimpart = 1; % which part of that stim to run adaptive on?
-    h.Settings.adaptive_general.terminate = 'block'; % terminate within each block only
     
 %     %% ADAPTIVE 1
 %     h.Settings.adaptive(1).type = 'detect';
@@ -349,7 +347,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).type = 'discrim';
     h.Settings.adaptive(1).updown = [1 2];
     % how many of each to run?
-    h.Settings.adaptive(1).nRuns = 100*12;
+    h.Settings.adaptive(1).nRuns = 5*12;
     % max number of thresh estimates to average over to get overall estimate
     h.Settings.adaptive(1).av_thresh = [50,75,100];
     h.Settings.adaptive(1).ci_thresh = 20;
@@ -369,7 +367,7 @@ case 'Adaptive'
     % stepdir -1 = level decreases intensity; stepdir 1 = level increases intensity
     h.Settings.adaptive(1).stepdir = -1;
     % starting level of adaptive staircase
-    h.Settings.adaptive(1).startinglevel = 0.1; % should be a DIFFERENCE value in dB. 
+    h.Settings.adaptive(1).startinglevel = 0.3; % should be a DIFFERENCE value in dB. 
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
     h.Settings.adaptive(1).omit = 0; % 1 = omission is incorrect; 2 = omission is correct
     % which trials (or oddballs if oddonly selected) to start adaptive procedure if there is an omission?
@@ -599,7 +597,7 @@ case 'Adaptive'
     h.Settings.response_nexttrialmin = 0.5;
     % when does next trial starts after button press? Empty if programmed
     % ISI
-    h.Settings.response_nexttrialwait = 0.6:0.2:1.6;
+    h.Settings.response_nexttrialwait = 1.2:0.2:2;
     
     %% THRESHOLDING
     % starting level and step size

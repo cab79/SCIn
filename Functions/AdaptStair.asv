@@ -454,9 +454,6 @@ if ~isempty(ci_para)
                     if strcmp(h.Settings.adaptive_general.terminate,'block')
                          if h.Seq.blocks(h.i)<max(h.Seq.blocks)
                             s.p(atype).init.zestinit_diffLvl = x(end);
-                            slope = max(5/(abs(h.Settings.adaptive(1).levelmax)-abs(h.Settings.adaptive(1).levelmin)),2/x(end)); % make the prior tighter if thresh is near to zero
-                            s.p(atype).init.zestB = slope; 
-                            s.p(atype).init.zestC = slope; 
                             [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
                          end
                     end
@@ -481,23 +478,19 @@ if ~isempty(ind)
         col = {'r','m','y'};
         % does fig handle exist?
         fig = isfield(h,'f');
-        if strcmp(h.Settings.adaptive_general.seqtype,'cond')
-            s.fignum = h.Seq.blocks(h.i);
-        elseif strcmp(h.Settings.adaptive_general.seqtype,'rand') || strcmp(h.Settings.adaptive_general.seqtype,'alt')
-            s.fignum = atype;
+        fignum = h.Seq.blocks(h.i)*(length(h.Settings.adaptive)+(atype-1);
+        if fig
+            fig = fig && length(h.f)>=atype;
         end
         if fig
-            fig = fig && length(h.f(ishandle(h.f)))>=s.fignum;
-        end
-        if fig
-            eval(['fig = ishandle(h.f(' num2str(s.fignum) '));']);
+            eval(['fig = ishandle(h.f(' num2str(atype) '));']);
         end
 
         if ~fig
             set(groot, 'DefaultFigureVisible', 'off');
-            eval(['h.f(' num2str(s.fignum) ')=figure;']);
+            eval(['h.f(' num2str(atype) ')=figure;']);
         else
-            eval(['set(groot, ''CurrentFigure'', h.f(' num2str(s.fignum) '));']);
+            eval(['set(groot, ''CurrentFigure'', h.f(' num2str(atype) '));']);
             %eval(['figure(h.f' num2str(atype) ');']);
         end
         hold on
