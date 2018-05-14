@@ -301,59 +301,6 @@ switch h.Settings.adaptive(atype).method
         else
             go_up=1;
         end
-        if go_down
-            s.a(atype).n_down = s.a(atype).n_down + 1;
-            if s.a(atype).n_down == s.p(atype).down
-                s.a(atype).n_down = 0;
-                s.a(atype).pos = 1;
-                s.a(atype).trend = 1;
-                % update the count of the number of s.reversals and
-                % corresponding stepsize
-                if s.a(atype).pos ==1 && s.a(atype).neg == -1
-                    %s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
-%                     % calculate the threshold
-%                     s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
-%                     s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
-%                     s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
-                    s.a(atype).pos = s.a(atype).trend;
-                    s.a(atype).neg = s.a(atype).trend;
-                end
-%                 if s.p(atype).isstep == 1
-%                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel - s.a(atype).actualstep;
-%                 else
-%                     s.a(atype).StimulusLevel = s.a(atype).StimulusLevel / s.a(atype).actualstep;
-%                 end
-            end
-        elseif go_up
-            %error(['stopped at mintrialcount: ' num2str(s.mintrialcount)])
-            s.a(atype).neg = -1;
-            s.a(atype).trend = -1;
-            s.a(atype).n_down = 0;
-            % update the count of the number of s.reversals and
-            % corresponding stepsize
-            if s.a(atype).pos ==1 && s.a(atype).neg == -1
-%                 s.a(atype).count_of_n_of_reversals = s.a(atype).count_of_n_of_reversals + 1;
-%                 % calculate the threshold
-%                 s.a(atype).blockthresholds(s.a(atype).n_threshold)=s.a(atype).StimulusLevel;
-%                 s.a(atype).n_threshold = s.a(atype).n_threshold + 1;
-%                 s.a(atype).actualstep = s.a(atype).expplan(s.a(atype).count_of_n_of_reversals, 2);
-                s.a(atype).pos = s.a(atype).trend;
-                s.a(atype).neg = s.a(atype).trend;
-            end
-%             if s.p(atype).isstep == 1
-%                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel + s.a(atype).actualstep;
-%             else
-%                 s.a(atype).StimulusLevel = s.a(atype).StimulusLevel * s.a(atype).actualstep;
-%             end
-%             if isfield(h.Settings.adaptive(atype),'levelmax')
-%                 if h.Settings.adaptive(atype).levelmax>0
-%                     s.a(atype).StimulusLevel = min(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
-%                 else
-%                     s.a(atype).StimulusLevel = max(s.a(atype).StimulusLevel,h.Settings.adaptive(atype).levelmax);
-%                 end
-%             end
-        end
-%         nochange=0;
 %         if go_down
 %             
 %             s.a(atype).n_down = s.a(atype).n_down + 1;
@@ -411,7 +358,7 @@ switch h.Settings.adaptive(atype).method
 % %             end
 %         end
 %         if ~nochange
-            s.a(atype).expthresholds(s.block) = ZEST_marvit(go_down);
+            s.a(atype).expthresholds(s.block) = ZEST_marvit(go_down,[],s);
             if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
                 s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);
             end
@@ -476,7 +423,7 @@ if ~isempty(ci_para)
     if strcmp(h.Settings.adaptive(atype).type,'discrim')
         corr = s.out.adaptive(select_ind,4);
         pcorr = 100*sum(corr)/length(select_ind);
-        s.out.adaptive(end, 12) = pcorr
+        s.out.adaptive(end, 12) = pcorr;
     end
     
     % USE VARIANCE TERMINATION RULE
@@ -547,7 +494,7 @@ if ~isempty(ind) && ~isempty(av_para)
     if ~isnan(h.out.adaptive(end,11))
         scatter(length(ind),h.out.adaptive(end,11),'k','filled');
         highval=h.out.adaptive(end,11)+2*std(thresh);
-        title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11)) ', high: ' num2str(highval)])
+        title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11)) ', high: ' num2str(highval)]);
     end
     yyaxis right
     scatter(length(ind),h.out.adaptive(end,12),'y','filled');

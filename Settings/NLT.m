@@ -144,7 +144,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = 5; % if 0, consecutive stimuli will occur with no gap
     h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
     h.Settings.wait=0; % within-trial frequency (Hz); one value per nstim 
     
@@ -155,7 +155,9 @@ case 'Adaptive'
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = []; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_type = 'abs'; % either 'dB' or 'abs'
     h.Settings.stim(1).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
     h.Settings.stim(1).chan = [6]; h.Settings.stim(1).chanforLJ = 1;
     h.Settings.stim(1).nrchannels = 1; % total number of channels, e.g. on sound card
@@ -212,6 +214,12 @@ case 'Adaptive'
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
     h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    % how early after start of trial can button press trigger the next trial? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialmin = 0.2;
+    % when does next trial starts after button press? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialwait = 0.2:0.2:1;
     
     %% THRESHOLDING
     % starting level and step size
@@ -607,7 +615,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 3; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = 6; % if 0, consecutive stimuli will occur with no gap
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
@@ -621,6 +629,7 @@ case 'Adaptive'
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 0; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).f0 = 500; % pitch
     h.Settings.stim(1).inten_type = 'dB'; % either 'dB' or 'abs'
@@ -641,7 +650,9 @@ case 'Adaptive'
     h.Settings.stim(2).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(2).inten = []; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(2).maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(2).inten_type = 'abs'; % either 'dB' or 'abs'
     h.Settings.stim(2).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
     h.Settings.stim(2).chan = [6]; h.Settings.stim(2).chanforLJ = 1;
     h.Settings.stim(2).nrchannels = 1; % total number of channels, e.g. on sound card
@@ -733,6 +744,12 @@ case 'Adaptive'
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
     h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    % how early after start of trial can button press trigger the next trial? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialmin = 0.2;
+    % when does next trial starts after button press? Empty if programmed
+    % ISI
+    h.Settings.response_nexttrialwait = 0.2:0.2:1;
     
     %% THRESHOLDING
     % starting level and step size
