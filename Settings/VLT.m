@@ -181,7 +181,7 @@ case 'Adaptive'
     % Pattern type method: intensity, pitch. Not supported: channel, duration
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
-    h.Settings.wait=[0.3 0]; % one value per nstim 
+    h.Settings.wait=[0.1 0]; % one value per nstim 
     
      %% first stimulus: colour dot
     % duration of stimulus in seconds
@@ -434,7 +434,7 @@ case 'Adaptive'
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 3; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
-    h.Settings.wait=[0.5 0.3 0]; % one value per nstim 
+    h.Settings.wait=[0.5 0.1 0]; % one value per nstim 
     
     %% first stimulus: audio
     h.Settings.stim(1).dur = [0.15 0.15]; % duration of stimulus in seconds; modified by oddball settings

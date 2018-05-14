@@ -358,7 +358,8 @@ switch h.Settings.adaptive(atype).method
 % %             end
 %         end
 %         if ~nochange
-            s.a(atype).expthresholds(s.block) = ZEST_marvit(go_down,[],s);
+            [thresh,s] = ZEST_marvit(go_down,[],s,atype);
+            s.a(atype).expthresholds(s.block)=thresh;
             if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
                 s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);
             end
@@ -635,7 +636,7 @@ if setup
     %s.p(atype).init.zestconvert = {'delta_L', 'sd_pdf'};
     
     % initialize p.d.f.
-    ZEST_marvit(NaN,s.p(atype).init);
+    [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
 
     %s.p(atype).max_trials = 20;
     %s.p(atype).thresh_tol = .01;
