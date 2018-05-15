@@ -1,1 +1,1 @@
-root='C:\Data\Matlab\SCIn';
+root='C:\Matlab\SCIn';

@@ -361,7 +361,7 @@ switch h.Settings.stim(h.sn).control
                 h=trial(h,'set');
 
             case 'start' 
-                h=VisualStim(h,'stim');
+               h=VisualStim(h,'stim');
         end
 end
 end

@@ -16,7 +16,7 @@ PsychDefaultSetup(2);
 
 % Get the screen numbers. This gives us a number for each of the screens
 % attached to our computer. For help see: Screen Screens?
-Screen('Preference','SkipSyncTests', 1);
+%Screen('Preference','SkipSyncTests', 1);
 h.screens = Screen('Screens');
 
 % Draw we select the maximum of these numbers. So in a situation where we

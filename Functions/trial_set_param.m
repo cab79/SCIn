@@ -90,6 +90,8 @@ switch h.Settings.stim(h.sn).control
                 if ~isempty(discrim)
                     if isfield(h,'s') && length(h.s.a)>=discrim % if a level has been determined
                         h.stim(h.sn).inten_diff = h.s.a(discrim).StimulusLevel;
+                    elseif ~isfield(h,'s') && ~(h.stim(h.sn).inten_diff == 0 || isempty(h.stim(h.sn).inten_diff))
+                        h.Settings.adaptive(discrim).startinglevel = h.stim(h.sn).inten_diff;
                     end
                     if h.stim(h.sn).inten_diff == 0 || isempty(h.stim(h.sn).inten_diff) % if not set in GUI or settings
                         h.stim(h.sn).inten_diff = h.Settings.adaptive(discrim).startinglevel;
@@ -119,7 +121,7 @@ switch h.Settings.stim(h.sn).control
                 end
             end
         elseif h.seqtype.adapt && ~any(h.Settings.adaptive_general.stim==h.sn)
-            % do nothing - use GUI or settings
+            h.stim(h.sn).inten = h.stim(h.sn).inten_mean;
             
         % Otherwise, use sequence to determine intensity
         else

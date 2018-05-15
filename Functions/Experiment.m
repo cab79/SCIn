@@ -325,6 +325,16 @@ while h.i<size(h.Seq.signal,2)
     %h = record_response(h,'prev_trial');
 end
 
+try
+    PsychPortAudio('Close', h.pahandle);
+catch
+    try 
+        global pah
+        PsychPortAudio('Close',pah);
+    end
+end
+
+
 %plot figures
 set(groot, 'DefaultFigureVisible', 'on');
 if isfield(h,'f')
@@ -1041,11 +1051,11 @@ switch opt
                             % Flush Buffer so only new responses are recorded next
                             % time
                             KbQueueFlush; 
+                            if h.ct-h.st > h.Settings.response_nexttrialmin
+                                h.nexttrial=h.out.presstime(end);
+                            end
                         end
                         
-                        if h.ct-h.st > h.Settings.response_nexttrialmin
-                            h.nexttrial=h.out.presstime(end);
-                        end
                            
                     end
                     

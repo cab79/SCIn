@@ -280,7 +280,7 @@ case 'Adaptive'
     % buttonpress options: key: keyboard inputs. Blank for no button press
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
-    h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    h.Settings.buttonopt = {'LeftArrow','RightArrow'}; 
     % how early after start of trial can button press trigger the next trial? Empty if programmed
     % ISI
     h.Settings.response_nexttrialmin = 0.2;
@@ -356,7 +356,7 @@ case 'Adaptive'
     % number of trials each run
     h.Settings.adaptive(1).trialsperrun = 1;
     % adaptive staircase: meanings of the buttonopt
-    h.Settings.adaptive(1).buttonfun = {'DownArrow','UpArrow'}; 
+    h.Settings.adaptive(1).buttonfun = {'LeftArrow','RightArrow'}; 
     % adaptive staircase: corresponding signal values that would signify a
     % correct answer
     h.Settings.adaptive(1).signalval = [1 2];
@@ -419,7 +419,7 @@ case 'Adaptive'
     h.Settings.blockopt = 'cond';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
-    %    h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
+        %h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
         %distribute conditions equally among blocks
     %    h.Settings.distblocks = 1;
     % options to start sequence at beginning of every run
@@ -569,18 +569,18 @@ case 'Adaptive'
     %% associative learning experiments
     h.Settings.assoc.pairing = {
       % cue 1  cue 2
-        [1 3], [2 4]; %pairing option 1 (e.g. most porbable in some blocks)
-        [2 4], [1 3]; %pairing option 2 (e.g. least probable)
+        [1], [2]; %pairing option 1 (e.g. most porbable in some blocks)
+        [2], [1]; %pairing option 2 (e.g. least probable)
         }; % more than one number per pairing/cue: will be randomly assigned to each cue
-    % if there is more than on number per pairing/cue, what is their
+    % if there is more than one number per pairing/cue, what is their
     % percent representation?
-    %h.Settings.assoc.probstim = {[0.5 0.5],[0.5 0.5],[0.5 0.5],[0.5 0.5],[0.5 0.5],[0.5 0.5]}; % e.g. low intensity diff vs. high intensity diff
-    h.Settings.assoc.probstim = {[0.2 0.8],[1 0],[0.5 0.5],[0.5 0.5],[0.2 0.8],[1 0]}; % e.g. low intensity diff vs. high intensity diff
+    h.Settings.assoc.probstim = {1,1,1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
+    %h.Settings.assoc.probstim = {[0.2 0.8],[1 0],[0.5 0.5],[0.5 0.5],[0.2 0.8],[1 0]}; % e.g. low intensity diff vs. high intensity diff
     % for each condnum, which pair to use?
     h.Settings.assoc.pair = [1 2 1 2 2 1];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
-    h.Settings.assoc.intenstim = [1 -1 1.5 -1.5];
+    h.Settings.assoc.intenstim = [1 -1];
     h.Settings.assoc.stimnums = [1 2]; % which two stimulus numbers relate to the two levels of h.Seq.signal?
     h.Settings.assoc.stimpart = 1; % which part of the discriminative stim to run adaptive on?
     
@@ -593,7 +593,7 @@ case 'Adaptive'
     % buttonpress options: key: keyboard inputs. Blank for no button press
     h.Settings.buttontype='key';
     % range of keyboard presses indicating a recordable response
-    h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    h.Settings.buttonopt = {'LeftArrow','RightArrow'}; 
     % how early after start of trial can button press trigger the next trial? Empty if programmed
     % ISI
     h.Settings.response_nexttrialmin = 0.5;
@@ -605,6 +605,65 @@ case 'Adaptive'
     % starting level and step size
     %h.Settings.threshold.startinglevel = 2; % for intensity)
     %h.Settings.threshold.step = 2;
+    
+    %% ADAPTIVE: General
+    % which ones to run? (i.e. indices of h.Settings.adaptive)
+    h.Settings.adaptive_general.adapttypes = [1];
+    % alternate or randomise runs over types? Alt must have equal number of
+    % runs for each adapttype. Cond = one type per CP block
+    h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
+    h.Settings.adaptive_general.seqtypecond = []; %if 'cond', associate each CP with an adaptive type
+    h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
+    h.Settings.adaptive_general.selectcond.cp = [1:9]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.stim = 2; % which stim to run adaptive on?
+    h.Settings.adaptive_general.stimpart = 1; % which part of that stim to run adaptive on?
+    h.Settings.adaptive_general.terminate = ''; % 'block' to terminate within each block only. EMPTY '' TO TURN OFF
+    h.Settings.adaptive_general.reestimate = ''; % 'block' to re-estimate with wider prior each block
+    
+    
+    %% ADAPTIVE 1
+    h.Settings.adaptive(1).type = 'discrim';
+    h.Settings.adaptive(1).updown = [1 2];
+    % how many of each to run?
+    h.Settings.adaptive(1).nRuns = 100*12;
+    % max number of thresh estimates to average over to get overall estimate
+    h.Settings.adaptive(1).av_thresh = [];
+    h.Settings.adaptive(1).ci_thresh = 20;
+    % number of trials each run
+    h.Settings.adaptive(1).trialsperrun = 1;
+    % adaptive staircase: meanings of the buttonopt
+    h.Settings.adaptive(1).buttonfun = {'LeftArrow','RightArrow'}; 
+    % adaptive staircase: corresponding signal values that would signify a
+    % correct answer
+    h.Settings.adaptive(1).signalval = [2 1];
+    % reversals
+    h.Settings.adaptive(1).reversals = [4;8;12];
+    % stepsize
+    h.Settings.adaptive(1).stepsize = [2;sqrt(2);sqrt(sqrt(2))];
+    % steptype 0 = multiple/divide by stepsize; steptype 1 = add/subtract
+    h.Settings.adaptive(1).steptype = 0;
+    % stepdir -1 = level decreases intensity; stepdir 1 = level increases intensity
+    h.Settings.adaptive(1).stepdir = -1;
+    % starting level of adaptive staircase
+    h.Settings.adaptive(1).startinglevel = 0.1; % should be a DIFFERENCE value in dB. 
+    % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
+    h.Settings.adaptive(1).omit = 0; % 1 = omission is incorrect; 2 = omission is correct
+    % which trials (or oddballs if oddonly selected) to start adaptive procedure if there is an omission?
+    h.Settings.adaptive(1).startomit = 0;
+    % adapt on every trial or only just before an oddball?
+    %h.Settings.adaptive.oddonly = 1;
+    % max number of trials after oddball that subject must respond (otherwise counts as omitted response)
+    %h.Settings.adaptive.resptrials = 4;
+    % number of reversals to average over to calculate threshold.
+    h.Settings.adaptive(1).reversalForthresh = 6;
+    % use mean from the first X responses of each type (high and low)
+    %h.Settings.adaptive(1).getmeanfromresponses = 6;
+    % maximum amount to adjust the mean if their responses are very
+    % incorrect (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
+    %h.Settings.adaptive(1).meanadjustmax = 10;
+    % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
+    h.Settings.adaptive(1).levelmax = 0.5; % should be a DIFFERENCE value. 
+    h.Settings.adaptive(1).levelmin = 0.01;
     
     
 end

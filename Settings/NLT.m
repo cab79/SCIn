@@ -612,10 +612,10 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'cond';
+    h.Settings.blockopt = 'divide';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
-    %    h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
+        h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
         %distribute conditions equally among blocks
     %    h.Settings.distblocks = 1;
     % options to start sequence at beginning of every run
@@ -747,7 +747,7 @@ case 'Adaptive'
     h.Settings.assoc.pair = [1 2 1 2 2 1];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
-    h.Settings.assoc.intenstim = [1 -1 1.5 -1.5];
+    h.Settings.assoc.intenstim = [1 -1 1 -1];
     h.Settings.assoc.stimnums = [1 2]; % which two stimulus numbers relate to the two levels of h.Seq.signal?
     h.Settings.assoc.stimpart = 1; % which part of the discriminative stim to run adaptive on?
     

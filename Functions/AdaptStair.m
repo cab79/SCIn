@@ -37,6 +37,21 @@ if create_s || create_a
     h.s=s;
 else
     s=h.s;
+    % re-initialise with current estimate of threshold if
+    % it's a new block
+    if strcmp(h.Settings.adaptive_general.terminate,'block') || strcmp(h.Settings.adaptive_general.reestimate,'block')
+        if ~isempty(s.out.adaptive)
+            if h.Seq.blocks(h.i)>s.out.adaptive(end,13)
+                ind = find(s.out.adaptive(:,10)==atype & ~isnan(s.out.adaptive(:,7)) & s.out.adaptive(:,13)==h.Seq.blocks(h.i)-1);
+                currentthresh = s.out.adaptive(ind(end),7);
+                s.p(atype).init.zestinit_diffLvl = currentthresh;
+                slope = max(5/(abs(h.Settings.adaptive(1).levelmax)-abs(h.Settings.adaptive(1).levelmin)),2/currentthresh); % make the prior tighter if thresh is near to zero
+                s.p(atype).init.zestB = slope; 
+                s.p(atype).init.zestC = slope; 
+                [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
+            end
+        end
+    end
 end
 
 %%%%%%%%%%%%%%%%% TEMP - need to sort these out
@@ -416,7 +431,9 @@ if ~isempty(av_para)
         end
         if ~all(trend>0) && ~all(trend<0)
             s.out.adaptive(end, 11) = mean(av_thresh);
-            s.terminate = [s.terminate atype];
+            if ~isempty(h.Settings.adaptive_general.terminate)
+                s.terminate = [s.terminate atype];
+            end
         end
     end
 end
@@ -447,18 +464,11 @@ if ~isempty(ci_para)
                 %if  && 
                 if abs(CI(2)-CI(1))<abs(x(end))/ci_para && x(end)<CI(2) && x(end)>CI(1)
                     s.out.adaptive(end, 11) = x(end);
-                    s.terminate = [s.terminate atype];
                     
-                    % re-initialise with current estimate of threshold if
-                    % there are further blocks
-                    if strcmp(h.Settings.adaptive_general.terminate,'block')
-                         if h.Seq.blocks(h.i)<max(h.Seq.blocks)
-                            s.p(atype).init.zestinit_diffLvl = x(end);
-                            slope = max(5/(abs(h.Settings.adaptive(1).levelmax)-abs(h.Settings.adaptive(1).levelmin)),2/x(end)); % make the prior tighter if thresh is near to zero
-                            s.p(atype).init.zestB = slope; 
-                            s.p(atype).init.zestC = slope; 
-                            [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
-                         end
+                    if ~isempty(h.Settings.adaptive_general.terminate)
+                        s.terminate = [s.terminate atype];
+                    
+                        
                     end
                 end
             end
@@ -477,8 +487,8 @@ h.out.adaptive = s.out.adaptive;
 
 %% plot
 if ~isempty(ind) 
-    if ~isempty(av_para)
-        col = {'r','m','y'};
+    if ~isempty(av_para) || ~isempty(ci_para)
+       
         % does fig handle exist?
         fig = isfield(h,'f');
         if strcmp(h.Settings.adaptive_general.seqtype,'cond')
@@ -503,32 +513,35 @@ if ~isempty(ind)
         hold on
         yyaxis left
         scatter(length(ind),thresh(end),'b','filled');
-        for av = 1:length(av_para)
-            if length(ind)>av_para(av)
-                scatter(length(ind),av_thresh(av),col{av});
+        if ~isempty(av_para)
+            col = {'r','m','y'};
+            for av = 1:length(av_para)
+                if length(ind)>av_para(av)
+                    scatter(length(ind),av_thresh(av),col{av});
+                end
             end
         end
-    end
-    if ~isempty(ci_para)
-        for sd = 1:length(ci_para) 
-            if length(ind)>ci_para(sd)
-                scatter(length(ind),ci_thresh(sd,1),'g','filled');
-                scatter(length(ind),ci_thresh(sd,2),'g');
-                scatter(length(ind),ci_thresh(sd,3),'g');
+        if ~isempty(ci_para)
+            for sd = 1:length(ci_para) 
+                if length(ind)>ci_para(sd)
+                    scatter(length(ind),ci_thresh(sd,1),'g','filled');
+                    scatter(length(ind),ci_thresh(sd,2),'g');
+                    scatter(length(ind),ci_thresh(sd,3),'g');
+                end
             end
         end
+        if ~isnan(h.out.adaptive(end,11))
+            scatter(length(ind),h.out.adaptive(end,11),'k','filled');
+            highval=h.out.adaptive(end,11)+2*std(thresh);
+            title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11)) ', high: ' num2str(highval)]);
+        end
+        if strcmp(h.Settings.adaptive(atype).type,'discrim')
+            yyaxis right
+            scatter(length(ind),h.out.adaptive(end,12),'y','filled');
+            ylim([0 100]);
+        end
+        hold off
     end
-    if ~isnan(h.out.adaptive(end,11))
-        scatter(length(ind),h.out.adaptive(end,11),'k','filled');
-        highval=h.out.adaptive(end,11)+2*std(thresh);
-        title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11)) ', high: ' num2str(highval)]);
-    end
-    if strcmp(h.Settings.adaptive(atype).type,'discrim')
-        yyaxis right
-        scatter(length(ind),h.out.adaptive(end,12),'y','filled');
-        ylim([0 100]);
-    end
-    hold off
 end
    
 function s = AdaptStairParameters(h,atype)
@@ -642,23 +655,24 @@ if setup
     s.a(atype).neg = 0;
     s.a(atype).trend = 30;
     
+    % Starting params
+    s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(1).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
+
     s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(1).levelmax); % highest threshold value possible; 
     s.p(atype).init.zestminrange = abs(h.Settings.adaptive(1).levelmin); % lowest threshold value possible; 
     range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
+    slope = max(5/range,5/s.p(atype).init.zestinit_diffLvl); % make the prior tighter if thresh is near to zero
     
     % ZEST params for initial p.d.f.
     s.p(atype).init.zestA = 1;
-    s.p(atype).init.zestB = 5/range; % = .025; % B= 2.5 for Marvit et al., 2003
-    s.p(atype).init.zestC = 5/range; % = .1; %C = 2.5 for Marvit et al., 2003;
+    s.p(atype).init.zestB = slope; % = .025; % B= 2.5 for Marvit et al., 2003
+    s.p(atype).init.zestC = slope; % = .1; %C = 2.5 for Marvit et al., 2003;
 
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
     s.p(atype).init.zestfa = 0.05;   %gamma in the text, false alarm rate (guess rate for 2AFC)
     s.p(atype).init.zestmiss = 0.05; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
     s.p(atype).init.zestbeta = 2; %10;    %beta in the text, slope of response function
     s.p(atype).init.zesteta = 0;     %eta in the text, "sweat factor" or response criterion parameter
-
-    % Starting params
-    s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(1).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
 
     % UNCOMMENT IF USING LOG
     %s.p(atype).init.zestconvert = {'delta_L', 'sd_pdf'};
