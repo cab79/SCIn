@@ -517,29 +517,24 @@ case 'Adaptive'
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2], [1 2], [2 1], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballvalue = {[1 2], [1 2],  [1 2], [2 1], [1 2],  [1 2], [1 2], [2 1], [1 2],  [1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
 
     %% SEQUENCE
     % Change probablity (CP): each condition is in rows
     h.Settings.oddprob = [
         % standard (left) vs oddball (right)
-        %0.5 0.5
-        %0.8 0.2
-        %0.5 0.5
-        %0.8 0.2
-        %0.5 0.5
-        %0.8 0.2
-        %0.5 0.5
-        %0.8 0.2
-        %0.5 0.5
-        %0.8 0.2
-        %0.5 0.5
-        %0.8 0.2
         0.5 0.5
         0.8 0.2
+        0.5 0.5
         0.8 0.2
+        0.5 0.5
         0.8 0.2
+        0.5 0.5
+        0.8 0.2
+        0.5 0.5
+        0.8 0.2
+        0.5 0.5
         0.8 0.2
         ];
     % index of row of oddprob that are standards and oddballs. Can be
@@ -547,26 +542,33 @@ case 'Adaptive'
     h.Settings.standardind = 1; 
     h.Settings.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [0 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.sep_odd = [0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0 0 0]; % for each CP condition
+    h.Settings.std_lead = [0 0 0 0 0 0 0 0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = [12 12 12 12 12]; % overrides h.Settings.totdur
+    h.Settings.n_odd = [4, 4, 4,4,  4, 8, 4,8,  4, 12, 4,12]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
     h.Settings.n_odd_set = h.Settings.n_odd; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [0 0 0 0 0]; 
+    h.Settings.rand_set = [0 0 0 0 0 0 0 0 0 0 0 0]; 
     % condition numbers
     h.Settings.condnum = [
         3 4
         1 2
+        3 4
         5 6
+        3 4
         1 2
+        3 4
+        5 6
+        3 4
+        1 2
+        3 4
         5 6
         ]; 
     
