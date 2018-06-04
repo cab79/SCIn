@@ -43,12 +43,14 @@ else
         if ~isempty(s.out.adaptive)
             if h.Seq.blocks(h.i)>s.out.adaptive(end,13)
                 ind = find(s.out.adaptive(:,10)==atype & ~isnan(s.out.adaptive(:,7)) & s.out.adaptive(:,13)==h.Seq.blocks(h.i)-1);
-                currentthresh = s.out.adaptive(ind(end),7);
-                s.p(atype).init.zestinit_diffLvl = currentthresh;
-                slope = max(5/(abs(h.Settings.adaptive(1).levelmax)-abs(h.Settings.adaptive(1).levelmin)),2/currentthresh); % make the prior tighter if thresh is near to zero
-                s.p(atype).init.zestB = slope; 
-                s.p(atype).init.zestC = slope; 
-                [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
+                if ~isempty(ind)
+                    currentthresh = s.out.adaptive(ind(end),7);
+                    s.p(atype).init.zestinit_diffLvl = currentthresh;
+                    slope = max(5/(abs(h.Settings.adaptive(1).levelmax)-abs(h.Settings.adaptive(1).levelmin)),2/currentthresh); % make the prior tighter if thresh is near to zero
+                    s.p(atype).init.zestB = slope; 
+                    s.p(atype).init.zestC = slope; 
+                    [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
+                end
             end
         end
     end
@@ -656,10 +658,10 @@ if setup
     s.a(atype).trend = 30;
     
     % Starting params
-    s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(1).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
+    s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(atype).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
 
-    s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(1).levelmax); % highest threshold value possible; 
-    s.p(atype).init.zestminrange = abs(h.Settings.adaptive(1).levelmin); % lowest threshold value possible; 
+    s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(atype).levelmax); % highest threshold value possible; 
+    s.p(atype).init.zestminrange = abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; 
     range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
     slope = max(5/range,5/s.p(atype).init.zestinit_diffLvl); % make the prior tighter if thresh is near to zero
     

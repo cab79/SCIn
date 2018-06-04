@@ -37,7 +37,7 @@ switch opt
                 
                 %% ---------------- CONNECT TO BRAINVISION ------------------%
                 if ~isfield(h,'BV'); 
-                    h.BV.delay = 0.002;
+                    h.BV.delay = 0.001;
                 end
                 h.BV.status = 0;
                 
@@ -123,7 +123,7 @@ switch opt
             Error_Message(Error)
 
             % wait for a short delay
-            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,5,h.BV.delay*1000000,0,0);
+            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,5,h.BV.delay,0,0);
             Error_Message(Error)
 
             %--- EEG trigger off, via Labjack USB - for Brainamps ---%
@@ -144,7 +144,7 @@ switch opt
             %Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT, 8, 1, 0, 0);
             Error_Message(Error)
             % wait for a short delay
-            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,8,h.BV.delay*1000000,0,0);
+            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,8,100000,0,0);
             Error_Message(Error)
             %--- EEG trigger off, via Labjack USB---%
             Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_PORT, 8, 0, 8, 0);
