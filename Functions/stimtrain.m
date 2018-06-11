@@ -14,14 +14,17 @@ switch h.Settings.stim(h.sn).control
                 return
         end
         
-        if ~isfield(h,'ljHandle')
-            try
-                h.ljHandle = get(h.ljhandle, 'Value');
-            end
+%         if ~isfield(h,'ljHandle')
+%             try
+%                 h.ljHandle = get(h.ljhandle, 'Value');
+%             end
+%         end
+        
+        if ~isunix
+            ljud_LoadDriver; % Loads LabJack UD Function Library
+            ljud_Constants; % Loads LabJack UD constant file
         end
         
-        ljud_LoadDriver; % Loads LabJack UD Function Library
-        ljud_Constants; % Loads LabJack UD constant file
         if h.Settings.stim(h.sn).chanforLJ
             port = h.Settings.stim(h.sn).chan;
         else
@@ -75,21 +78,25 @@ switch h.Settings.stim(h.sn).control
                 
                 
                 %Set DACA 
-                if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
-                    try
-                        Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0); 
-                        Error_Message(Error)
-                    catch% to use DAC0 port
+                if isunix
+                    h.ljHandle.setFIO(h.stim(h.sn).inten*h.Settings.DAC_multiply,0)
+                else
+                    if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
+                        try
+                            Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0); 
+                            Error_Message(Error)
+                        catch% to use DAC0 port
+                            Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
+                            Error_Message(Error)
+                            Error = ljud_GoOne(h.ljHandle);
+                            Error_Message(Error)
+                        end
+                    elseif strcmp(h.Settings.stim(h.sn).control,'labjack')
                         Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
                         Error_Message(Error)
                         Error = ljud_GoOne(h.ljHandle);
                         Error_Message(Error)
                     end
-                elseif strcmp(h.Settings.stim(h.sn).control,'labjack')
-                    Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
-                    Error_Message(Error)
-                    Error = ljud_GoOne(h.ljHandle);
-                    Error_Message(Error)
                 end
 
                 %voltage = 80;
@@ -200,49 +207,64 @@ switch h.Settings.stim(h.sn).control
                     else
                        p_freq = h.Settings.stim(h.sn).p_freq; 
                     end
-                    for pr = 1:h.Settings.stim(h.sn).npulses_train % train
-                        Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT,port,1,0,0); % 
-                        Error_Message(Error)
+                    if isunix
+                        t1=GetSecs;
+                        for pr = 1:h.Settings.stim(h.sn).npulses_train % train
+                            
+                            h.ljHandle.timedTTL(port,round((1000/p_freq)/2));
+                            WaitSecs(round((1000/p_freq)/2));
+                            
+                        end
+                        t2=GetSecs;
+                    else
+                        for pr = 1:h.Settings.stim(h.sn).npulses_train % train
+                            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT,port,1,0,0); % 
+                            Error_Message(Error)
 
-                        Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,port,round((1000000/p_freq)/2),0,0); % Actual resolution is 64 microseconds.
-                        Error_Message(Error)
+                            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,port,round((1000000/p_freq)/2),0,0); % Actual resolution is 64 microseconds.
+                            Error_Message(Error)
 
-                        Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT,port,0,0,0);
-                        Error_Message(Error)
+                            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT,port,0,0,0);
+                            Error_Message(Error)
 
-                        Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,port,round((1000000/p_freq)/2),0,0); % Actual resolution is 64 microseconds.
+                            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,port,round((1000000/p_freq)/2),0,0); % Actual resolution is 64 microseconds.
+                            Error_Message(Error)
+                        end
+                        %Execute the stimulus train
+                        t1=GetSecs;
+                        Error = ljud_GoOne(h.ljHandle);
                         Error_Message(Error)
+                        %ljud_GetResult(ljHandle, LJ_ioGET_DIGITAL_BIT, 7, @Value)
+                        t2=GetSecs;
                     end
-                    %Execute the stimulus train
-                    t1=GetSecs;
-                    Error = ljud_GoOne(h.ljHandle);
-                    Error_Message(Error)
-                    %ljud_GetResult(ljHandle, LJ_ioGET_DIGITAL_BIT, 7, @Value)
-                    t2=GetSecs;
                     disp(['pulses per stim: ' num2str(pr) ';  labjack stim length: ' num2str(t2-t1)]);
                 end
                 
             case 'stop'
                 
-                if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
-                    Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, 0, 0); 
-                    Error_Message(Error)
+                if isunix
+                    h.ljHandle.setFIO(0,0)
                 else
-                    %try
-                        Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, 0, 0,0);
+                    if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
+                        Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, 0, 0); 
                         Error_Message(Error)
-                        Error = ljud_GoOne(h.ljHandle);
-                        Error_Message(Error)
-                    %end
-                end
-                
-                if isfield(h.Settings.stim(h.sn),'labjack_timer')
-                    if h.Settings.stim(h.sn).labjack_timer
-                        Error = ljud_AddRequest (h.ljHandle,  LJ_ioPUT_CONFIG, LJ_chTIMER_COUNTER_PIN_OFFSET, port, 0, 0);
-                        Error_Message(Error)
-                        %Execute the requests. 
-                        Error = ljud_GoOne(h.ljHandle);
-                        Error_Message(Error)
+                    else
+                        %try
+                            Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, 0, 0,0);
+                            Error_Message(Error)
+                            Error = ljud_GoOne(h.ljHandle);
+                            Error_Message(Error)
+                        %end
+                    end
+
+                    if isfield(h.Settings.stim(h.sn),'labjack_timer')
+                        if h.Settings.stim(h.sn).labjack_timer
+                            Error = ljud_AddRequest (h.ljHandle,  LJ_ioPUT_CONFIG, LJ_chTIMER_COUNTER_PIN_OFFSET, port, 0, 0);
+                            Error_Message(Error)
+                            %Execute the requests. 
+                            Error = ljud_GoOne(h.ljHandle);
+                            Error_Message(Error)
+                        end
                     end
                 end
                 

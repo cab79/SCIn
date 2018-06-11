@@ -134,26 +134,32 @@ switch opt
             Error = ljud_GoOne(h.ljHandle);
             Error_Message(Error)
          elseif strcmp(h.Settings.record_EEG,'labjack_DB15')
-            ljud_LoadDriver; % Loads LabJack UD Function Library
-            ljud_Constants; % Loads LabJack UD constant file
+                TriggerNum = h.Seq.condnum(h.i);
              
-            TriggerNum = h.Seq.condnum(h.i);
-            
-            %--- EEG trigger on, via Labjack USB ---%
-            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_PORT, 8, TriggerNum, 8, 0);
-            %Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT, 8, 1, 0, 0);
-            Error_Message(Error)
-            % wait for a short delay
-            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,8,h.BV.delay*1000000,0,0);
-            Error_Message(Error)
-            %--- EEG trigger off, via Labjack USB---%
-            Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_PORT, 8, 0, 8, 0);
-            %Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT, 8, 0, 0, 0);
-            Error_Message(Error)
-            % send command
-            Error = ljud_GoOne(h.ljHandle);
-            Error_Message(Error)
-            
+            if isunix
+                h.ljHandle.setDIOvalue(TriggerNum);
+                WaitSecs(h.BV.delay);
+                h.ljHandle.setDIOvalue(0);
+                
+            else
+                ljud_LoadDriver; % Loads LabJack UD Function Library
+                ljud_Constants; % Loads LabJack UD constant file
+
+                %--- EEG trigger on, via Labjack USB ---%
+                Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_PORT, 8, TriggerNum, 8, 0);
+                %Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT, 8, 1, 0, 0);
+                Error_Message(Error)
+                % wait for a short delay
+                Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_WAIT,8,h.BV.delay*1000000,0,0);
+                Error_Message(Error)
+                %--- EEG trigger off, via Labjack USB---%
+                Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_PORT, 8, 0, 8, 0);
+                %Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT, 8, 0, 0, 0);
+                Error_Message(Error)
+                % send command
+                Error = ljud_GoOne(h.ljHandle);
+                Error_Message(Error)
+            end
             
         elseif strcmp(h.Settings.record_EEG,'serial')
             try
