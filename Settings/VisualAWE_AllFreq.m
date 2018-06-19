@@ -91,7 +91,10 @@ switch opt
         sd = h.Settings.stimdur;
         h.Settings.conditionmethod = {'intensity','pitch','phase'};
         h.Settings.conditionvalue = {
-            [0 0], [h.Settings.f0 h.Settings.f0], [1 1]
+            [h.Settings.inten 0], [1/(sd*10) 1/(sd*10)], [0 0]
+            [h.Settings.inten 0], [1/(sd*10) 1/(sd*10)], [0 0]
+            [h.Settings.inten 0], [1/(sd*10) 1/(sd*10)], [0 0]
+            [h.Settings.inten 0], [1/(sd*10) 1/(sd*10)], [0 0]
             [h.Settings.inten h.Settings.inten], [h.Settings.f0 h.Settings.f0], [1 1]
             [h.Settings.inten 0], [1/(sd*10) 1/(sd*10)], [0 0]
             [h.Settings.inten 0], [1/(sd*10) 1/(sd*10)], [0 0]
@@ -109,7 +112,10 @@ switch opt
             % right column = 2nd inten/pitch
         % and the temporal pattern is defined by fc (from either fpitch or finten)
         h.Settings.oddballvalue = {
-            [sd sd]
+            [sd*0.5+1/h.Settings.f0*0.5, sd]
+            [sd*1.5-1/h.Settings.f0*0.5, sd]
+            [sd, sd*0.5+1/h.Settings.f0*0.5]
+            [sd, sd*1.5-1/h.Settings.f0*0.5]
             [sd sd]
             [sd*0.5+1/h.Settings.f0*0.5, sd]
             [sd*1.5-1/h.Settings.f0*0.5, sd]
@@ -119,9 +125,9 @@ switch opt
 
         %% SEQUENCE
         h.Settings.oddprob = [
-            1 0 0 0 0 0
-            0 1 0 0 0 0
-            0 0 0.25 0.25 0.25 0.25
+            0.25 0.25 0.25 0.25 0 0 0 0 0
+            0 0 0 0 1 0 0 0 0
+            0 0 0 0 0 0.25 0.25 0.25 0.25
             ];
 
         h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
@@ -144,9 +150,9 @@ switch opt
         h.Settings.n_set = [1 1 1];%[1 1 1 1 1]; % 1 = use min set size
 
         % min number of oddballs within each CP condition
-        h.Settings.n_odd = [40 160 10];%[300 20 20 20 20]; % overrides h.Settings.totdur
+        h.Settings.n_odd = [10 160 10];%[300 20 20 20 20]; % overrides h.Settings.totdur
         % min number of oddballs per randomised set, per CP
-        h.Settings.n_odd_set = [40 160 10];%[300 20 20 20 20]; % overrides h.Settings.totdur
+        h.Settings.n_odd_set = [10 160 10];%[300 20 20 20 20]; % overrides h.Settings.totdur
         % randomise sets?
         h.Settings.rand_set = [0 0 0];%[0 1 1 1 1]; 
         % randomise within sets?

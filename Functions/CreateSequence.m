@@ -486,6 +486,6 @@ end
 
 if isfield(h.Settings,'assoc')
     h = CreateAssociative(h);
-elseif length(h.Settings.stim)>1
-    h.Seq.signal = repmat(h.Seq.signal,length(h.Settings.stim),1);
+%elseif length(h.Settings.stim)>1
+%    h.Seq.signal = repmat(h.Seq.signal,length(h.Settings.stim),1);
 end
