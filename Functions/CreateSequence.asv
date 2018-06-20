@@ -20,7 +20,6 @@ if nargin>1
     setrand_set = h.Settings.(dtype).rand_set;
     setcondnum = h.Settings.(dtype).condnum;
 else
-    dtype='';
     setconds = h.Settings.conds;
     setoddprob = h.Settings.oddprob;
     setstandardind = h.Settings.standardind; 
@@ -34,6 +33,8 @@ else
     setrand_set = h.Settings.rand_set;
     setcondnum = h.Settings.condnum;
 end
+
+h.Seq =struct;
 
 %% define orthgonal conditions (CURRENTLY HAS NO IMPACT ON REST OF THE FUNCTION)
 % e.g. ensuring that condition levels and oddball levels are orthogonal, if
@@ -248,7 +249,7 @@ if nCP>0
                 stan_odd_val = [1 2];
                 if all(ismember(unique(randind{cp}{s}),stan_odd_val));
                     %update values according to oddball method
-                    if strcmp(h.Settings.oddballmethod,'index')
+                    if strcmp(h.Settings.oddballmethod,'intensityindex')
                         if ~isempty(h.Settings.oddballvalue)
                             stan_odd_val = h.Settings.oddballvalue{cp};
                         end
@@ -290,28 +291,26 @@ if nCP>0
         end
 
         % make condition numbers distinct for different CP conditions
-        for s = 1:num_sets(cp)
-            if ~isempty(setcondnum)
-                ucon = unique(condnum{cp}{s});
-                for i = 1:length(ucon)
-                    condnum{cp}{s}(condnum{cp}{s}==ucon(i)) = setcondnum(cp,ucon(i));
-                end
-            elseif cp>1
-                for s = 1:num_sets(cp)
-                    % find max value of previous CP condition
-                    maxval = max([condnum{cp-1}{:}]);
-                    % find min value of current CP condition
-                    minval = min([condnum{cp}{:}]);
-                    % is current value too low?
-                    if minval<=maxval
-                        % gat value to add on
-                        valadd = maxval-minval+1;
-                        % add this value to the condnum
-                        if strcmp(h.Settings.oddballtype,'classical')
-                            condnum{cp}{s} = condnum{cp}{s}+valadd; 
-                        elseif strcmp(h.Settings.oddballtype,'roving')
-                            condnum{cp}{s}(2:end) = condnum{cp}{s}(2:end)+valadd; % keep first value as 0
-                        end
+        if (h.Settings,'condnum')
+            ucon = unique(condnum{cp}{s});
+            for i = 1:length(ucon)
+                condnum{cp}{s}(condnum{cp}{s}==ucon(i)) = setcondnum(cp,ucon(i));
+            end
+        elseif cp>1
+            for s = 1:num_sets(cp)
+                % find max value of previous CP condition
+                maxval = max([condnum{cp-1}{:}]);
+                % find min value of current CP condition
+                minval = min([condnum{cp}{:}]);
+                % is current value too low?
+                if minval<=maxval
+                    % gat value to add on
+                    valadd = maxval-minval+1;
+                    % add this value to the condnum
+                    if strcmp(h.Settings.oddballtype,'classical')
+                        condnum{cp}{s} = condnum{cp}{s}+valadd; 
+                    elseif strcmp(h.Settings.oddballtype,'roving')
+                        condnum{cp}{s}(2:end) = condnum{cp}{s}(2:end)+valadd; % keep first value as 0
                     end
                 end
             end
@@ -326,7 +325,7 @@ end
 
 
 %% create final sequences/blocks
-%if ~isfield(h.Seq,'signal')
+if ~isfield(h.Seq,'signal')
     h.Seq.signal=[];
     h.Seq.condnum=[];
     h.Seq.blocks=[];
@@ -432,15 +431,14 @@ end
     %    end
     %end
     
-    figure;plot(h.Seq.condnum)
-        
-    if ~isempty(dtype)
-        h.Seq.(dtype).blocks =h.Seq.blocks;
-        h.Seq.(dtype).signal =h.Seq.signal;
-        h.Seq.(dtype).condnum =h.Seq.condnum;
-        h.Seq.signal=[];
-        h.Seq.condnum=[];
-        h.Seq.blocks=[];
+    % create all trials if design is continuous
+    if isfield(h.Settings,'stimcontrol') && strcmp(h.Settings.design,'continuous') && h.Settings.savesinwave
+        if ~isempty(h.Settings.stimcontrol)
+            %if ~strcmp(h.Settings.stimcontrol,'labjack')
+                opt = 'create';
+                h = stimtrain(h,opt);
+            %end
+        end
     end
-    
-%end
+    figure;plot(h.Seq.condnum)
+end

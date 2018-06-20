@@ -15,9 +15,12 @@ switch opt
                     t2=t1;
                     att=0;
                     ME=0;
-                    while ME~=1 && t2<t1+60
+                    while ME~=1 && t2<t1+5
                         ME=connect_labjack(ME,t1,t2);
                         t2=GetSecs;
+                    end
+                    if ~ME
+                        return
                     end
                     ljud_Constants; % Loads LabJack UD constant file
                     [Error h.ljHandle] = ljud_OpenLabJack(LJ_dtU3,LJ_ctUSB,'1',1); % Returns ljHandle for open LabJack
