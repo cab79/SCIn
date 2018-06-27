@@ -5,7 +5,7 @@ switch opt
     case 'setoptions'
         
     % settings options
-    h.SettingsOptions = {'Ascend','Adaptive','NLT_classical','Assoc'};
+    h.SettingsOptions = {'Ascend','Adaptive','NLT_classical','AL'};
     
     case 'Ascend'
 
@@ -588,13 +588,13 @@ case 'Adaptive'
     %h.Settings.threshold.startinglevel = 2; % for intensity)
     %h.Settings.threshold.step = 2;
     
-    case 'Assoc'
+    case 'AL'
 
     % set general options
     h = setgeneral(h);
     
     % FILENAME OF SEQUENCE CREATION FUNCTION (without .m)
-    h.SeqFun = 'CreateSequence';
+    h.SeqFun = 'CreateDesign';
     
     %% TRIALS or CONTINUOUS?
     h.Settings.design = 'trials';
@@ -690,7 +690,7 @@ case 'Adaptive'
 
     %% SEQUENCE
     % Change probablity (CP): each condition is in rows
-    h.Settings.oddprob = [
+    h.Settings.AL.oddprob = [
         % standard (left) vs oddball (right)
 %         0.8 0.2
 %         0.5 0.5
@@ -740,25 +740,25 @@ case 'Adaptive'
 %         ]; 
 % index of row of oddprob that are standards and oddballs. Can be
     % overridden by h.Settings.oddballvalue if using index
-    h.Settings.standardind = 1; 
-    h.Settings.oddind = 2; 
+    h.Settings.AL.standardind = 1; 
+    h.Settings.AL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [0 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.AL.sep_odd = [0 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0 0 0]; % for each CP condition
+    h.Settings.AL.std_lead = [0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
-    h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
+    h.Settings.AL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = [12 12 12 12 12]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd = [12 12 12 12 12]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.n_odd_set = h.Settings.n_odd; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd_set = h.Settings.AL.n_odd; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [0 0 0 0 0]; 
+    h.Settings.AL.rand_set = [0 0 0 0 0]; 
     % condition numbers
-    h.Settings.condnum = [
+    h.Settings.AL.condnum = [
         3 4
         5 6
         1 2
@@ -767,22 +767,22 @@ case 'Adaptive'
         ]; 
     
     %% associative learning experiments
-    h.Settings.assoc.pairing = {
+    h.Settings.AL.pairing = {
       % cue 1  cue 2
         [1], [2]; %pairing option 1 (e.g. most porbable in some blocks)
         [2], [1]; %pairing option 2 (e.g. least probable)
         }; % more than one number per pairing/cue: will be randomly assigned to each cue
     % if there is more than one number per pairing/cue, what is their
     % percent representation?
-    h.Settings.assoc.probstim = {1,1,1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
+    h.Settings.AL.probstim = {1,1,1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
     %h.Settings.assoc.probstim = {[0.2 0.8],[1 0],[0.5 0.5],[0.5 0.5],[0.2 0.8],[1 0]}; % e.g. low intensity diff vs. high intensity diff
     % for each condnum, which pair to use?
-    h.Settings.assoc.pair = [1 2 1 2 2 1];
+    h.Settings.AL.pair = [1 2 1 2 2 1];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
-    h.Settings.assoc.intenstim = [1 -1];
-    h.Settings.assoc.stimnums = [1 2]; % which two stimulus numbers relate to the two levels of h.Seq.signal?
-    h.Settings.assoc.stimpart = 1; % which part of the discriminative stim to run adaptive on?
+    h.Settings.AL.intenstim = [1 -1];
+    h.Settings.AL.stimnums = [1 2]; % which two stimulus numbers relate to the two levels of h.Seq.signal?
+    h.Settings.AL.stimpart = 1; % which part of the discriminative stim to run adaptive on?
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
@@ -1247,9 +1247,9 @@ function h = setgeneral(h)
 % record EEG, NS: netstation, BV: brainvision, 'serial': serial port
 % serial port
 h.Settings.serial = 'COM1';
-%h.Settings.record_EEG='serial';
+h.Settings.record_EEG='labjack_DB15';
 %h.Settings.EEGport = 'COM3'; % only needed for 'serial' EEG triggers
-%h.Settings.EEGMarkPattern = 1; % mark EEG for every change in stimulus pattern (0 = start of trial only)
+h.Settings.EEGMarkPattern = 0; % mark EEG for every change in stimulus pattern (0 = start of trial only)
 h.Settings.labjack=1; % Use labjack for controlling any equipment?
 h.Settings.labjack_DACport = 4;
 h.Settings.DAC_multiply = 0.01; % multiply DAC output by this (e.g. to get mA on DS8R)

@@ -391,7 +391,7 @@ case 'Adaptive'
     
     
     
-    case 'Assoc'
+    case 'AL'
 
     % set general options
     h = setgeneral(h);

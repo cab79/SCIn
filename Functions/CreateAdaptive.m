@@ -24,7 +24,7 @@ if length(h.Settings.adaptive)>1 && isfield(h.Settings,'adaptive_general')
     elseif strcmp(h.Settings.adaptive_general.seqtype,'cond')
         order=[];
         for cp = 1:nCP
-            idx = ismember(h.Seq.condnum,condnum{cp}{:});
+            idx = ismember(h.Seq.condnum,h.condnum{cp}{:});
             order(idx)=h.Settings.adaptive_general.seqtypecond(cp);
         end
     end
@@ -45,7 +45,7 @@ if length(h.Settings.adaptive)>1 && isfield(h.Settings,'adaptive_general')
     condval=[];
     if isfield(h.Settings.adaptive_general.selectcond,'cp') % use cp condition
         for cpi = 1:length(h.Settings.adaptive_general.selectcond.cp)
-            condval = [condval unique(condnum{h.Settings.adaptive_general.selectcond.cp(cpi)}{1})];
+            condval = [condval unique(h.condnum{h.Settings.adaptive_general.selectcond.cp(cpi)}{1})];
         end
     end
     if ~isempty(condval)

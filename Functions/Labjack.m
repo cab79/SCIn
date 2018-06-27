@@ -15,7 +15,7 @@ switch opt
                     t2=t1;
                     att=0;
                     ME=0;
-                    while ME~=1 && t2<t1+5
+                    while ME~=1 && t2<t1+10
                         ME=connect_labjack(ME,t1,t2);
                         t2=GetSecs;
                     end

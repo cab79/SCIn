@@ -1,4 +1,4 @@
-function h = CreateSequence(h,varargin)
+ function h = CreateSequence(h,varargin)
 dbstop if error
 disp('Creating sequence...');
 
@@ -208,42 +208,42 @@ if nCP>0
             if strcmp(h.Settings.oddballtype,'roving')
                 for i = 1:length(randind{cp}{s})
                     if i==1; 
-                        condnum{cp}{s}(i) = 0; % first stimulus in a run should be indicated with 0
+                        h.condnum{cp}{s}(i) = 0; % first stimulus in a run should be indicated with 0
                     elseif i==2 % initialise values
                         if randind{cp}{s}(i)==setstandardind % standard
-                            condnum{cp}{s}(i) = setstandardind;
+                            h.condnum{cp}{s}(i) = setstandardind;
                         elseif randind{cp}{s}(i)==setoddind % oddball
-                            condnum{cp}{s}(i) = setoddind;
+                            h.condnum{cp}{s}(i) = setoddind;
                         end
                     elseif i>2 % values now depend on the direction of change
                         if randind{cp}{s}(i)==setstandardind % standard
-                            if condnum{cp}{s}(i-1)==1
-                                condnum{cp}{s}(i) = 1;
-                            elseif condnum{cp}{s}(i-1)==2
-                                condnum{cp}{s}(i) = 3;
-                            elseif condnum{cp}{s}(i-1)==3
-                                condnum{cp}{s}(i) = 3;
-                            elseif condnum{cp}{s}(i-1)==4
-                                condnum{cp}{s}(i) = 1;
+                            if h.condnum{cp}{s}(i-1)==1
+                                h.condnum{cp}{s}(i) = 1;
+                            elseif h.condnum{cp}{s}(i-1)==2
+                                h.condnum{cp}{s}(i) = 3;
+                            elseif h.condnum{cp}{s}(i-1)==3
+                                h.condnum{cp}{s}(i) = 3;
+                            elseif h.condnum{cp}{s}(i-1)==4
+                                h.condnum{cp}{s}(i) = 1;
                             end
                         elseif randind{cp}{s}(i)==setoddind % oddball
-                            if condnum{cp}{s}(i-1)==1
-                                condnum{cp}{s}(i) = 2;
-                            elseif condnum{cp}{s}(i-1)==2
-                                condnum{cp}{s}(i) = 4;
-                            elseif condnum{cp}{s}(i-1)==3
-                                condnum{cp}{s}(i) = 4;
-                            elseif condnum{cp}{s}(i-1)==4
-                                condnum{cp}{s}(i) = 2;
+                            if h.condnum{cp}{s}(i-1)==1
+                                h.condnum{cp}{s}(i) = 2;
+                            elseif h.condnum{cp}{s}(i-1)==2
+                                h.condnum{cp}{s}(i) = 4;
+                            elseif h.condnum{cp}{s}(i-1)==3
+                                h.condnum{cp}{s}(i) = 4;
+                            elseif h.condnum{cp}{s}(i-1)==4
+                                h.condnum{cp}{s}(i) = 2;
                             end
                         end
                     end
                 end
                 
-                stimtype{cp}{s} = nan(1,length(condnum{cp}{s}));
-                stimtype{cp}{s}(ismember(condnum{cp}{s},[0])) = 1;
-                stimtype{cp}{s}(ismember(condnum{cp}{s},[1 4])) = 1;
-                stimtype{cp}{s}(ismember(condnum{cp}{s},[2 3])) = 2;
+                stimtype{cp}{s} = nan(1,length(h.condnum{cp}{s}));
+                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[0])) = 1;
+                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[1 4])) = 1;
+                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[2 3])) = 2;
             else
                 stan_odd_val = [1 2];
                 if all(ismember(unique(randind{cp}{s}),stan_odd_val));
@@ -255,16 +255,16 @@ if nCP>0
                     end
                     stimtype{cp}{s}(randind{cp}{s}==1)=stan_odd_val(1);
                     stimtype{cp}{s}(randind{cp}{s}==2)=stan_odd_val(2);
-                    condnum{cp}{s}=stimtype{cp}{s};
+                    h.condnum{cp}{s}=stimtype{cp}{s};
                 else
                     stimtype{cp}{s}=randind{cp}{s};
-                    condnum{cp}{s}=randind{cp}{s};
+                    h.condnum{cp}{s}=randind{cp}{s};
                 end
             end
         end
 
         if strcmp(h.Settings.oddballtype,'roving')
-            condnum_allset = cat(2,condnum{cp}{:});
+            condnum_allset = cat(2,h.condnum{cp}{:});
             % identify number of standards and oddballs
             cn=unique(condnum_allset);
             stan_ind = find(mod(cn,2)); % odd numbered
@@ -292,25 +292,25 @@ if nCP>0
         % make condition numbers distinct for different CP conditions
         for s = 1:num_sets(cp)
             if ~isempty(setcondnum)
-                ucon = unique(condnum{cp}{s});
+                ucon = unique(h.condnum{cp}{s});
                 for i = 1:length(ucon)
-                    condnum{cp}{s}(condnum{cp}{s}==ucon(i)) = setcondnum(cp,ucon(i));
+                    h.condnum{cp}{s}(h.condnum{cp}{s}==ucon(i)) = setcondnum(cp,ucon(i));
                 end
             elseif cp>1
                 for s = 1:num_sets(cp)
                     % find max value of previous CP condition
-                    maxval = max([condnum{cp-1}{:}]);
+                    maxval = max([h.condnum{cp-1}{:}]);
                     % find min value of current CP condition
-                    minval = min([condnum{cp}{:}]);
+                    minval = min([h.condnum{cp}{:}]);
                     % is current value too low?
                     if minval<=maxval
                         % gat value to add on
                         valadd = maxval-minval+1;
-                        % add this value to the condnum
+                        % add this value to the h.condnum
                         if strcmp(h.Settings.oddballtype,'classical')
-                            condnum{cp}{s} = condnum{cp}{s}+valadd; 
+                            h.condnum{cp}{s} = h.condnum{cp}{s}+valadd; 
                         elseif strcmp(h.Settings.oddballtype,'roving')
-                            condnum{cp}{s}(2:end) = condnum{cp}{s}(2:end)+valadd; % keep first value as 0
+                            h.condnum{cp}{s}(2:end) = h.condnum{cp}{s}(2:end)+valadd; % keep first value as 0
                         end
                     end
                 end
@@ -366,7 +366,7 @@ end
                 cps=cps+1;
                 h.Seq.signal(setx_ind==cps) = stimtype{cp}{s}; % type of signal for each trial: intensity, pitch, duration or channel
                 %h.Seq.pattern = ; % type of temporal pattern of the signal within each trial
-                h.Seq.condnum(setx_ind==cps) = condnum{cp}{s};
+                h.Seq.condnum(setx_ind==cps) = h.condnum{cp}{s};
                 
                 % if we are working on a cp condition whose sets are
                 % randomised, balance the conds between blocks:
