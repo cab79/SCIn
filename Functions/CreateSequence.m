@@ -19,6 +19,7 @@ if nargin>1
     setn_odd_set = h.Settings.(dtype).n_odd_set;
     setrand_set = h.Settings.(dtype).rand_set;
     setcondnum = h.Settings.(dtype).condnum;
+    settol = h.Settings.(dtype).sep_odd_tol;
 else
     dtype='';
     setconds = h.Settings.conds;
@@ -33,6 +34,7 @@ else
     setn_odd_set = h.Settings.n_odd_set;
     setrand_set = h.Settings.rand_set;
     setcondnum = h.Settings.condnum;
+    settol = h.Settings.sep_odd_tol;
 end
 
 %% define orthgonal conditions (CURRENTLY HAS NO IMPACT ON REST OF THE FUNCTION)
@@ -165,12 +167,13 @@ if nCP>0
                     oi_ind = ~ismember(candidate,oi);
                     sub_cand(oi_ind) = 1;
 
+                    
                     % How long is each sequence of standards?
                     w = [false sub_cand==setstandardind false]; %// "close" w with zeros, and transform to logical
                     starts = find(w(2:end) & ~w(1:end-1)); %// find starts of runs of non-zeros
                     ends = find(~w(2:end) & w(1:end-1))-1; %// find ends of runs of non-zeros
                     result = cell2mat(arrayfun(@(s,e) length(sub_cand(s:e)), starts, ends, 'uniformout', false)); %// build result
-                    if ~all(result>=nX)
+                    if sum(result>=nX)<length(result)*settol(1)
                         min_stan=0;
                     end
 
@@ -178,7 +181,7 @@ if nCP>0
                     if nX>0
                         cand_odd = sub_cand>1;
                         diffcand = [diff(cand_odd) 0];
-                        if ~all(diffcand(cand_odd) ~= 0) %// check if no repeated values
+                        if sum(diffcand(cand_odd) ~= 0)<length(diffcand(cand_odd))*settol(2) %// check if no repeated values
                             no_conseq=0;
                         end
                     end
@@ -241,9 +244,9 @@ if nCP>0
                 end
                 
                 stimtype{cp}{s} = nan(1,length(h.condnum{cp}{s}));
-                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[0])) = 1;
-                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[1 4])) = 1;
-                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[2 3])) = 2;
+                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[0])) = h.Settings.oddballvalue{cp}(1);
+                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[1 4])) = h.Settings.oddballvalue{cp}(1);
+                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[2 3])) = h.Settings.oddballvalue{cp}(2);
             else
                 stan_odd_val = [1 2];
                 if all(ismember(unique(randind{cp}{s}),stan_odd_val));
@@ -291,17 +294,19 @@ if nCP>0
 
         % make condition numbers distinct for different CP conditions
         for s = 1:num_sets(cp)
-            if ~isempty(setcondnum)
+            if strcmp(h.Settings.oddballtype,'classical') && ~isempty(setcondnum)
                 ucon = unique(h.condnum{cp}{s});
+                ucon = ucon(ucon>0);
                 for i = 1:length(ucon)
                     h.condnum{cp}{s}(h.condnum{cp}{s}==ucon(i)) = setcondnum(cp,ucon(i));
                 end
-            elseif cp>1
+            elseif strcmp(h.Settings.oddballtype,'roving') && cp>1
                 for s = 1:num_sets(cp)
                     % find max value of previous CP condition
                     maxval = max([h.condnum{cp-1}{:}]);
                     % find min value of current CP condition
-                    minval = min([h.condnum{cp}{:}]);
+                    vals=[h.condnum{cp}{:}];
+                    minval = min(vals(vals>0));
                     % is current value too low?
                     if minval<=maxval
                         % gat value to add on
@@ -371,7 +376,7 @@ end
                 % if we are working on a cp condition whose sets are
                 % randomised, balance the conds between blocks:
                 randcp = ismember(cp,find(setrand_set));
-                nrandcp = length(randcp);
+                nrandcp = length(find(setrand_set));
                 if any(randcp)
                     if strcmp(h.Settings.blockopt,'cond')
                         h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(stimtype{cp}{s}));
@@ -407,14 +412,16 @@ end
             h.Seq.blocks(h.Seq.blocks==max(h.Seq.blocks)) = blockuni(end-1)+1;
         end
         
-        % make block nums monotonic without changing their order
-        blockuni=unique(h.Seq.blocks);
-        blockunistable=unique(h.Seq.blocks,'stable');
-        for b = 1:length(blockuni)
-            block_ind{b} = find(h.Seq.blocks==blockunistable(b));
-        end
-        for b = 1:length(blockuni)
-            h.Seq.blocks(block_ind{b}) = blockuni(b);
+        if strcmp(h.Settings.blockopt,'cond')
+            % make block nums monotonic without changing their order
+            blockuni=unique(h.Seq.blocks);
+            blockunistable=unique(h.Seq.blocks,'stable');
+            for b = 1:length(blockuni)
+                block_ind{b} = find(h.Seq.blocks==blockunistable(b));
+            end
+            for b = 1:length(blockuni)
+                h.Seq.blocks(block_ind{b}) = blockuni(b);
+            end
         end
         
         % sort (if needed)
@@ -432,15 +439,19 @@ end
     %    end
     %end
     
-    figure;plot(h.Seq.condnum)
+    figure
+    hold on
+    plot(h.Seq.condnum)
+    plot(h.Seq.signal,'g')
+    hold off
         
     if ~isempty(dtype)
         h.Seq.(dtype).blocks =h.Seq.blocks;
         h.Seq.(dtype).signal =h.Seq.signal;
         h.Seq.(dtype).condnum =h.Seq.condnum;
-        h.Seq.signal=[];
-        h.Seq.condnum=[];
-        h.Seq.blocks=[];
+%         h.Seq.signal=[];
+%         h.Seq.condnum=[];
+%         h.Seq.blocks=[];
     end
     
 %end

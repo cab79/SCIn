@@ -97,7 +97,9 @@ switch opt
         end
           
         % KBCheck or KBQueueCheck results
-        KbName('UnifyKeyNames'); %used for cross-platform compatibility of keynaming
+        if h.Settings.record_response
+            KbName('UnifyKeyNames'); %used for cross-platform compatibility of keynaming
+        end
         h.out.presstrial = [];
         h.out.pressbutton = {};
         h.out.presstime = [];
@@ -149,7 +151,9 @@ switch opt
         
         
         % Flush Buffer so only responses after stim onset are recorded (not recording accidental buton presses)
-        KbQueueFlush; 
+        if h.Settings.record_response
+            KbQueueFlush; 
+        end
         
         switch h.Settings.design
             case 'trials'
@@ -325,12 +329,14 @@ while h.i<size(h.Seq.signal,2)
     %h = record_response(h,'prev_trial');
 end
 
-try
-    PsychPortAudio('Close', h.pahandle);
-catch
-    try 
-        global pah
-        PsychPortAudio('Close',pah);
+if isfield(h,'pahandle')
+    try
+        PsychPortAudio('Close', h.pahandle);
+    catch
+        try 
+            global pah
+            PsychPortAudio('Close',pah);
+        end
     end
 end
 
@@ -630,7 +636,9 @@ while (h.ct-h.st)<h.trialdur
         
         h.stop = 1;
         if isfield(h,'pahandle')
-            PsychPortAudio('Close', h.pahandle);
+            try
+                PsychPortAudio('Close', h.pahandle);
+            end
         end
         
         try
@@ -644,7 +652,9 @@ while (h.ct-h.st)<h.trialdur
        
         
         % release keyboard cue
-        KbQueueRelease; 
+        if h.Settings.record_response
+            KbQueueRelease; 
+        end
         
         break
         %pause(0.1)

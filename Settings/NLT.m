@@ -5,7 +5,7 @@ switch opt
     case 'setoptions'
         
     % settings options
-    h.SettingsOptions = {'Ascend','Adaptive','NLT_classical','AL'};
+    h.SettingsOptions = {'Ascend','Adaptive','RO','AL'};
     
     case 'Ascend'
 
@@ -342,13 +342,13 @@ case 'Adaptive'
     h.Settings.adaptive(2).levelmax = 50; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0.1;
     
-    case 'NLT_roving'
+    case 'RO' % roving oddball (EEG)
 
     % set general options
     h = setgeneral(h);
     
     % FILENAME OF SEQUENCE CREATION FUNCTION (without .m)
-    h.SeqFun = 'CreateSequence';
+    h.SeqFun = 'CreateDesign';
     
     %% TRIALS or CONTINUOUS?
     h.Settings.design = 'trials';
@@ -370,7 +370,7 @@ case 'Adaptive'
     h.Settings.blockopt = 'divide';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
-    %    h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
+        h.Settings.nblocks = 3; % must integer-divide each value in h.Settings.cond_rep_init
         %distribute conditions equally among blocks
     %    h.Settings.distblocks = 1;
     % options to start sequence at beginning of every run
@@ -386,151 +386,28 @@ case 'Adaptive'
     h.Settings.totdur = 0; 
     % duration of trial in seconds
     h.Settings.trialdur = 0.4; % if 0, consecutive stimuli will occur with no gap
-    % duration of stimulus in seconds
-    h.Settings.stimdur = 0; % modified by oddball settings
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.patternmethod = '';
-    h.Settings.patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
-    h.Settings.stimdurtype = 'reg'; % not needed unless 'rand'
-    % Binarual beats frequency: creates right ear frequency of f0+df
-    %h.Settings.df = 0; % 10Hz = alpha. Other options: 1Hz, 25Hz, 40Hz.
-    % Monaural beats instead? 
-    %h.Settings.monaural = 0; 
-    % attenuation level in decibels
-    %h.Settings.atten = -30; 
-    % pitch
-    %h.Settings.f0 = 200; % Left ear carrier frequency (pitch)
-    %intensity
-    h.Settings.inten = []; % value between 2 and 1000mA for Digitimer DS8R. leave blank if determined from GUI, threshold or adaptive
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
-    h.Settings.t_freq=0; 
+    h.Settings.wait=[0]; % one value per nstim 
     
-    %% CHANGING STIMULUS INTENSITY EVERY X PULSES
-    % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
-    
-    %% Condition-dependent stimulus parameters
-    % Condition method: intensity, pitch, channel
-    h.Settings.conditionmethod = {};
-    h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
-    % Oddball method: intensity, pitch, channel
-    h.Settings.oddballmethod = 'intensity'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = []; % leave blank if determined from GUI
-    h.Settings.oddballtype = 'roving'; % options: 'roving', 'classical'
-
-    %% SEQUENCE
-    % Change probablity (CP): each condition is in rows
-    h.Settings.oddprob = [
-        % standard (left) vs oddball (right)
-        0.9 0.1
-        0.7 0.3
-        0.5 0.5
-        ];
-    % index of row of oddprob that are standards and oddballs
-    h.Settings.standardind = 1; 
-    h.Settings.oddind = 2; 
-    % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [2 2 1]; % for each CP condition
-    % for sep_odd, which indices of h.Settings.oddballvalue to consider
-    % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2]};
-    % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0]; % for each CP condition
-    % min number of oddballs within each CP condition
-    h.Settings.n_odd = [18, 18, 18]; % overrides h.Settings.totdur
-    % number of minimum sets to randomise together
-    h.Settings.n_set = [3 3 3]; % 1 = use min set size, for each CP condition
-    % min number of oddballs per randomised set, per CP and per oddball
-    % type
-    h.Settings.n_odd_set = [6, 6, 6]; % overrides h.Settings.totdur
-    % randomise sets?
-    h.Settings.rand_set = 1; 
-    
-    %% RESPONSE PARAMETERS
-    % record responses during experiment? 0 or 1
-    h.Settings.record_response = 1;
-    % how to record responses?
-    h.Settings.record_response_type = {'all'}; %options: 'all','thistrial','previoustrial'
-    % buttonpress options: key: keyboard inputs. Blank for no button press
-    h.Settings.buttontype='key';
-    % range of keyboard presses indicating a recordable response
-    h.Settings.buttonopt = {'DownArrow'}; 
-    
-    %% THRESHOLDING
-    % starting level and step size
-    %h.Settings.threshold.startinglevel = 2; % for intensity)
-    %h.Settings.threshold.step = 2;
-
-    case 'NLT_classical'
-
-    % set general options
-    h = setgeneral(h);
-    
-    % FILENAME OF SEQUENCE CREATION FUNCTION (without .m)
-    h.SeqFun = 'CreateSequence';
-    
-    %% TRIALS or CONTINUOUS?
-    h.Settings.design = 'trials';
-    % if continuous, how many trials ahead should be in the player schedule?
-    % (applied to stimulation via soundcard only)
-    h.Settings.ntrialsahead = 0;  %0 = all trials
-    
-    %% EXPERIMENTAL CONDIITIONS
-    % name the settings that define orthogonal condtions at a different row
-    h.Settings.conds = {'oddprob'};
-    
-    %% Output options
-    % save sinwave from all trials as part of stim sequence file
-    %h.Settings.savesinwave = 0;
-    
-    %% BLOCKING/RUN OPTIONS
-    % 'divide' = equally divide trials by nblocks; 
-    % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'divide';
-    % further options for 'divide':
-        % number of blocks (containing multiple conditions)
-    %    h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
-        %distribute conditions equally among blocks
-    %    h.Settings.distblocks = 1;
-    % options to start sequence at beginning of every run
-    % 'msgbox', 'labjack', 'buttonpress', 'audio' - can have more than one in
-    % cell array
-    h.Settings.blockstart = {'buttonpress'}; % audio,labjack,audio
-    h.Settings.pauseeachblock = 0; % pause after every block?
-    % names of any audiofiles
-    h.Settings.audiofile = {};
-    
-    %% Condition-independent stimulus parameters - can be superceded by condition-dependent parameters
-    % duration of stimulus sequence in seconds
-    h.Settings.totdur = 0; 
-    % duration of trial in seconds
-    h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
+    %% stimulus: tactile
     % duration of stimulus in seconds
-    h.Settings.stimdur = 0; % modified by oddball settings
-    % Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.patternmethod = '';
-    h.Settings.patternvalue = []; % one per stimdur
-    % 'rand' or 'reg' spacing?
-    h.Settings.stimdurtype = 'reg'; % not needed unless 'rand'
-    % Binarual beats frequency: creates right ear frequency of f0+df
-    %h.Settings.df = 0; % 10Hz = alpha. Other options: 1Hz, 25Hz, 40Hz.
-    % Monaural beats instead? 
-    %h.Settings.monaural = 0; 
-    % attenuation level in decibels
-    %h.Settings.atten = -30; 
-    % pitch
-    %h.Settings.f0 = 200; % Left ear carrier frequency (pitch)
-    %intensity
-    h.Settings.inten = []; % value between 2 and 1000mA for Digitimer DS8R
-    h.Settings.inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
-    h.Settings.maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
-    % Tactile: number of pulses per trial
-    h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
-    % Tactile: within-trial frequency (Hz) 
-    h.Settings.t_freq=[]; 
-    
+    h.Settings.stim(1).dur = 0; % modified by oddball settings
+    h.Settings.stim(1).patternmethod = '';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(1).patternvalue = []; % one per stimdur
+    h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
+    h.Settings.stim(1).inten = []; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_type = 'abs'; % either 'dB' or 'abs'
+    h.Settings.stim(1).control='LJTick-DAQ'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
+    h.Settings.stim(1).chan = [6]; h.Settings.stim(2).chanforLJ = 1;
+    h.Settings.stim(1).nrchannels = 1; % total number of channels, e.g. on sound card
+    h.Settings.stim(1).npulses_train = 1; % Tactile: number of pulses in a train; set to zero to be determined by stimdur
+    h.Settings.stim(1).p_freq=[];% Tactile: within-train frequency (Hz)
+    h.Settings.stim(1).labjack_timer=1; % Use timer to control frequency of labjack outputs? Otherwise uses software timing. must use if there are a large number of pulses (e.g. >4)
     
     %% CHANGING STIMULUS INTENSITY EVERY X PULSES
     % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
@@ -541,52 +418,63 @@ case 'Adaptive'
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
-    h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
+    h.Settings.oddballvalue = {[1 2], [3 4], [1 2], [3 4]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballtype = 'roving'; % options: 'roving', 'classical'
 
     %% SEQUENCE
     % Change probablity (CP): each condition is in rows
-    h.Settings.oddprob = [
-        % standard (left) vs oddball (right)
+    h.Settings.PL.oddprob = [
+        0.8 0.2
         0.8 0.2
         0.5 0.5
-        0.8 0.2
+        0.5 0.5
         ];
-    % index of row of oddprob that are standards and oddballs. Can be
+
+% index of row of oddprob that are standards and oddballs. Can be
     % overridden by h.Settings.oddballvalue if using index
-    h.Settings.standardind = 1; 
-    h.Settings.oddind = 2; 
+    h.Settings.PL.standardind = 1; 
+    h.Settings.PL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [2 0 2]; % for each CP condition
+    h.Settings.PL.sep_odd = [2 2 1 1];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.PL.sep_odd_tol = [1 0.8]; % set these to be as high as possible (max 1)
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.PL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2]};
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0]; % for each CP condition
+    h.Settings.PL.std_lead = [0 0 0 0]; % for each CP condition
     % number of sets to randomise together
-    h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
+    h.Settings.PL.n_set = [9 9 9 9]; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = [12, 30, 12]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd = [180 180 180 180]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.n_odd_set = [4, 10, 4]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd_set = [20 20 20 20]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [1 1 1]; 
+    h.Settings.PL.rand_set = [1 1 1 1]; 
+    % condition numbers
+    h.Settings.PL.condnum = [
+        1 2
+        3 4
+        5 6
+        7 8
+        ]; 
     
     %% RESPONSE PARAMETERS
     % record responses during experiment? 0 or 1
-    h.Settings.record_response = 1;
-    % how to record responses?
-    h.Settings.record_response_type = {'all'}; %options: 'all','thistrial','previoustrial'
-    %intensity difference
-    % buttonpress options: key: keyboard inputs. Blank for no button press
-    h.Settings.buttontype='key';
-    % range of keyboard presses indicating a recordable response
-    h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    h.Settings.record_response = 0;
+%     % how to record responses?
+%     h.Settings.record_response_type = {'all'}; %options: 'all','thistrial','previoustrial'
+%     %intensity difference
+%     % buttonpress options: key: keyboard inputs. Blank for no button press
+%     h.Settings.buttontype='key';
+%     % range of keyboard presses indicating a recordable response
+%     h.Settings.buttonopt = {'LeftArrow','RightArrow'}; 
+%     % how early after start of trial can button press trigger the next trial? Empty if programmed
+%     % ISI
+%     h.Settings.response_nexttrialmin = 0.2;
+%     % when does next trial starts after button press? Empty if programmed
+%     % ISI
+%     h.Settings.response_nexttrialwait = 0.6:0.2:1.6;
     
-    %% THRESHOLDING
-    % starting level and step size
-    %h.Settings.threshold.startinglevel = 2; % for intensity)
-    %h.Settings.threshold.step = 2;
     
     case 'AL'
 
@@ -1239,6 +1127,133 @@ case 'Adaptive'
     % starting level and step size
     %h.Settings.threshold.startinglevel = 2; % for intensity)
     %h.Settings.threshold.step = 2;
+
+    case 'NLT_classical'
+
+    % set general options
+    h = setgeneral(h);
+    
+    % FILENAME OF SEQUENCE CREATION FUNCTION (without .m)
+    h.SeqFun = 'CreateSequence';
+    
+    %% TRIALS or CONTINUOUS?
+    h.Settings.design = 'trials';
+    % if continuous, how many trials ahead should be in the player schedule?
+    % (applied to stimulation via soundcard only)
+    h.Settings.ntrialsahead = 0;  %0 = all trials
+    
+    %% EXPERIMENTAL CONDIITIONS
+    % name the settings that define orthogonal condtions at a different row
+    h.Settings.conds = {'oddprob'};
+    
+    %% Output options
+    % save sinwave from all trials as part of stim sequence file
+    %h.Settings.savesinwave = 0;
+    
+    %% BLOCKING/RUN OPTIONS
+    % 'divide' = equally divide trials by nblocks; 
+    % 'cond' = separate block for each condition
+    h.Settings.blockopt = 'divide';
+    % further options for 'divide':
+        % number of blocks (containing multiple conditions)
+    %    h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
+        %distribute conditions equally among blocks
+    %    h.Settings.distblocks = 1;
+    % options to start sequence at beginning of every run
+    % 'msgbox', 'labjack', 'buttonpress', 'audio' - can have more than one in
+    % cell array
+    h.Settings.blockstart = {'buttonpress'}; % audio,labjack,audio
+    h.Settings.pauseeachblock = 0; % pause after every block?
+    % names of any audiofiles
+    h.Settings.audiofile = {};
+    
+    %% Condition-independent stimulus parameters - can be superceded by condition-dependent parameters
+    % duration of stimulus sequence in seconds
+    h.Settings.totdur = 0; 
+    % duration of trial in seconds
+    h.Settings.trialdur = 2; % if 0, consecutive stimuli will occur with no gap
+    % duration of stimulus in seconds
+    h.Settings.stimdur = 0; % modified by oddball settings
+    % Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.patternmethod = '';
+    h.Settings.patternvalue = []; % one per stimdur
+    % 'rand' or 'reg' spacing?
+    h.Settings.stimdurtype = 'reg'; % not needed unless 'rand'
+    % Binarual beats frequency: creates right ear frequency of f0+df
+    %h.Settings.df = 0; % 10Hz = alpha. Other options: 1Hz, 25Hz, 40Hz.
+    % Monaural beats instead? 
+    %h.Settings.monaural = 0; 
+    % attenuation level in decibels
+    %h.Settings.atten = -30; 
+    % pitch
+    %h.Settings.f0 = 200; % Left ear carrier frequency (pitch)
+    %intensity
+    h.Settings.inten = []; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.maxinten = 200; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    % Tactile: number of pulses per trial
+    h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
+    % Tactile: within-trial frequency (Hz) 
+    h.Settings.t_freq=[]; 
+    
+    
+    %% CHANGING STIMULUS INTENSITY EVERY X PULSES
+    % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
+    
+    %% Condition-dependent stimulus parameters
+    % Condition method: intensity, pitch, channel
+    h.Settings.conditionmethod = {};
+    h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
+    % Oddball method: intensity, index, pitch, channel
+    h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
+    h.Settings.oddballvalue = {[1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
+
+    %% SEQUENCE
+    % Change probablity (CP): each condition is in rows
+    h.Settings.oddprob = [
+        % standard (left) vs oddball (right)
+        0.8 0.2
+        0.5 0.5
+        0.8 0.2
+        ];
+    % index of row of oddprob that are standards and oddballs. Can be
+    % overridden by h.Settings.oddballvalue if using index
+    h.Settings.standardind = 1; 
+    h.Settings.oddind = 2; 
+    % keep oddball trials apart by at least sep_odd standards
+    h.Settings.sep_odd = [2 0 2]; % for each CP condition
+    % for sep_odd, which indices of h.Settings.oddballvalue to consider
+    % each time? (each list will be considered separately)
+    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    % for each set, ensure a number of leading standards 
+    h.Settings.std_lead = [0 0 0]; % for each CP condition
+    % number of sets to randomise together
+    h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
+    % min number of oddballs within each CP condition
+    h.Settings.n_odd = [12, 30, 12]; % overrides h.Settings.totdur
+    % min number of oddballs per randomised set, per CP
+    h.Settings.n_odd_set = [4, 10, 4]; % overrides h.Settings.totdur
+    % randomise sets?
+    h.Settings.rand_set = [1 1 1]; 
+    
+    %% RESPONSE PARAMETERS
+    % record responses during experiment? 0 or 1
+    h.Settings.record_response = 1;
+    % how to record responses?
+    h.Settings.record_response_type = {'all'}; %options: 'all','thistrial','previoustrial'
+    %intensity difference
+    % buttonpress options: key: keyboard inputs. Blank for no button press
+    h.Settings.buttontype='key';
+    % range of keyboard presses indicating a recordable response
+    h.Settings.buttonopt = {'DownArrow','UpArrow'}; 
+    
+    %% THRESHOLDING
+    % starting level and step size
+    %h.Settings.threshold.startinglevel = 2; % for intensity)
+    %h.Settings.threshold.step = 2;
+    
+    
 end
 
 function h = setgeneral(h)
