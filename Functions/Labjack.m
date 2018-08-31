@@ -36,13 +36,13 @@ switch opt
                         try
                             Error = ljud_ePut(h.ljHandle, LJ_ioPUT_CONFIG, LJ_chTDAC_SCL_PIN_NUM,h.Settings.labjack_DACport,0); 
                             Error_Message(Error)
-                            if error~=0
+                            if Error~=0
                                 error('')
                             end
                             %Set DACA 
                             Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, 0, 0); 
                             Error_Message(Error)
-                            if error~=0
+                            if Error~=0
                                 error('')
                             end
                         catch
