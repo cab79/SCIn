@@ -84,7 +84,9 @@ switch h.Settings.stim(h.sn).control
                     if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
                         try
                             Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0); 
-                            Error_Message(Error)
+                            if Error~=0
+                                error('error')
+                            end
                         catch% to use DAC0 port
                             Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
                             Error_Message(Error)

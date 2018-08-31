@@ -33,11 +33,21 @@ switch opt
 
                     % Configure LJTick-DAC, if needed
                     if any(strcmp({h.Settings.stim(:).control},'LJTick-DAQ'))
-                        Error = ljud_ePut(h.ljHandle, LJ_ioPUT_CONFIG, LJ_chTDAC_SCL_PIN_NUM,h.Settings.labjack_DACport,0); 
-                        Error_Message(Error)
-                        %Set DACA 
-                        Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, 0, 0); 
-                        Error_Message(Error)
+                        try
+                            Error = ljud_ePut(h.ljHandle, LJ_ioPUT_CONFIG, LJ_chTDAC_SCL_PIN_NUM,h.Settings.labjack_DACport,0); 
+                            Error_Message(Error)
+                            if error~=0
+                                error('')
+                            end
+                            %Set DACA 
+                            Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, 0, 0); 
+                            Error_Message(Error)
+                            if error~=0
+                                error('')
+                            end
+                        catch
+                            disp('COULD NOT SET UP LJTICK-DAQ - SEE LABJACK.M')
+                        end
                     end
                 end
                 
