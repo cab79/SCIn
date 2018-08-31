@@ -385,7 +385,7 @@ if get(hObject, 'Value') == get(hObject, 'Max')
     eval(['h = ' h.exptFun '(h,opt);']);
     d = h.d;
     if h.Settings.labjack
-        set(h.ljhandle, 'Value', h.ljHandle);
+        set(h.ljhandle, 'Value', 0);
     end
     
     % select blocks to run
