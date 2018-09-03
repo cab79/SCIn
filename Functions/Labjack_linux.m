@@ -81,6 +81,8 @@ classdef Labjack_linux < handle
 		fio6 = 0
 		%> FIO7 state
 		fio7 = 0
+		%> DAC0 state
+		dac0 = 0
 		%> LED state, which is controllable only on the U3
 		led = 1
 		%> The raw strobed word command generated with prepareStrobe, sent with strobeWord
@@ -513,6 +515,7 @@ classdef Labjack_linux < handle
 				cmd(8) = 29; %IOType for PortDirWrite = 29
 				cmd(9:11) = maskdir;
 				cmd(12:14) = valuedir;
+                
 				cmd(8) = 27; %IOType for PortStateWrite = 27
 				cmd(9:11) = mask;
 				cmd(12:14) = value;
@@ -562,6 +565,36 @@ classdef Labjack_linux < handle
 				cmd(8) = 27; %IOType for PortStateWrite = 27
 				cmd(9:11) = mask;
 				cmd(12:14) = value;
+				
+				obj.command = obj.checksum(cmd,'extended');
+				obj.outp = obj.rawWrite(obj.command);
+				if obj.readResponse; obj.inp = obj.rawRead(zeros(1,10),10); end
+			end
+        end
+        
+        % ===================================================================
+		%> @brief setDACValue
+		%>	setDACValue sets the value for DAC0 (16-bit)
+		%>	@param value is binary identifier for 0-3 bit range
+		%>  @param mask is the mask to apply the command
+		% ===================================================================
+		function setDAC(obj,value)
+			if ~exist('value','var');fprintf('\nSetDAC Input options: \n\t\tvalue');return;end
+			if obj.silentMode == false && obj.vHandle == 1
+				cmd=zeros(10,1);
+                %cmd(1) - Checksum8 - generated from checksum function
+				cmd(2) = 248; %command byte for feedback command (f8 in hex)
+				cmd(3) = (length(cmd)-6)/2;
+                %cmd(4) - 0
+                %cmd(5-6) - generated from checksum function
+                %cmd(7) - 0
+				cmd(8) = 38; %IOType for DAC0 16-bit = 38
+                
+                DAC0_value=round((value/4.95)*65535); % https://labjack.com/support/datasheets/u3/hardware-description/dac
+                DAC0_base = dec2base(DAC0_value, 16, 4); % base 16
+                MSB = hex2dec(DAC0_base(1:2));
+                LSB = hex2dec(DAC0_base(3:4));
+				cmd(9:10) = [LSB,MSB]; % 9: Value LSB, 10: Value MSB
 				
 				obj.command = obj.checksum(cmd,'extended');
 				obj.outp = obj.rawWrite(obj.command);

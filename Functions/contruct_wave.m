@@ -135,6 +135,7 @@ for i = 1:length(h.dur)
         trough = zeros((h.Settings.trialdur*h.Settings.fs)-length(rise)-length(fall)-length(peak),1);
 
         mwav{i} = [rise;peak;fall;trough]';
+        temp_sin{i} = mwav{i};
     end
 
     % instantaneous phase and direction at end of stim

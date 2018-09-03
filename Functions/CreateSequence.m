@@ -40,24 +40,24 @@ end
 %% define orthgonal conditions (CURRENTLY HAS NO IMPACT ON REST OF THE FUNCTION)
 % e.g. ensuring that condition levels and oddball levels are orthogonal, if
 % needed
-conds = [];
-ncond = 0;
-nonprobcond = [];
-if ~isempty(setconds)
-    allcondind='';
-    for i = 1:length(setconds)
-        eval(['condval{i} = set' setconds{i} ';']);
-        if size(condval{i},1)<2
-            continue
-        end
-        condind{i} = 1:size(condval{i},1);
-        allcondind = [allcondind ' condind{' num2str(i) '},'];
-    end
-    eval(['allcond = allcomb(' allcondind(1:end-1) ');']);
-    allcond = 1:i;
-    probcond = find(strcmp(setconds,'oddprob'));
-    nonprobcond = allcond; nonprobcond(probcond) = [];
-end
+% conds = [];
+% ncond = 0;
+% nonprobcond = [];
+% if ~isempty(setconds)
+%     allcondind='';
+%     for i = 1:length(setconds)
+%         eval(['condval{i} = set' setconds{i} ';']);
+%         if size(condval{i},1)<2
+%             continue
+%         end
+%         condind{i} = 1:size(condval{i},1);
+%         allcondind = [allcondind ' condind{' num2str(i) '},'];
+%     end
+%     eval(['allcond = allcomb(' allcondind(1:end-1) ');']);
+%     allcond = 1:i;
+%     probcond = find(strcmp(setconds,'oddprob'));
+%     nonprobcond = allcond; nonprobcond(probcond) = [];
+% end
 
 %% work out parameters of each sequence set (length, number of oddballs, probability of oddballs, etc.)
 
@@ -325,9 +325,9 @@ if nCP>0
 end
 
 %% duplicate sequences for non-probability conditions
-if ~isempty(nonprobcond)
-    
-end
+% if ~isempty(nonprobcond)
+%     
+% end
 
 
 %% create final sequences/blocks

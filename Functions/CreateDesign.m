@@ -13,6 +13,11 @@ if isfield(h.Settings,'AL')
 %    h.Seq.signal = repmat(h.Seq.signal,length(h.Settings.stim),1);
 end
 
+%% other
+if ~isfield(h,'Seq')
+    h = CreateSequence(h);
+end
+
 %% create Adaptive type order
 if isfield(h.Settings,'adaptive')
     h = CreateAdaptive(h);
