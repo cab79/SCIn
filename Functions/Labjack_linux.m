@@ -65,6 +65,8 @@ classdef Labjack_linux < handle
 		inp = []
 		%> output buffer, normally the number of bytes written
 		outp = []
+        % calibration values
+        cal=[];
 		%> FIO0 state
 		fio0 = 0
 		%> FIO1 state
@@ -345,7 +347,13 @@ classdef Labjack_linux < handle
 			end
 			in =  calllib('liblabjackusb', 'LJUSB_ReadTO', obj.handle, bytein, count, obj.timeOut);
 			if in == 0; obj.salutation('rawRead','ERROR READING!',true); end
-		end
+        end
+        
+        function [ret_count, ret_bytes] = rawRead2(obj, count)
+            bytes = zeros(count,1);
+            [ret_count, ret_handle, ret_bytes] = calllib('liblabjackusb', 'LJUSB_ReadTO', obj.handle, bytes, count, obj.timeOut);
+            if ret_count == 0; obj.salutation('rawRead','ERROR READING!',true); end
+        end
 		
 		% ===================================================================
 		%> @brief WaitShort
@@ -590,7 +598,14 @@ classdef Labjack_linux < handle
                 %cmd(7) - 0
 				cmd(8) = 38; %IOType for DAC0 16-bit = 38
                 
-                DAC0_value=round((value/4.95)*65535); % https://labjack.com/support/datasheets/u3/hardware-description/dac
+                % uncalibrated
+                %DAC0_value=round((value/4.95)*65535); % https://labjack.com/support/datasheets/u3/hardware-description/dac
+                
+                % calibrated
+                slope = obj.FPuint8ArrayToFPDouble(obj.cal(2,:),9);
+                offset = 0;%obj.FPuint8ArrayToFPDouble(obj.cal(2,:),17);
+                DAC0_value=round(((value*slope)+offset)*256); % https://labjack.com/support/datasheets/u3/hardware-description/dac
+                
                 DAC0_base = dec2base(DAC0_value, 16, 4); % base 16
                 MSB = hex2dec(DAC0_base(1:2));
                 LSB = hex2dec(DAC0_base(3:4));
@@ -600,7 +615,31 @@ classdef Labjack_linux < handle
 				obj.outp = obj.rawWrite(obj.command);
 				if obj.readResponse; obj.inp = obj.rawRead(zeros(1,10),10); end
 			end
-		end
+        end
+        
+         % ===================================================================
+		%> @brief getCal FROM EXODRIVER U3.C CODE
+        % Also see https://labjack.com/forums/u3/seeking-advice-how-use-u3-measure-pedal-stroke-rate
+		% ===================================================================
+		function getCal(obj)
+			%if ~exist('value','var');fprintf('\ngetCal Input options: \n\t\tvalue');return;end
+			if obj.silentMode == false && obj.vHandle == 1
+                for i = 0:4 % blocks 0 to 4
+                    cmd=zeros(8,1);
+                    %cmd(1) - Checksum8 - generated from checksum function
+                    cmd(2) = 248; %command byte for feedback command (f8 in hex)
+                    cmd(3) = 1; % number of words
+                    cmd(4) = 45;
+                    %cmd(5-6) - generated from checksum function
+                    %cmd(7) - 0;
+                    cmd(8) = i; % block number
+                    obj.command = obj.checksum(cmd,'extended');
+                    obj.outp = obj.rawWrite(obj.command);
+                    obj.cal(i+1,:) = zeros(1,40);
+                    [obj.inp, obj.cal(i+1,:)] = rawRead2(obj, 40);
+                end
+			end
+        end
 		
 		% ===================================================================
 		%> @brief Prepare Strobe Word
@@ -694,15 +733,23 @@ classdef Labjack_linux < handle
 				cmdLow = [myname 'Low'];
 				if ~exist('val','var')
 					val = abs(obj.(myname)-1);
-				end
-				if val == 1
+                end
+               % cmd=zeros(10,1);
+               % cmd(2) = 248; %command byte for feedback command (f8 in hex)
+               % cmd(3) = (length(cmd)-6)/2;
+               % cmd(8) = 11; %bitstatewrite
+               % cmd(9) = line;
+               % cmd(10) = val;
+               % obj.command = obj.checksum(cmd,'extended');
+               % obj.outp = obj.rawWrite(obj.command);
+               % %if obj.readResponse; obj.inp  = obj.rawRead(zeros(1,10),10); end
+                
+				if val>0
 					obj.outp = obj.rawWrite(obj.(cmdHigh));
-					if obj.readResponse; obj.inp  = obj.rawRead(zeros(1,10),10); end
 					obj.(myname) = 1;
 					obj.salutation('SETFIO',[myname ' is HIGH'])
-				else
+                else
 					obj.outp = obj.rawWrite(obj.(cmdLow));
-					if obj.readResponse; obj.inp = obj.rawRead(zeros(1,10),10); end
 					obj.(myname) = 0;
 					obj.salutation('SETFIO',[myname ' is LOW'])
 				end
@@ -814,6 +861,26 @@ classdef Labjack_linux < handle
 	methods ( Static ) % STATIC METHODS
 	%=======================================================================
 		
+        %CAB
+        function out=FPuint8ArrayToFPDouble(buffer, startIndex)
+        % based on C function in https://github.com/labjack/exodriver/blob/master/examples/U3/u3.c
+
+            buffer=uint32(uint8(buffer));
+
+            resultDec = buffer(startIndex)+...
+                        (bitshift(buffer(startIndex + 1),8))+ ...
+                        (bitshift(buffer(startIndex + 2),16))+ ...
+                        (bitshift(buffer(startIndex + 3),24));
+
+            resultWh = buffer(startIndex + 4) +...
+                        (bitshift(buffer(startIndex + 5),8)) +...
+                        (bitshift(buffer(startIndex + 6),16)) +...
+                        (bitshift(buffer(startIndex + 7),24));
+
+            out= double(int64(resultWh)) + double(resultDec)/4294967296.0;
+        end
+    
+    
 		% ===================================================================
 		%> @brief checksum8
 		%>	Calculate checksum for data packet

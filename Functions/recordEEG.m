@@ -137,9 +137,9 @@ switch opt
                 TriggerNum = h.Seq.condnum(h.i);
              
             if isunix
-                h.ljHandle.setDIOvalue(TriggerNum);
+                h.ljHandle.setDIOValue(TriggerNum);
                 WaitSecs(h.BV.delay);
-                h.ljHandle.setDIOvalue(0);
+                h.ljHandle.setDIOValue(0);
                 
             else
                 ljud_LoadDriver; % Loads LabJack UD Function Library

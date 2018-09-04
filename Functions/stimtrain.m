@@ -23,6 +23,8 @@ switch h.Settings.stim(h.sn).control
         if ~isunix
             ljud_LoadDriver; % Loads LabJack UD Function Library
             ljud_Constants; % Loads LabJack UD constant file
+        elseif isempty(h.ljHandle.cal)
+            getCal(h.ljHandle);
         end
         
         if h.Settings.stim(h.sn).chanforLJ
@@ -79,7 +81,7 @@ switch h.Settings.stim(h.sn).control
                 
                 %Set DACA 
                 if isunix
-                    h.ljHandle.setFIO(h.stim(h.sn).inten*h.Settings.DAC_multiply,0)
+                    h.ljHandle.setDAC(h.stim(h.sn).inten*h.Settings.DAC_multiply)
                 else
                     if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
                         try
@@ -213,11 +215,14 @@ switch h.Settings.stim(h.sn).control
                         t1=GetSecs;
                         for pr = 1:h.Settings.stim(h.sn).npulses_train % train
                             
-                            h.ljHandle.timedTTL(port,round((1000/p_freq)/2));
-                            WaitSecs(round((1000/p_freq)/2));
+                            h.ljHandle.timedTTL(port,((1000000/p_freq)/2));
+                            %h.ljHandle.setFIO(1,6);
+                            %WaitSecs((1000/p_freq)/2);
+                            %h.ljHandle.setFIO(0,6);
                             
                         end
                         t2=GetSecs;
+                        disp(num2str(t2-t1))
                     else
                         for pr = 1:h.Settings.stim(h.sn).npulses_train % train
                             Error = ljud_AddRequest(h.ljHandle,LJ_ioPUT_DIGITAL_BIT,port,1,0,0); % 
