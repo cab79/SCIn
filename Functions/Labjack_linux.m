@@ -603,8 +603,8 @@ classdef Labjack_linux < handle
                 
                 % calibrated
                 slope = obj.FPuint8ArrayToFPDouble(obj.cal(2,:),9);
-                offset = 0;%obj.FPuint8ArrayToFPDouble(obj.cal(2,:),17);
-                DAC0_value=round(((value*slope)+offset)*256); % https://labjack.com/support/datasheets/u3/hardware-description/dac
+                offset = obj.FPuint8ArrayToFPDouble(obj.cal(2,:),17);
+                DAC0_value=max(0,round(((value*slope)+offset)*256)); % https://labjack.com/support/datasheets/u3/hardware-description/dac
                 
                 DAC0_base = dec2base(DAC0_value, 16, 4); % base 16
                 MSB = hex2dec(DAC0_base(1:2));
@@ -864,7 +864,7 @@ classdef Labjack_linux < handle
         %CAB
         function out=FPuint8ArrayToFPDouble(buffer, startIndex)
         % based on C function in https://github.com/labjack/exodriver/blob/master/examples/U3/u3.c
-
+            %buffer = [0 0 0 0 255 255 255 255]; startIndex=1; % testing the outputs
             buffer=uint32(uint8(buffer));
 
             resultDec = buffer(startIndex)+...
@@ -877,7 +877,7 @@ classdef Labjack_linux < handle
                         (bitshift(buffer(startIndex + 6),16)) +...
                         (bitshift(buffer(startIndex + 7),24));
 
-            out= double(int64(resultWh)) + double(resultDec)/4294967296.0;
+            out= double(typecast(resultWh,'int32')) + double(resultDec)/4294967296.0;
         end
     
     
