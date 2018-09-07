@@ -205,6 +205,7 @@ case 'Adaptive'
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.sep_odd_tol = [1 1 1 1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
     h.Settings.std_lead = [0 0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
@@ -635,6 +636,7 @@ case 'Adaptive'
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.AL.sep_odd_tol = [1 1 1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
     h.Settings.AL.std_lead = [0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together

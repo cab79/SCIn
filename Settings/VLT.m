@@ -5,7 +5,7 @@ switch opt
     case 'setoptions'
         
     % settings options
-    h.SettingsOptions = {'Ascend','Adaptive','AL','PL','ALPL'};
+    h.SettingsOptions = {'Ascend','Adaptive','ALPL'};
     
     case 'Ascend'
 
@@ -240,7 +240,7 @@ case 'Adaptive'
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballvalue = {[1 2],[1 2],[1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
 
     %% SEQUENCE
@@ -260,6 +260,7 @@ case 'Adaptive'
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.sep_odd_tol = [1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
     h.Settings.std_lead = [0 0 0]; % for each CP condition
     % number of sets to randomise together
@@ -551,6 +552,7 @@ case 'Adaptive'
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.sep_odd_tol = [1 1 1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
     h.Settings.std_lead = [0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
@@ -827,6 +829,7 @@ case 'Adaptive'
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.PL.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.PL.sep_odd_tol = [1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
     h.Settings.PL.std_lead = [0 0 0]; % for each CP condition
     % number of sets to randomise together
@@ -875,6 +878,7 @@ case 'Adaptive'
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
+    h.Settings.AL.sep_odd_tol = [1 1 1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
     h.Settings.AL.std_lead = [0 0 0 0 0]; % for each CP condition
     % number of sets to randomise together
