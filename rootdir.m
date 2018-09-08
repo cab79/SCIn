@@ -1,1 +1,1 @@
-root='/usr/local/Matlab_files/SCIn';
+root='C:\Matlab\SCIn';

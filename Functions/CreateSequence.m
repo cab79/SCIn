@@ -327,7 +327,7 @@ if nCP>0
                         end
                     end
                 end
-            else
+            elseif isempty(setcondnum)
                 h.condnum{cp}{s} = stimtype{cp}{s};
             end
         end
@@ -451,10 +451,9 @@ end
     %end
     
     figure
-    hold on
     plot(h.Seq.condnum)
+    figure
     plot(h.Seq.signal,'g')
-    hold off
         
     if ~isempty(dtype)
         h.Seq.(dtype).blocks =h.Seq.blocks;

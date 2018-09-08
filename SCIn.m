@@ -1,11 +1,11 @@
-function varargout = SCIn(varargin)
+function varargout = scin(varargin)
 
 % GUI:
 % display messages stating trial number, block number, ready to startstop next block, etc.
 % select blocks with GUI by adding block number to h.Seq, e.g. row 4, and
 % remove code from TSOT
 
-%MATLAB code for SCIn.fig
+%MATLAB code for scin.fig
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
@@ -17,8 +17,8 @@ global d
 try
     rootdir
 catch
-    %error('start SCIn from the SCIn directory')
-    error('update "rootdir.m" with the SCIn directory')
+    %error('start scin from the scin directory')
+    error('update "rootdir.m" with the scin directory')
 end
 d.root = root;
 d.expts = 'Functions';
@@ -32,8 +32,8 @@ d.out = 'Outputs';
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @SCIn_OpeningFcn, ...
-                   'gui_OutputFcn',  @SCIn_OutputFcn, ...
+                   'gui_OpeningFcn', @scin_OpeningFcn, ...
+                   'gui_OutputFcn',  @scin_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -47,15 +47,15 @@ else
 end
 
 
-% --- Executes just before SCIn is made visible.
-function SCIn_OpeningFcn(hObject, eventdata, h, varargin)
+% --- Executes just before scin is made visible.
+function scin_OpeningFcn(hObject, eventdata, h, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % h    structure with h and user data (see GUIDATA)
-% varargin   command line arguments to SCIn (see VARARGIN)
+% varargin   command line arguments to scin (see VARARGIN)
 
-% Choose default command line output for SCIn
+% Choose default command line output for scin
 h.output = hObject;
 guidata(hObject, h);
 
@@ -83,7 +83,7 @@ end
 addpath(genpath(d.root))
 
 % --- Outputs from this function are returned to the command line.
-function varargout = SCIn_OutputFcn(hObject, eventdata, h) 
+function varargout = scin_OutputFcn(hObject, eventdata, h) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -336,7 +336,7 @@ function StartStop_Callback(hObject, eventdata, h)
 global d
 % get GUI handle name: necessary if 'h' is empty because not called from
 % the base workspace
-%GUIhname = findall(0, 'Type', 'figure', 'Tag', 'SCIn');
+%GUIhname = findall(0, 'Type', 'figure', 'Tag', 'scin');
 %h = guihandles(GUIhname);
 
 h.d=d;
@@ -470,7 +470,7 @@ function PauseResume_Callback(hObject, eventdata, h)
 global d
 % get GUI handle name: necessary if 'h' is empty because not called from
 % the base workspace
-GUIhname = findall(0, 'Type', 'figure', 'Tag', 'SCIn');
+GUIhname = findall(0, 'Type', 'figure', 'Tag', 'scin');
 h = guihandles(GUIhname);
 
 if 0
@@ -574,9 +574,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-% --- Executes on key press with focus on SCIn or any of its controls.
-%function SCIn_WindowKeyPressFcn(hObject, eventdata, h)
-% hObject    handle to SCIn (see GCBO)
+% --- Executes on key press with focus on scin or any of its controls.
+%function scin_WindowKeyPressFcn(hObject, eventdata, h)
+% hObject    handle to scin (see GCBO)
 % eventdata  structure with the following fields (see FIGURE)
 %	Key: name of the key that was pressed, in lower case
 %	Character: character interpretation of the key(s) that was pressed
