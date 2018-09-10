@@ -167,9 +167,9 @@ switch h.Settings.stim(h.sn).control
                     elseif h.Seq.signal(h.sn,h.i)==2
                         h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.stim(h.sn).inten_diff / 2;
                     elseif h.Seq.signal(h.sn,h.i)==3
-                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.stim(h.sn).inten_diff_max / 2;
+                        h.stim(h.sn).inten = h.stim(h.sn).inten_diff_max;
                     elseif h.Seq.signal(h.sn,h.i)==4
-                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.stim(h.sn).inten_diff_max / 2;
+                        h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.stim(h.sn).inten_diff / 2;
                     end
                 elseif isfield(h.Settings,'PL')
                     % calculate intensity
