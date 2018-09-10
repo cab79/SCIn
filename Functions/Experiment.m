@@ -1,7 +1,7 @@
 function h = Experiment(h,opt)
 dbstop if error
 % GUI handle name
-h.GUIhname = findall(0, 'Type', 'figure', 'Tag', 'SCIn');
+h.GUIhname = findall(0, 'Type', 'figure', 'Tag', 'scin');
 h.quit=0;
 
 if ~isfield(h.Settings,'record_response_type')
