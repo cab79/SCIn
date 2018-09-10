@@ -54,13 +54,13 @@ switch opt
                 %h.lineconfig=dio.Line % display index and digital line configurations to show mapping
             end
             
-            choice = questdlg('Using EEG: Disable GUI buttons? (more accurate EEG markers)', ...
-                    'Choice', ...
-                    'Yes','No','Yes');
-            switch choice
-                case 'Yes'
-                    h.disableGUI=1;
-            end
+%             choice = questdlg('Using EEG: Disable GUI buttons? (more accurate EEG markers)', ...
+%                     'Choice', ...
+%                     'Yes','No','Yes');
+%             switch choice
+%                 case 'Yes'
+%                     h.disableGUI=1;
+%             end
         catch MExc
             choice = questdlg('EEG not connected. Stop or continue?', ...
                     'Choice', ...

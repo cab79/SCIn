@@ -18,7 +18,11 @@ if nargin>1
     setn_odd = h.Settings.(dtype).n_odd;
     setn_odd_set = h.Settings.(dtype).n_odd_set;
     setrand_set = h.Settings.(dtype).rand_set;
-    setcondnum = h.Settings.(dtype).condnum;
+    try
+        setcondnum = h.Settings.(dtype).condnum;
+    catch
+        setcondnum = [];
+    end
     settol = h.Settings.(dtype).sep_odd_tol;
 else
     dtype='';
@@ -33,7 +37,11 @@ else
     setn_odd = h.Settings.n_odd;
     setn_odd_set = h.Settings.n_odd_set;
     setrand_set = h.Settings.rand_set;
-    setcondnum = h.Settings.condnum;
+    try
+        setcondnum = h.Settings.condnum;
+    catch
+        setcondnum = [];
+    end
     settol = h.Settings.sep_odd_tol;
 end
 
@@ -319,6 +327,8 @@ if nCP>0
                         end
                     end
                 end
+            elseif isempty(setcondnum)
+                h.condnum{cp}{s} = stimtype{cp}{s};
             end
         end
     end
@@ -332,9 +342,6 @@ end
 
 %% create final sequences/blocks
 %if ~isfield(h.Seq,'signal')
-    h.Seq.signal=[];
-    h.Seq.condnum=[];
-    h.Seq.blocks=[];
     
     %randomise sets
     if any(setrand_set)
@@ -363,6 +370,10 @@ end
     else
         setx_ind=setx;
     end
+    
+    h.Seq.signal=nan(1,length(setx_ind));
+    h.Seq.condnum=nan(1,length(setx_ind));
+    h.Seq.blocks=nan(1,length(setx_ind));
     
     %if nCP>0
         cps=0;
@@ -440,10 +451,9 @@ end
     %end
     
     figure
-    hold on
     plot(h.Seq.condnum)
+    figure
     plot(h.Seq.signal,'g')
-    hold off
         
     if ~isempty(dtype)
         h.Seq.(dtype).blocks =h.Seq.blocks;
