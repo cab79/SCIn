@@ -714,7 +714,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 3; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = 10; % if 0, consecutive stimuli will occur with no gap
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 3; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
