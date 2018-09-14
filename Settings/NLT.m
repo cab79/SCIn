@@ -823,7 +823,7 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'cond';
+    h.Settings.blockopt = '';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
@@ -933,11 +933,11 @@ case 'Adaptive'
     % number of sets to randomise together
     h.Settings.PL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.PL.n_odd = [36 24 24]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd = [40 40 40]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.PL.n_odd_set = [12 4 4]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd_set = [20 8 8]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.PL.rand_set = [1 1 1 1 1 1 1 1 1]; 
+    h.Settings.PL.rand_set = [1 1 1]; 
     % condition numbers
     h.Settings.PL.condnum = [
         1 2
@@ -959,8 +959,6 @@ case 'Adaptive'
 %         0.5 0.5
 %         0.8 0.2
         0.5 0.5
-        0.8 0.2
-        0.8 0.2
         0.8 0.2
         0.8 0.2
         ];
@@ -1000,28 +998,26 @@ case 'Adaptive'
     h.Settings.AL.standardind = 1; 
     h.Settings.AL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.AL.sep_odd = [0 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.AL.sep_odd = [0 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
-    h.Settings.AL.sep_odd_tol = [1 1 1 1 1]; % set these to be as high as possible (max 1)
+    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.AL.sep_odd_tol = [1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
-    h.Settings.AL.std_lead = [0 0 0 0 0]; % for each CP condition
+    h.Settings.AL.std_lead = [0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.AL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.AL.n_odd = [12 12 12 12 12]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd = [40 40 40]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.AL.n_odd_set = h.Settings.AL.n_odd; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd_set = [20 8 8]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.AL.rand_set = [0 0 0 0 0]; 
+    h.Settings.AL.rand_set = [1 1 1]; 
     % condition numbers
     h.Settings.AL.condnum = [
+        1 2
         3 4
         5 6
-        1 2
-        5 6
-        1 2
         ]; 
     
     %% associative learning experiments
@@ -1072,7 +1068,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
     h.Settings.adaptive_general.seqtypecond = []; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
-    h.Settings.adaptive_general.selectcond.cp = [1:5]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.selectcond.cp = []; % which CP condition to run adaptive on? (empty = all)
     h.Settings.adaptive_general.stim = 2; % which stim to run adaptive on?
     h.Settings.adaptive_general.terminate = ''; % 'block' to terminate within each block only. EMPTY '' TO TURN OFF
     h.Settings.adaptive_general.reestimate = ''; % 'block' to re-estimate with wider prior each block
@@ -1192,7 +1188,8 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'cond';
+    % '' = no blocking
+    h.Settings.blockopt = '';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
@@ -1210,7 +1207,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 1.2:0.2:2; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = 2.5:0.5:3.5; % 0.3s auditory cue + 1s anticipation + 0.6s min for ERP
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
@@ -1302,11 +1299,11 @@ case 'Adaptive'
     % number of sets to randomise together
     h.Settings.PL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.PL.n_odd = [108 72 72]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd = [40 40 40]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.PL.n_odd_set = [12 4 4]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd_set = [20 8 8]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.PL.rand_set = [1 1 1 1 1 1 1 1 1]; 
+    h.Settings.PL.rand_set = [1 1 1]; 
     % condition numbers
     h.Settings.PL.condnum = [
         1 2
@@ -1328,8 +1325,6 @@ case 'Adaptive'
 %         0.5 0.5
 %         0.8 0.2
         0.5 0.5
-        0.8 0.2
-        0.8 0.2
         0.8 0.2
         0.8 0.2
         ];
@@ -1369,28 +1364,26 @@ case 'Adaptive'
     h.Settings.AL.standardind = 1; 
     h.Settings.AL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.AL.sep_odd = [0 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.AL.sep_odd = [0 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2]};
-    h.Settings.AL.sep_odd_tol = [1 1 1 1 1]; % set these to be as high as possible (max 1)
+    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.AL.sep_odd_tol = [1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
-    h.Settings.AL.std_lead = [0 0 0 0 0]; % for each CP condition
+    h.Settings.AL.std_lead = [0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.AL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.AL.n_odd = [36 36 36 36 36]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd = [40 40 40]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.AL.n_odd_set = [12 12 12 12 12]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd_set = [20 8 8]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.AL.rand_set = [0 0 0 0 0]; 
+    h.Settings.AL.rand_set = [1 1 1]; 
     % condition numbers
     h.Settings.AL.condnum = [
+        1 2
         3 4
         5 6
-        1 2
-        5 6
-        1 2
         ]; 
     
     %% associative learning experiments

@@ -74,6 +74,7 @@ for b = 1:length(blockuni)
         
     end
     
+    
     % diagnostics for debugging
     if 1
         for p = 1:4 % for each value of signal (in either row)
@@ -84,6 +85,24 @@ for b = 1:length(blockuni)
     end
     
 end
+
+% update condnum so that there are unique values for high and low stims
+sigrow=2;% stims
+siguni=unique(h.Seq.signal(sigrow,:)); 
+newcond=0;
+newcondnum=nan(1,length(h.Seq.condnum));
+newcondnumset = h.condnum;
+for c = 1:length(conduni)
+    cond_ind = find(h.Seq.condnum==conduni(c));
+    for s = 1:length(siguni)
+        newcond=newcond+1;
+        sig_ind = find(h.Seq.signal(sigrow,:)==siguni(s));
+        comb_ind = ismember(cond_ind,sig_ind);
+        newcondnum(cond_ind(comb_ind)) = newcond;
+    end
+end
+h.Seq.condnum=newcondnum;
+h.condnum = newcondnumset;
 
 figure
 plot(h.Seq.condnum)

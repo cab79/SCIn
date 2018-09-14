@@ -218,7 +218,7 @@ if nCP>0
         for s = 1:num_sets(cp)
             if strcmp(h.Settings.oddballtype,'roving')
                 for i = 1:length(randind{cp}{s})
-                    if i==1; 
+                    if i==1
                         h.condnum{cp}{s}(i) = 0; % first stimulus in a run should be indicated with 0
                     elseif i==2 % initialise values
                         if randind{cp}{s}(i)==setstandardind % standard
@@ -251,24 +251,24 @@ if nCP>0
                     end
                 end
                 
-                stimtype{cp}{s} = nan(1,length(h.condnum{cp}{s}));
-                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[0])) = h.Settings.oddballvalue{cp}(1);
-                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[1 4])) = h.Settings.oddballvalue{cp}(1);
-                stimtype{cp}{s}(ismember(h.condnum{cp}{s},[2 3])) = h.Settings.oddballvalue{cp}(2);
+                h.stimtype{cp}{s} = nan(1,length(h.condnum{cp}{s}));
+                h.stimtype{cp}{s}(ismember(h.condnum{cp}{s},[0])) = h.Settings.oddballvalue{cp}(1);
+                h.stimtype{cp}{s}(ismember(h.condnum{cp}{s},[1 4])) = h.Settings.oddballvalue{cp}(1);
+                h.stimtype{cp}{s}(ismember(h.condnum{cp}{s},[2 3])) = h.Settings.oddballvalue{cp}(2);
             else
                 stan_odd_val = [1 2];
-                if all(ismember(unique(randind{cp}{s}),stan_odd_val));
+                if all(ismember(unique(randind{cp}{s}),stan_odd_val))
                     %update values according to oddball method
                     if strcmp(h.Settings.oddballmethod,'index')
                         if ~isempty(h.Settings.oddballvalue)
                             stan_odd_val = h.Settings.oddballvalue{cp};
                         end
                     end
-                    stimtype{cp}{s}(randind{cp}{s}==1)=stan_odd_val(1);
-                    stimtype{cp}{s}(randind{cp}{s}==2)=stan_odd_val(2);
-                    h.condnum{cp}{s}=stimtype{cp}{s};
+                    h.stimtype{cp}{s}(randind{cp}{s}==1)=stan_odd_val(1);
+                    h.stimtype{cp}{s}(randind{cp}{s}==2)=stan_odd_val(2);
+                    h.condnum{cp}{s}=h.stimtype{cp}{s};
                 else
-                    stimtype{cp}{s}=randind{cp}{s};
+                    h.stimtype{cp}{s}=randind{cp}{s};
                     h.condnum{cp}{s}=randind{cp}{s};
                 end
             end
@@ -328,7 +328,7 @@ if nCP>0
                     end
                 end
             elseif isempty(setcondnum)
-                h.condnum{cp}{s} = stimtype{cp}{s};
+                h.condnum{cp}{s} = h.stimtype{cp}{s};
             end
         end
     end
@@ -374,15 +374,18 @@ end
     h.Seq.signal=nan(1,length(setx_ind));
     h.Seq.condnum=nan(1,length(setx_ind));
     h.Seq.blocks=nan(1,length(setx_ind));
+    h.Seq.cp_cond=nan(1,length(setx_ind));
+    %sets_all = unique(setx_ind,'stable');
     
     %if nCP>0
         cps=0;
         for cp = 1:nCP
             for s = 1:num_sets(cp)
                 cps=cps+1;
-                h.Seq.signal(setx_ind==cps) = stimtype{cp}{s}; % type of signal for each trial: intensity, pitch, duration or channel
+                h.Seq.signal(setx_ind==cps) = h.stimtype{cp}{s}; % type of signal for each trial: intensity, pitch, duration or channel
                 %h.Seq.pattern = ; % type of temporal pattern of the signal within each trial
                 h.Seq.condnum(setx_ind==cps) = h.condnum{cp}{s};
+                h.Seq.cp_cond(setx_ind==cps)=cp;
                 
                 % if we are working on a cp condition whose sets are
                 % randomised, balance the conds between blocks:
@@ -390,29 +393,29 @@ end
                 nrandcp = length(find(setrand_set));
                 if any(randcp)
                     if strcmp(h.Settings.blockopt,'cond')
-                        h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(h.stimtype{cp}{s}));
                     elseif strcmp(h.Settings.blockopt,'divide')
                         bv = s+(nCP-nrandcp); % block value
-                        h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(h.stimtype{cp}{s}));
                     else
-                        h.Seq.blocks(setx_ind==cps) = ones(1,length(stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = ones(1,length(h.stimtype{cp}{s}));
                     end
                 % otherwise assign block value according to CP value
                 % not ideal - current only works if non-rand CP==1
                 else
                     nrand = length(setrand_set);
                     if strcmp(h.Settings.blockopt,'cond')
-                        h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(h.stimtype{cp}{s}));
                     elseif strcmp(h.Settings.blockopt,'divide')
                         if cp==1
                             bv = 1; % block value
-                            h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(stimtype{cp}{s}));
+                            h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(h.stimtype{cp}{s}));
                         elseif cp==nCP
                             bv = 1000; % block value
-                            h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(stimtype{cp}{s}));
+                            h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(h.stimtype{cp}{s}));
                         end
                     else
-                        h.Seq.blocks(setx_ind==cps) = ones(1,length(stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = ones(1,length(h.stimtype{cp}{s}));
                     end
                 end
             end
@@ -440,6 +443,7 @@ end
         h.Seq.blocks = h.Seq.blocks(blockind);
         h.Seq.signal = h.Seq.signal(blockind);
         h.Seq.condnum = h.Seq.condnum(blockind);
+        h.Seq.cp_cond=h.Seq.cp_cond(blockind);
     %else
     %    h.Seq.signal = ones(1,num_sets); % type of signal for each trial: intensity, pitch, duration or channel
     %    %h.Seq.pattern = ; % type of temporal pattern of the signal within each trial
@@ -459,6 +463,7 @@ end
         h.Seq.(dtype).blocks =h.Seq.blocks;
         h.Seq.(dtype).signal =h.Seq.signal;
         h.Seq.(dtype).condnum =h.Seq.condnum;
+        h.Seq.(dtype).cp_cond =h.Seq.cp_cond;
 %         h.Seq.signal=[];
 %         h.Seq.condnum=[];
 %         h.Seq.blocks=[];
