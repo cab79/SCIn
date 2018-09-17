@@ -674,7 +674,7 @@ if setup
     s.p(atype).init.zestfa = 0.05;   %gamma in the text, false alarm rate (guess rate for 2AFC)
     s.p(atype).init.zestmiss = 0.05; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
     s.p(atype).init.zestbeta = 2; %10;    %beta in the text, slope of response function
-    s.p(atype).init.zesteta = 0;     %eta in the text, "sweat factor" or response criterion parameter
+    s.p(atype).init.zesteta = 0.05;     %eta in the text, "sweat factor" or response criterion parameter
 
     % UNCOMMENT IF USING LOG
     %s.p(atype).init.zestconvert = {'delta_L', 'sd_pdf'};
