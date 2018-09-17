@@ -895,7 +895,7 @@ case 'Adaptive'
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2], [1 2],  [1 2], [2 1], [1 2],  [1 2], [1 2], [2 1], [1 2],  [1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballvalue = {[1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
 
      %% SEQUENCES: PL
