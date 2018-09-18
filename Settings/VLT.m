@@ -723,7 +723,7 @@ case 'Adaptive'
     %% first stimulus: audio
     h.Settings.stim(1).dur = [0.15 0.15]; % duration of stimulus in seconds; modified by oddball settings
     h.Settings.stim(1).patternmethod = 'pitch';% Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.stim(1).patternvalue = {[540 500],[460 500]}; % one per stimdur in each cell; one cell per oddball value
+    h.Settings.stim(1).patternvalue = {[540 500],[500 540]}; % one per stimdur in each cell; one cell per oddball value
     h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
     h.Settings.stim(1).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
@@ -835,9 +835,9 @@ case 'Adaptive'
     % number of sets to randomise together
     h.Settings.PL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.PL.n_odd = [40 40 40]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd = [30 30 30]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.PL.n_odd_set = [20 8 8]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd_set = [15 10 10]; % overrides h.Settings.totdur
     % randomise sets?
     h.Settings.PL.rand_set = [1 1 1]; 
     % condition numbers
@@ -910,9 +910,9 @@ case 'Adaptive'
     % number of sets to randomise together
     h.Settings.AL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.AL.n_odd = [40 40 40]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd = [30 30 30]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.AL.n_odd_set = [20 8 8]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd_set = [15 10 10]; % overrides h.Settings.totdur
     % randomise sets?
     h.Settings.AL.rand_set = [1 1 1]; 
     % condition numbers
