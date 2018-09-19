@@ -1072,7 +1072,7 @@ case 'Adaptive'
     % runs for each adapttype. Cond = one type per CP block
     h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
     h.Settings.adaptive_general.seqtypecond = []; %if 'cond', associate each CP with an adaptive type
-    h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
+    h.Settings.adaptive_general.seqrandblocksize = 10; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = []; % which CP condition to run adaptive on? (empty = all)
     h.Settings.adaptive_general.stim = 2; % which stim to run adaptive on?
     h.Settings.adaptive_general.terminate = ''; % 'block' to terminate within each block only. EMPTY '' TO TURN OFF
