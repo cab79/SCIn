@@ -13,7 +13,6 @@ stimtypes = [1 2];
 h.Seq.signal = nan(length(stimtypes),size(h.Seq.AL.signal,2));
 h.Seq.blocks = h.Seq.AL.blocks;
 h.Seq.condnum = h.Seq.AL.condnum;
-h.Seq.cp_cond = h.Seq.AL.cp_cond;
 
 % get block indices
 blockuni=unique(h.Seq.AL.blocks);
@@ -92,7 +91,7 @@ sigrow=2;% stims
 siguni=unique(h.Seq.signal(sigrow,:)); 
 newcond=0;
 newcondnum=nan(1,length(h.Seq.condnum));
-newcondnumset = h.AL.condnum;
+newcondnumset = h.condnum;
 for c = 1:length(conduni)
     cond_ind = find(h.Seq.condnum==conduni(c));
     for s = 1:length(siguni)

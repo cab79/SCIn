@@ -14,7 +14,7 @@ end
 for dt = 1:length(dtypes)
     if ~isempty(dtypes)
         % design type
-        dtype = dtypes{dt};
+        dtype = varargin{1};
 
         % the following fields are required in settings for this to run:
         setoddprob = h.Settings.(dtype).oddprob;
@@ -161,7 +161,7 @@ for dt = 1:length(dtypes)
 
 
     %% create sequence sets
-    setx{dt} = []; cpx{dt}=[]; setnum=0;
+    setx = []; cpx=[]; setnum=0;
     if nCP>0
         for cp = 1:nCP
             setind{cp} = [];
@@ -377,56 +377,49 @@ end
 %% create final sequences/blocks
 %if ~isfield(h.Seq,'signal')
     
-%randomise sets
-if any(setrand_set)
-    if length(setrand_set)>1
-        % get set indices to randomise
-        setrand = find(ismember(cpx{1},find(setrand_set)));
+    %randomise sets
+    if any(setrand_set)
+        if length(setrand_set)>1
+            % get set indices to randomise
+            setrand = find(ismember(cpx{1},find(setrand_set)));
+        else
+            setrand = 1:length(setx{1});
+        end
+        % get set indices not beign randomised
+        setnorand = 1:length(setx{1});
+        setnorand(setrand)=[];
+        
+        % create set index
+        us = unique(setx{1}(setrand));
+        us_pos = ismember(unique(setx{1}),us);
+        usnr = unique(setx{1}(setnorand));
+        usnr_pos = ismember(unique(setx{1}),usnr);
+        randus = us(randperm(length(us)));
+        randnorand(us_pos) = randus;
+        randnorand(usnr_pos) = usnr;
+        setx_ind = [];
+        for s = 1:length(randnorand)
+            setx_ind = [setx_ind setx{1}(setx{1}==randnorand(s))];
+        end
     else
-        setrand = 1:length(setx{1});
-    end
-    % get set indices not beign randomised
-    setnorand = 1:length(setx{1});
-    setnorand(setrand)=[];
-
-    % create set index
-    us = unique(setx{1}(setrand));
-    us_pos = ismember(unique(setx{1}),us);
-    usnr = unique(setx{1}(setnorand));
-    usnr_pos = ismember(unique(setx{1}),usnr);
-    randus = us(randperm(length(us)));
-    randnorand(us_pos) = randus;
-    randnorand(usnr_pos) = usnr;
-    setx_ind = [];
-    for s = 1:length(randnorand)
-        setx_ind = [setx_ind setx{1}(setx{1}==randnorand(s))];
-    end
-else
-    setx_ind=setx{1};
-end
-
-%sets_all = unique(setx_ind,'stable');
-    
-for dt = 1:length(dtypes)
-    if ~isempty(dtypes)
-        dtype = dtypes{dt};
-    else
-        dtype='X';
+        setx_ind=setx{1};
     end
     
-    h.Seq.(dtype).signal=nan(1,length(setx_ind));
-    h.Seq.(dtype).condnum=nan(1,length(setx_ind));
-    h.Seq.(dtype).blocks=nan(1,length(setx_ind));
-    h.Seq.(dtype).cp_cond=nan(1,length(setx_ind));
+    h.Seq.signal=nan(1,length(setx_ind));
+    h.Seq.condnum=nan(1,length(setx_ind));
+    h.Seq.blocks=nan(1,length(setx_ind));
+    h.Seq.cp_cond=nan(1,length(setx_ind));
+    %sets_all = unique(setx_ind,'stable');
+    
     %if nCP>0
         cps=0;
         for cp = 1:nCP
             for s = 1:num_sets{dt}(cp)
                 cps=cps+1;
-                h.Seq.(dtype).signal(setx_ind==cps) = h.(dtype).stimtype{cp}{s}; % type of signal for each trial: intensity, pitch, duration or channel
-                %h.Seq.(dtype).pattern = ; % type of temporal pattern of the signal within each trial
-                h.Seq.(dtype).condnum(setx_ind==cps) = h.(dtype).condnum{cp}{s};
-                h.Seq.(dtype).cp_cond(setx_ind==cps)=cp;
+                h.Seq.signal(setx_ind==cps) = h.(dtype).stimtype{cp}{s}; % type of signal for each trial: intensity, pitch, duration or channel
+                %h.Seq.pattern = ; % type of temporal pattern of the signal within each trial
+                h.Seq.condnum(setx_ind==cps) = h.(dtype).condnum{cp}{s};
+                h.Seq.cp_cond(setx_ind==cps)=cp;
                 
                 % if we are working on a cp condition whose sets are
                 % randomised, balance the conds between blocks:
@@ -434,78 +427,80 @@ for dt = 1:length(dtypes)
                 nrandcp = length(find(setrand_set));
                 if any(randcp)
                     if strcmp(h.Settings.blockopt,'cond')
-                        h.Seq.(dtype).blocks(setx_ind==cps) = cp*ones(1,length(h.(dtype).stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(h.(dtype).stimtype{cp}{s}));
                     elseif strcmp(h.Settings.blockopt,'divide')
                         bv = s+(nCP-nrandcp); % block value
-                        h.Seq.(dtype).blocks(setx_ind==cps) = bv*ones(1,length(h.(dtype).stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(h.(dtype).stimtype{cp}{s}));
                     else
-                        h.Seq.(dtype).blocks(setx_ind==cps) = ones(1,length(h.(dtype).stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = ones(1,length(h.(dtype).stimtype{cp}{s}));
                     end
                 % otherwise assign block value according to CP value
                 % not ideal - current only works if non-rand CP==1
                 else
                     nrand = length(setrand_set);
                     if strcmp(h.Settings.blockopt,'cond')
-                        h.Seq.(dtype).blocks(setx_ind==cps) = cp*ones(1,length(h.(dtype).stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = cp*ones(1,length(h.(dtype).stimtype{cp}{s}));
                     elseif strcmp(h.Settings.blockopt,'divide')
                         if cp==1
                             bv = 1; % block value
-                            h.Seq.(dtype).blocks(setx_ind==cps) = bv*ones(1,length(h.(dtype).stimtype{cp}{s}));
+                            h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(h.(dtype).stimtype{cp}{s}));
                         elseif cp==nCP
                             bv = 1000; % block value
-                            h.Seq.(dtype).blocks(setx_ind==cps) = bv*ones(1,length(h.(dtype).stimtype{cp}{s}));
+                            h.Seq.blocks(setx_ind==cps) = bv*ones(1,length(h.(dtype).stimtype{cp}{s}));
                         end
                     else
-                        h.Seq.(dtype).blocks(setx_ind==cps) = ones(1,length(h.(dtype).stimtype{cp}{s}));
+                        h.Seq.blocks(setx_ind==cps) = ones(1,length(h.(dtype).stimtype{cp}{s}));
                     end
                 end
             end
         end
         % correct max block number
-        blockuni=unique(h.Seq.(dtype).blocks);
+        blockuni=unique(h.Seq.blocks);
         if length(blockuni)>1
-            h.Seq.(dtype).blocks(h.Seq.(dtype).blocks==max(h.Seq.(dtype).blocks)) = blockuni(end-1)+1;
+            h.Seq.blocks(h.Seq.blocks==max(h.Seq.blocks)) = blockuni(end-1)+1;
         end
         
         if strcmp(h.Settings.blockopt,'cond')
             % make block nums monotonic without changing their order
-            blockuni=unique(h.Seq.(dtype).blocks);
-            blockunistable=unique(h.Seq.(dtype).blocks,'stable');
+            blockuni=unique(h.Seq.blocks);
+            blockunistable=unique(h.Seq.blocks,'stable');
             for b = 1:length(blockuni)
-                block_ind{b} = find(h.Seq.(dtype).blocks==blockunistable(b));
+                block_ind{b} = find(h.Seq.blocks==blockunistable(b));
             end
             for b = 1:length(blockuni)
-                h.Seq.(dtype).blocks(block_ind{b}) = blockuni(b);
+                h.Seq.blocks(block_ind{b}) = blockuni(b);
             end
         end
         
         % sort (if needed)
-        [~,blockind] = sort(h.Seq.(dtype).blocks);
-        h.Seq.(dtype).blocks = h.Seq.(dtype).blocks(blockind);
-        h.Seq.(dtype).signal = h.Seq.(dtype).signal(blockind);
-        h.Seq.(dtype).condnum = h.Seq.(dtype).condnum(blockind);
-        h.Seq.(dtype).cp_cond=h.Seq.(dtype).cp_cond(blockind);
+        [~,blockind] = sort(h.Seq.blocks);
+        h.Seq.blocks = h.Seq.blocks(blockind);
+        h.Seq.signal = h.Seq.signal(blockind);
+        h.Seq.condnum = h.Seq.condnum(blockind);
+        h.Seq.cp_cond=h.Seq.cp_cond(blockind);
     %else
-    %    h.Seq.(dtype).signal = ones(1,num_sets{dt}); % type of signal for each trial: intensity, pitch, duration or channel
-    %    %h.Seq.(dtype).pattern = ; % type of temporal pattern of the signal within each trial
-    %    h.Seq.(dtype).condnum = ones(1,num_sets{dt});
-    %    %h.Seq.(dtype).changedist = design(3,:);
+    %    h.Seq.signal = ones(1,num_sets{dt}); % type of signal for each trial: intensity, pitch, duration or channel
+    %    %h.Seq.pattern = ; % type of temporal pattern of the signal within each trial
+    %    h.Seq.condnum = ones(1,num_sets{dt});
+    %    %h.Seq.changedist = design(3,:);
     %    if strcmp(h.Settings.blockopt,'cond')
-    %        h.Seq.(dtype).blocks = ones(1,num_sets{dt});
+    %        h.Seq.blocks = ones(1,num_sets{dt});
     %    end
     %end
     
     figure
-    plot(h.Seq.(dtype).condnum)
+    plot(h.Seq.condnum)
     figure
-    plot(h.Seq.(dtype).signal,'g')
+    plot(h.Seq.signal,'g')
         
+    if strcmp(dtype,'X')
+        h.Seq.blocks=h.Seq.(dtype).blocks;
+        h.Seq.signal=h.Seq.(dtype).signal;
+        h.Seq.condnum=h.Seq.(dtype).condnum;
+        h.Seq.cp_cond=h.Seq.(dtype).cp_cond;
+%         h.Seq.signal=[];
+%         h.Seq.condnum=[];
+%         h.Seq.blocks=[];
+    end
     
-end
-
-if strcmp(dtype,'X') || dt==1
-    h.Seq.blocks=h.Seq.(dtype).blocks;
-    h.Seq.signal=h.Seq.(dtype).signal;
-    h.Seq.condnum=h.Seq.(dtype).condnum;
-    h.Seq.cp_cond=h.Seq.(dtype).cp_cond;
-end
+%end

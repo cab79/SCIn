@@ -2,12 +2,12 @@ function h = CreateDesign(h)
 
 %% Perceptual learning
 if isfield(h.Settings,'PL')
-    h = CreateSequence(h,{'PL','AL'});
+    h = CreateSequence(h,'PL');
 end
 
 %% Associative learning: add cue sequence
 if isfield(h.Settings,'AL')
-    %h = CreateSequence(h,'AL');
+    h = CreateSequence(h,'AL');
     h = CreateAssociative(h);
 %elseif length(h.Settings.stim)>1
 %    h.Seq.signal = repmat(h.Seq.signal,length(h.Settings.stim),1);

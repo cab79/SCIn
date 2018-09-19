@@ -896,19 +896,20 @@ case 'Adaptive'
     
     % Oddball method: intensity, index, pitch, channel
     h.Settings.PL.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.PL.oddballvalue = {[1 2], [1 2], [2 1],[2 1], [1 2], [1 2], [2 1], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.PL.oddballvalue = {[1 2], [1 2], [2 1],[1 2], [1 2], [2 1],[1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.PL.oddballtype = 'classical'; % options: 'roving', 'classical'
 
      %% SEQUENCES: PL
     % Change probablity (CP): each condition is in rows
     h.Settings.PL.oddprob = [
         % standard (left) vs oddball (right)
+        0.5 0.5
         0.8 0.2
         0.8 0.2
+        0.5 0.5
         0.8 0.2
         0.8 0.2
-        0.8 0.2
-        0.8 0.2
+        0.5 0.5
         0.8 0.2
         0.8 0.2
         ];
@@ -917,7 +918,7 @@ case 'Adaptive'
     h.Settings.PL.standardind = 1; 
     h.Settings.PL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.PL.sep_odd = [2 2 2 2 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.PL.sep_odd = [0 2 2 2 2 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
     h.Settings.PL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};

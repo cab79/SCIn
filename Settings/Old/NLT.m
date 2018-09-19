@@ -893,22 +893,28 @@ case 'Adaptive'
     % Condition method: intensity, pitch, channel
     h.Settings.conditionmethod = {};
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
-    
     % Oddball method: intensity, index, pitch, channel
-    h.Settings.PL.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.PL.oddballvalue = {[1 2], [1 2], [2 1],[2 1], [1 2], [1 2], [2 1], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
-    h.Settings.PL.oddballtype = 'classical'; % options: 'roving', 'classical'
+    h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
+    h.Settings.oddballvalue = {[1 2], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
 
      %% SEQUENCES: PL
     % Change probablity (CP): each condition is in rows
     h.Settings.PL.oddprob = [
         % standard (left) vs oddball (right)
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
+        %0.5 0.5
+        %0.8 0.2
+        %0.5 0.5
+        %0.8 0.2
+        %0.5 0.5
+        %0.8 0.2
+        %0.5 0.5
+        %0.8 0.2
+        %0.5 0.5
+        %0.8 0.2
+        %0.5 0.5
+        %0.8 0.2
+        0.5 0.5
         0.8 0.2
         0.8 0.2
         ];
@@ -917,48 +923,42 @@ case 'Adaptive'
     h.Settings.PL.standardind = 1; 
     h.Settings.PL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.PL.sep_odd = [2 2 2 2 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.PL.sep_odd = [0 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.PL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
-    h.Settings.PL.sep_odd_tol = [1 1 1 1 1 1 1 1]; % set these to be as high as possible (max 1)
+    h.Settings.PL.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.PL.sep_odd_tol = [1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
-    h.Settings.PL.std_lead = [0 0 0 0 0 0 0 0]; % for each CP condition
+    h.Settings.PL.std_lead = [0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.PL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.PL.n_odd = [10 10 10 10 10 10 10 10]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd = [30 30 30]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.PL.n_odd_set = [10 10 10 10 10 10 10 10]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd_set = [15 10 10]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.PL.rand_set = [1 1 1 1 1 1 1 1]; 
+    h.Settings.PL.rand_set = [1 1 1]; 
     % condition numbers
     h.Settings.PL.condnum = [
         1 2
-        1 2
         3 4
-        3 4
-        1 2
-        1 2
-        3 4
-        3 4
+        5 6
         ]; 
     
     %% SEQUENCE
-    
-    % Oddball method: intensity, index, pitch, channel
-    h.Settings.AL.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.AL.oddballvalue = {[1 2], [1 2], [1 2],[1 2], [2 1], [2 1], [2 1], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
-    h.Settings.AL.oddballtype = 'classical'; % options: 'roving', 'classical'
     % Change probablity (CP): each condition is in rows
     h.Settings.AL.oddprob = [
         % standard (left) vs oddball (right)
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
-        0.8 0.2
+%         0.8 0.2
+%         0.5 0.5
+%         0.8 0.2
+%         0.8 0.2
+%         0.5 0.5
+%         0.8 0.2
+%         0.8 0.2
+%         0.5 0.5
+%         0.8 0.2
+        0.5 0.5
         0.8 0.2
         0.8 0.2
         ];
@@ -998,31 +998,26 @@ case 'Adaptive'
     h.Settings.AL.standardind = 1; 
     h.Settings.AL.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.AL.sep_odd = [2 2 2 2 2 2 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    h.Settings.AL.sep_odd = [0 2 2];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
-    h.Settings.AL.sep_odd_tol = [1 1 1 1 1 1 1 1]; % set these to be as high as possible (max 1)
+    h.Settings.AL.sep_odd_ind = {[1 2],[1 2],[1 2]};
+    h.Settings.AL.sep_odd_tol = [1 1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
-    h.Settings.AL.std_lead = [0 0 0 0 0 0 0 0]; % for each CP condition
+    h.Settings.AL.std_lead = [0 0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.AL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.AL.n_odd = [10 10 10 10 10 10 10 10]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd = [30 30 30]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.AL.n_odd_set = [10 10 10 10 10 10 10 10]; % overrides h.Settings.totdur
+    h.Settings.AL.n_odd_set = [15 10 10]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.AL.rand_set = [1 1 1 1 1 1 1 1]; 
+    h.Settings.AL.rand_set = [1 1 1]; 
     % condition numbers
     h.Settings.AL.condnum = [
         1 2
-        1 2
-        1 2
-        1 2
         3 4
-        3 4
-        3 4
-        3 4
+        5 6
         ]; 
     
     %% associative learning experiments
