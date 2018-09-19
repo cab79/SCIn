@@ -113,8 +113,6 @@ if use_PL
         cp_val = find(i2==cp);
         cp_ind(ismember(h.Seq.PL.cp_cond,cp_val)) = cp;
     end
-    maxcon = max(h.Seq.condnum);
-    h.Seq.condnum = h.Seq.condnum + (cp_ind-1)*maxcon;
 end
 
 figure
