@@ -42,6 +42,13 @@ else
 end
 
 % if ODDBALL
+if ~isfield(h.Settings,'oddballmethod')
+    if isfield(h.Settings,'AL') && isfield(h.Settings.AL,'oddballmethod')
+        h.Settings.oddballmethod = h.Settings.AL.oddballmethod;
+    elseif isfield(h.Settings,'PL') && isfield(h.Settings.PL,'oddballmethod')
+        h.Settings.oddballmethod = h.Settings.PL.oddballmethod;
+    end
+end
 h.seqtype.oddball=0;
 if isfield(h.Settings,'oddballmethod')
     if ~isempty(h.Settings.oddballmethod)
