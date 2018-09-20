@@ -37,7 +37,7 @@ switch h.Settings.stim(h.sn).control
             case 'setup'
                 % if GUI is set to intensity > 0, check this is not
                 % accidental
-                if isfield(h,'inten_mean_gui'); 
+                if isfield(h,'inten_mean_gui')
                     inten_mean = str2double(h.inten_mean_gui);
                     if inten_mean>0
                         choice = questdlg(['Is ' num2str(inten_mean) ' the correct starting intensity?'], ...

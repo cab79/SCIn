@@ -298,6 +298,7 @@ case 'Adaptive'
     % maximum amount - for safety
     h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
+    h.Settings.adaptive(1).maxtrial = 30;
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -342,6 +343,7 @@ case 'Adaptive'
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(2).levelmax = 100; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
+    h.Settings.adaptive(2).maxtrial = 30;
     
     case 'RO' % roving oddball (EEG)
 

@@ -389,6 +389,7 @@ case 'Adaptive'
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(1).levelmax = 1; % should be a DIFFERENCE value. 
     h.Settings.adaptive(1).levelmin = 0;
+    h.Settings.adaptive(1).maxtrial = 30;
     
     
     

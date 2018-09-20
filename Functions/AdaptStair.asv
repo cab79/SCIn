@@ -464,8 +464,7 @@ if ~isempty(ci_para)
                 ci_thresh(sd,2:3) = CI;
                 % TERMINATE
                 %if  && 
-                if (abs(CI(2)-CI(1))<abs(x(end))/ci_para && x(end)<CI(2) && x(end)>CI(1)) || ...
-                        (length(ind)>=h.Settings.adaptive(atype).maxtrial && x(end)<CI(2) && x(end)>CI(1))
+                if (abs(CI(2)-CI(1))<abs(x(end))/ci_para && x(end)<CI(2) && x(end)>CI(1))
                     s.out.adaptive(end, 11) = x(end);
                     
                     if ~isempty(h.Settings.adaptive_general.terminate)
@@ -477,15 +476,14 @@ if ~isempty(ci_para)
     end
 end
 
-%TERMINATE BY TRIAL NUMBER
-% if ~isempty(h.Settings.adaptive_general.terminate)
-%     if isfield(h.Settings.adaptive(atype),'maxtrial') || ~isempty(h.Settings.adaptive(atype).maxtrial)
-%         if length(ind)>=h.Settings.adaptive(atype).maxtrial
-%             s.out.adaptive(end, 11) = thresh(end);
-%             s.terminate = [s.terminate atype];
-%         end
-%     end
-% end
+% TERMINATE BY TRIAL NUMBER
+%if  && 
+if ~isempty(h.Settings.adaptive_general.terminate)
+    if || s.trial>=2
+        s.out.adaptive(end, 11) = thresh(end);
+        s.terminate = [s.terminate atype];
+    end
+end
 
 h.s =s;
 h.out.adaptive = s.out.adaptive;
@@ -543,8 +541,8 @@ if ~isempty(ind)
         end
         if ~isnan(h.out.adaptive(end,11))
             scatter(length(ind),h.out.adaptive(end,11),'k','filled');
-            %highval=h.out.adaptive(end,11)+2*std(thresh);
-            title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11))]);
+            highval=h.out.adaptive(end,11)+2*std(thresh);
+            title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11)) ', high: ' num2str(highval)]);
         end
         if strcmp(h.Settings.adaptive(atype).type,'discrim')
             yyaxis right
@@ -672,7 +670,7 @@ if setup
     s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(atype).levelmax); % highest threshold value possible; 
     s.p(atype).init.zestminrange = abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; 
     range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
-    slope = (100*s.p(atype).init.zestinit_diffLvl)/range; % make the prior tighter if thresh is near to zero
+    slope = max(5/range,5/s.p(atype).init.zestinit_diffLvl); % make the prior tighter if thresh is near to zero
     
     % ZEST params for initial p.d.f.
     s.p(atype).init.zestA = 1;
@@ -682,7 +680,7 @@ if setup
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
     s.p(atype).init.zestfa = 0.05;   %gamma in the text, false alarm rate (guess rate for 2AFC)
     s.p(atype).init.zestmiss = 0.05; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
-    s.p(atype).init.zestbeta = 1; %10;    %beta in the text, slope of response function
+    s.p(atype).init.zestbeta = 2; %10;    %beta in the text, slope of response function
     s.p(atype).init.zesteta = 0.1;     %eta in the text, "sweat factor" or response criterion parameter
 
     % UNCOMMENT IF USING LOG
