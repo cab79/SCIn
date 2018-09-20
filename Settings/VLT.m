@@ -387,8 +387,8 @@ case 'Adaptive'
     % incorrect (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     %h.Settings.adaptive(1).meanadjustmax = 10;
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
-    h.Settings.adaptive(1).levelmax = 0.5; % should be a DIFFERENCE value. 
-    h.Settings.adaptive(1).levelmin = 0.01;
+    h.Settings.adaptive(1).levelmax = 1; % should be a DIFFERENCE value. 
+    h.Settings.adaptive(1).levelmin = 0;
     
     
     
@@ -1024,8 +1024,8 @@ case 'Adaptive'
     % incorrect (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     %h.Settings.adaptive(1).meanadjustmax = 10;
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
-    h.Settings.adaptive(1).levelmax = 0.5; % should be a DIFFERENCE value. 
-    h.Settings.adaptive(1).levelmin = 0.01;
+    h.Settings.adaptive(1).levelmax = 1; % should be a DIFFERENCE value. 
+    h.Settings.adaptive(1).levelmin = 0;
     
     
 end

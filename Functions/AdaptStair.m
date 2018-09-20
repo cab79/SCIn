@@ -673,7 +673,7 @@ if setup
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
     s.p(atype).init.zestfa = 0.05;   %gamma in the text, false alarm rate (guess rate for 2AFC)
     s.p(atype).init.zestmiss = 0.05; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
-    s.p(atype).init.zestbeta = 1; %10;    %beta in the text, slope of response function
+    s.p(atype).init.zestbeta = 2; %10;    %beta in the text, slope of response function
     s.p(atype).init.zesteta = 0.1;     %eta in the text, "sweat factor" or response criterion parameter
 
     % UNCOMMENT IF USING LOG

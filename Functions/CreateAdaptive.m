@@ -22,11 +22,17 @@ if length(h.Settings.adaptive)>1 && isfield(h.Settings,'adaptive_general')
             order(bi) = order_bi(randperm(length(order_bi)));
         end
     elseif strcmp(h.Settings.adaptive_general.seqtype,'cond')
-        order=[];
-        for cp = 1:nCP
-            idx = ismember(h.Seq.condnum,h.condnum{cp}{:});
-            order(idx)=h.Settings.adaptive_general.seqtypecond(cp);
-        end
+        %if isfield(h.Seq,'condnum')
+            order=[];
+            %nCP = length(h.Settings.oddprob);
+            %h.condnum=h.Settings.condnum;
+            for cp = 1:length(h.Settings.adaptive_general.seqtypecond)
+                idx = ismember(h.Seq.cp_cond,cp);
+                order(idx)=h.Settings.adaptive_general.seqtypecond(cp);
+            end
+        %else
+            
+        %end
     end
 
     % Create trial order
@@ -69,6 +75,6 @@ if length(h.Settings.adaptive)>1 && isfield(h.Settings,'adaptive_general')
 else
     h.Seq.adapttype = ones(1,length(h.Seq.condnum));
 end
-hold on; plot(h.Seq.adapttype,'r')
+figure;plot(h.Seq.adapttype,'r')
 
 

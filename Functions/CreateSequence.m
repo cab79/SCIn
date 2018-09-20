@@ -8,11 +8,11 @@ if nargin>1
     % design type
     dtypes = varargin{1};
 else 
-    dtypes = '';
+    dtypes = {''};
 end
 
 for dt = 1:length(dtypes)
-    if ~isempty(dtypes)
+    if ~isempty(dtypes{1})
         % design type
         dtype = dtypes{dt};
 
@@ -408,7 +408,7 @@ end
 %sets_all = unique(setx_ind,'stable');
     
 for dt = 1:length(dtypes)
-    if ~isempty(dtypes)
+    if ~isempty(dtypes{1})
         dtype = dtypes{dt};
     else
         dtype='X';
