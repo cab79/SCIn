@@ -55,6 +55,13 @@ if isfield(h.Settings,'oddballmethod')
         h.seqtype.oddball=1;
     end
 end
+if ~isfield(h.Settings,'oddballvalue')
+    if isfield(h.Settings,'AL') && isfield(h.Settings.AL,'oddballvalue')
+        h.Settings.oddballvalue = h.Settings.AL.oddballvalue;
+    elseif isfield(h.Settings,'PL') && isfield(h.Settings.PL,'oddballvalue')
+        h.Settings.oddballvalue = h.Settings.PL.oddballvalue;
+    end
+end
 
 % select channels
 if isfield(h.Settings.stim(h.sn),'chan')
