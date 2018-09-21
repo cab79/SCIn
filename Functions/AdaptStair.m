@@ -452,6 +452,9 @@ if ~isempty(ci_para)
     end
     
     % USE VARIANCE TERMINATION RULE
+    if ~isfield(h.Settings.adaptive(atype),'maxtrial')
+        h.Settings.adaptive(atype).maxtrial = inf;
+    end
     ci_thresh=nan(length(ci_para),3);
     if ~isempty(ind) 
         for sd = 1:length(ci_para)
@@ -466,8 +469,8 @@ if ~isempty(ci_para)
                 %if  && 
                 if (abs(CI(2)-CI(1))<abs(x(end))/ci_para && x(end)<CI(2) && x(end)>CI(1)) || ...
                         (length(ind)>=h.Settings.adaptive(atype).maxtrial && x(end)<CI(2) && x(end)>CI(1))
-                    s.out.adaptive(end, 11) = x(end);
                     
+                    s.out.adaptive(end, 11) = x(end);
                     if ~isempty(h.Settings.adaptive_general.terminate)
                         s.terminate = [s.terminate atype];
                     end

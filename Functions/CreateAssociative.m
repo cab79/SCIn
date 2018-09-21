@@ -115,6 +115,13 @@ if use_PL
     end
     maxcon = max(h.Seq.condnum);
     h.Seq.condnum = h.Seq.condnum + (cp_ind-1)*maxcon;
+    
+    conduni=unique(h.Seq.condnum);
+    newcondnum=h.Seq.condnum;
+    for cu=1:length(conduni)
+        newcondnum(h.Seq.condnum==conduni(cu))=cu;
+    end
+    h.Seq.condnum=newcondnum;
 end
 
 figure
