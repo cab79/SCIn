@@ -81,7 +81,8 @@ switch h.Settings.stim(h.sn).control
                 
                 %Set DACA 
                 if isunix
-                    h.ljHandle.setDAC(h.stim(h.sn).inten*h.Settings.DAC_multiply)
+                    h.ljHandle.setDAC(h.stim(h.sn).inten*h.Settings.DAC_multiply);
+                    WaitSecs(0.1);
                 else
                     if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
                         try

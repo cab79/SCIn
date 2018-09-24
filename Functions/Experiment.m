@@ -282,6 +282,14 @@ while h.i<size(h.Seq.signal,2)
     % record stimulus timing (of last stimulus in trial)
     h.out.stimtime{h.i} = GetSecs;
     
+    % STIM marker on EEG
+    if isfield(h.Settings,'record_EEG')
+        if h.Settings.record_EEG
+            opt = 'mark';
+            h = recordEEG(h,opt);
+        end
+    end
+    
     % calculate ISI
     if isfield(h,'st_prev')
         isi = h.st-h.st_prev;
@@ -291,16 +299,6 @@ while h.i<size(h.Seq.signal,2)
     
     t=toc/60;
     disp(['Block ' num2str(h.Seq.blocks(h.i)) '/' num2str(max(h.Seq.blocks)) ', Trial' num2str(h.i) '. Elapsed time is ' num2str(t) ' mins. ISI is ' num2str(isi) ' s']);
-    
-    
-    % STIM marker on EEG
-    if isfield(h.Settings,'record_EEG')
-        if h.Settings.record_EEG
-            opt = 'mark';
-            h = recordEEG(h,opt);
-        end
-    end
-    
     
     % define the duration of this trial
     if length(h.Settings.trialdur)>1

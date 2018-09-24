@@ -182,7 +182,7 @@ case 'Adaptive'
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
     h.Settings.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.oddballvalue = {[1 2],[1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
     
     %% SEQUENCE
@@ -191,31 +191,27 @@ case 'Adaptive'
         % standard (left) vs oddball (right)
         0.5 0.5
         0.5 0.5
-        0.5 0.5
-        0.5 0.5
-        0.5 0.5
-        0.5 0.5
         ];
     % index of row of oddprob that are standards and oddballs. Can be
     % overridden by h.Settings.oddballvalue if using index
     h.Settings.standardind = 1; 
     h.Settings.oddind = 2; 
     % keep oddball trials apart by at least sep_odd standards
-    h.Settings.sep_odd = [0 0 0 0 0 0]; % for each CP condition
+    h.Settings.sep_odd = [0 0]; % for each CP condition
     % for sep_odd, which indices of h.Settings.oddballvalue to consider
     % each time? (each list will be considered separately)
-    h.Settings.sep_odd_ind = {[1 2],[1 2],[1 2],[1 2],[1 2],[1 2]};
-    h.Settings.sep_odd_tol = [1 1 1 1 1 1]; % set these to be as high as possible (max 1)
+    h.Settings.sep_odd_ind = {[1 2],[1 2]};
+    h.Settings.sep_odd_tol = [1 1]; % set these to be as high as possible (max 1)
     % for each set, ensure a number of leading standards 
-    h.Settings.std_lead = [0 0 0 0 0 0]; % for each CP condition
+    h.Settings.std_lead = [0 0]; % for each CP condition
     % number of sets to randomise together
     h.Settings.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.n_odd = 10*[12 12 12 12 12 12]; % overrides h.Settings.totdur
+    h.Settings.n_odd = 10*[12 12]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
-    h.Settings.n_odd_set = 10*[12 12 12 12 12 12]; % overrides h.Settings.totdur
+    h.Settings.n_odd_set = 10*[12 12]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.rand_set = [0 0 0 0 0 0]; 
+    h.Settings.rand_set = [0 0]; 
     
     
     %% RESPONSE PARAMETERS
@@ -247,9 +243,9 @@ case 'Adaptive'
     % alternate or randomise runs over types? Alt must have equal number of
     % runs for each adapttype. Cond = one type per CP block
     h.Settings.adaptive_general.seqtype = 'cond'; % 'alt', 'rand', 'cond' 
-    h.Settings.adaptive_general.seqtypecond = [1 2 1 2 1 2]; %if 'cond', associate each CP with an adaptive type
+    h.Settings.adaptive_general.seqtypecond = [1 2]; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
-    h.Settings.adaptive_general.selectcond.cp = [1:6]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.selectcond.cp = [1:2]; % which CP condition to run adaptive on?
     h.Settings.adaptive_general.stim = 1; % which stim to run adaptive on?
     h.Settings.adaptive_general.terminate = 'block'; % terminate within each block only
     h.Settings.adaptive_general.reestimate = ''; % 'block' to re-estimate with wider prior each block
@@ -298,7 +294,8 @@ case 'Adaptive'
     % maximum amount - for safety
     h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
-    h.Settings.adaptive(1).maxtrial = 30;
+    h.Settings.adaptive(1).maxtrial = inf;
+    h.Settings.adaptive(1).expected_change = 10; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -343,7 +340,8 @@ case 'Adaptive'
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(2).levelmax = 100; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
-    h.Settings.adaptive(2).maxtrial = 30;
+    h.Settings.adaptive(2).maxtrial = inf;
+    h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     
     case 'RO' % roving oddball (EEG)
 
@@ -1087,7 +1085,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).nRuns = 100*12;
     % max number of thresh estimates to average over to get overall
     % estimate (for plotting only - red line)
-    h.Settings.adaptive(1).av_thresh = [50,75,100];
+    h.Settings.adaptive(1).av_thresh = [];
     h.Settings.adaptive(1).ci_thresh = 20;
     % number of trials each run
     h.Settings.adaptive(1).trialsperrun = 1;
@@ -1124,6 +1122,7 @@ case 'Adaptive'
     % maximum amount - for safety
     h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
+    h.Settings.adaptive(1).expected_change = 10; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -1131,7 +1130,7 @@ case 'Adaptive'
     % how many of each to run?
     h.Settings.adaptive(2).nRuns = 100*12;
     % max number of thresh estimates to average over to get overall estimate
-    h.Settings.adaptive(2).av_thresh = [50,75,100];
+    h.Settings.adaptive(2).av_thresh = [];
     h.Settings.adaptive(2).ci_thresh = 20;
     % number of trials each run
     h.Settings.adaptive(2).trialsperrun = 1;
@@ -1168,6 +1167,7 @@ case 'Adaptive'
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(2).levelmax = 100; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
+    h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     
    
    case 'ALPL_EEG'

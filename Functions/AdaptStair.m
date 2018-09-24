@@ -452,7 +452,7 @@ if ~isempty(ci_para)
     end
     
     % USE VARIANCE TERMINATION RULE
-    if ~isfield(h.Settings.adaptive(atype),'maxtrial')
+    if ~isfield(h.Settings.adaptive(atype),'maxtrial') || isempty(h.Settings.adaptive(atype).maxtrial)
         h.Settings.adaptive(atype).maxtrial = inf;
     end
     ci_thresh=nan(length(ci_para),3);
@@ -674,19 +674,27 @@ if setup
 
     s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(atype).levelmax); % highest threshold value possible; 
     s.p(atype).init.zestminrange = abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; 
-    range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
-    slope = (100*s.p(atype).init.zestinit_diffLvl)/range; % make the prior tighter if thresh is near to zero
+    %range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
+    slope = 1/h.Settings.adaptive(atype).expected_change;
     
     % ZEST params for initial p.d.f.
     s.p(atype).init.zestA = 1;
-    s.p(atype).init.zestB = slope; % = .025; % B= 2.5 for Marvit et al., 2003
+    s.p(atype).init.zestB = slope; % = .025; % B= 2.5 for Marvit et al., 2003. 
     s.p(atype).init.zestC = slope; % = .1; %C = 2.5 for Marvit et al., 2003;
 
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
-    s.p(atype).init.zestfa = 0.05;   %gamma in the text, false alarm rate (guess rate for 2AFC)
-    s.p(atype).init.zestmiss = 0.05; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
-    s.p(atype).init.zestbeta = 1; %10;    %beta in the text, slope of response function
-    s.p(atype).init.zesteta = 0.1;     %eta in the text, "sweat factor" or response criterion parameter
+    if strcmp(h.Settings.adaptive(atype).type,'discrim')
+        s.p(atype).init.zestfa = 0.5; %gamma in the text, false alarm rate (guess rate for 2AFC)
+    else
+        s.p(atype).init.zestfa = 0;
+    end
+    s.p(atype).init.zestmiss = 0.25; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
+    s.p(atype).init.zestbeta = slope; %10;    %beta in the text, slope of response function. controls the rate of change throughout the whole expt
+    if strcmp(h.Settings.adaptive(atype).type,'discrim')
+        s.p(atype).init.zesteta = 0.1; % eta in the text, "sweat factor" or response criterion parameter
+    else
+        s.p(atype).init.zesteta = 0;%0.1; % eta in the text, "sweat factor" or response criterion parameter
+    end
 
     % UNCOMMENT IF USING LOG
     %s.p(atype).init.zestconvert = {'delta_L', 'sd_pdf'};
