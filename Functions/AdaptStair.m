@@ -691,7 +691,7 @@ if setup
     s.p(atype).init.zestmiss = 0.25; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
     s.p(atype).init.zestbeta = slope; %10;    %beta in the text, slope of response function. controls the rate of change throughout the whole expt
     if strcmp(h.Settings.adaptive(atype).type,'discrim')
-        s.p(atype).init.zesteta = 0.1; % eta in the text, "sweat factor" or response criterion parameter
+        s.p(atype).init.zesteta = 2/slope;%0.1; % eta in the text, "sweat factor" or response criterion parameter
     else
         s.p(atype).init.zesteta = 0;%0.1; % eta in the text, "sweat factor" or response criterion parameter
     end
