@@ -375,12 +375,20 @@ switch h.Settings.adaptive(atype).method
 % %             end
 %         end
 %         if ~nochange
-            [thresh,s] = ZEST_marvit(go_down,[],s,atype);
-            s.a(atype).expthresholds(s.block)=thresh;
-            if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
-                s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);
+            if s.trial>h.Settings.adaptive(atype).ignoretrials 
+                if s.trial>h.Settings.adaptive(atype).ignoretrials+1
+                    s.a(atype).eta = s.a(atype).expthresholds(s.block);% dynamically update the sweat factor to be the previous thresh estimate
+                end
+                [thresh,s] = ZEST_marvit(go_down,[],s,atype);
+                s.a(atype).expthresholds(s.block)=thresh;
+                if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
+                    s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);
+                end
+                s.a(atype).StimulusLevel = s.a(atype).expthresholds(s.block);
+            else
+                s.a(atype).expthresholds(s.block)=nan;
             end
-            s.a(atype).StimulusLevel = s.a(atype).expthresholds(s.block);
+            
 %         else
 %             s.a(atype).expthresholds(s.block) = s.a(atype).StimulusLevel;
 %         end
@@ -673,7 +681,7 @@ if setup
     s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(atype).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
 
     s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(atype).levelmax); % highest threshold value possible; 
-    s.p(atype).init.zestminrange = abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; 
+    s.p(atype).init.zestminrange = -s.p(atype).init.zestmaxrange;%abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; 
     %range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
     slope = 1/h.Settings.adaptive(atype).expected_change;
     
@@ -691,7 +699,7 @@ if setup
     s.p(atype).init.zestmiss = 0.25; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
     s.p(atype).init.zestbeta = slope; %10;    %beta in the text, slope of response function. controls the rate of change throughout the whole expt
     if strcmp(h.Settings.adaptive(atype).type,'discrim')
-        s.p(atype).init.zesteta = 2/slope;%0.1; % eta in the text, "sweat factor" or response criterion parameter
+        s.p(atype).init.zesteta = 1/slope;%0.1; % eta in the text, "sweat factor" or response criterion parameter
     else
         s.p(atype).init.zesteta = 0;%0.1; % eta in the text, "sweat factor" or response criterion parameter
     end

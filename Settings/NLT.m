@@ -151,7 +151,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 10; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = inf; % if 0, consecutive stimuli will occur with no gap
     h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
     h.Settings.wait=0; % within-trial frequency (Hz); one value per nstim 
     
@@ -296,6 +296,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
     h.Settings.adaptive(1).expected_change = 10; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    h.Settings.adaptive(1).ignoretrials = 0;
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -342,6 +343,7 @@ case 'Adaptive'
     h.Settings.adaptive(2).levelmin = 0;
     h.Settings.adaptive(2).maxtrial = inf;
     h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    h.Settings.adaptive(1).ignoretrials = 0;
     
     case 'RO' % roving oddball (EEG)
 
@@ -841,7 +843,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 10; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = inf; % if 0, consecutive stimuli will occur with no gap
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
@@ -1123,6 +1125,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).expected_change = 10; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    h.Settings.adaptive(1).ignoretrials = 5;
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -1168,7 +1171,7 @@ case 'Adaptive'
     h.Settings.adaptive(2).levelmax = 100; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
     h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
-    
+    h.Settings.adaptive(2).ignoretrials = 5;
    
    case 'ALPL_EEG'
 

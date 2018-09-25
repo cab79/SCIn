@@ -177,7 +177,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 5; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = inf; % if 0, consecutive stimuli will occur with no gap
     % Pattern type method: intensity, pitch. Not supported: channel, duration
     h.Settings.nstim_trial = 2; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
@@ -389,7 +389,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
     h.Settings.adaptive(1).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
-    
+    h.Settings.adaptive(1).ignoretrials = 0;
     
     case 'AL'
 
@@ -713,7 +713,7 @@ case 'Adaptive'
     % duration of stimulus sequence in seconds
     h.Settings.totdur = 0; 
     % duration of trial in seconds
-    h.Settings.trialdur = 10; % if 0, consecutive stimuli will occur with no gap
+    h.Settings.trialdur = inf; % if 0, consecutive stimuli will occur with no gap
     % Tactile: number of pulses per trial
     h.Settings.nstim_trial = 3; % set to zero to be determined by stimdur
     % Tactile: within-trial frequency (Hz) 
@@ -1025,8 +1025,8 @@ case 'Adaptive'
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(1).levelmax = 1; % should be a DIFFERENCE value. 
     h.Settings.adaptive(1).levelmin = 0;
-    h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
-    
+    h.Settings.adaptive(1).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    h.Settings.adaptive(1).ignoretrials = 5;
     
 end
 
