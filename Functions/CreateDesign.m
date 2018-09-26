@@ -1,8 +1,12 @@
 function h = CreateDesign(h)
 
 %% Perceptual learning
-if isfield(h.Settings,'PL')
+if isfield(h.Settings,'PL') && isfield(h.Settings,'AL')
     h = CreateSequence(h,{'PL','AL'});
+elseif isfield(h.Settings,'PL')
+    h = CreateSequence(h,{'PL'});
+elseif isfield(h.Settings,'AL')
+    h = CreateSequence(h,{'AL'});
 end
 
 %% Associative learning: add cue sequence

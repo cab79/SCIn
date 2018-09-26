@@ -5,7 +5,129 @@ switch opt
     case 'setoptions'
         
     % settings options
-    h.SettingsOptions = {'Ascend','Adaptive','RO','ALPL','ALPL_EEG'};
+    h.SettingsOptions = {'audio_test','Ascend','Adaptive','RO','ALPL','ALPL_EEG'};
+    
+    case 'audio_test'
+
+    % set general options
+    h = setgeneral(h);
+    h.Settings.labjack=0;
+    h.Settings.record_EEG='';
+    
+    % FILENAME OF SEQUENCE CREATION FUNCTION (without .m)
+    h.SeqFun = 'CreateDesign';
+    
+    %% TRIALS or CONTINUOUS?
+    h.Settings.design = 'trials';
+    % if continuous, how many trials ahead should be in the player schedule?
+    % (applied to stimulation via soundcard only)
+    h.Settings.ntrialsahead = 0;  %0 = all trials
+    
+    %% EXPERIMENTAL CONDIITIONS
+    % name the settings that define orthogonal conditions at a different row
+    h.Settings.conds = {'oddprob'};
+    
+    %% Output options
+    % save sinwave from all trials as part of stim sequence file
+    %h.Settings.savesinwave = 0;
+    
+    %% BLOCKING/RUN OPTIONS
+    % 'divide' = equally divide trials by nblocks; 
+    % 'cond' = separate block for each condition
+    h.Settings.blockopt = '';
+    % further options for 'divide':
+        % number of blocks (containing multiple conditions)
+        %h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
+        %distribute conditions equally among blocks
+    %    h.Settings.distblocks = 1;
+    % options to start sequence at beginning of every run
+    % 'msgbox', 'labjack', 'buttonpress', 'audio' - can have more than one in
+    % cell array
+    h.Settings.blockstart = {'buttonpress'}; % audio,labjack,audio
+    h.Settings.pauseeachblock = 0; % pause after every block?
+    % names of any audiofiles
+    h.Settings.audiofile = {};
+    
+    %% Condition-independent stimulus parameters - can be superceded by condition-dependent parameters
+    % duration of stimulus sequence in seconds
+    h.Settings.totdur = 0; 
+    % duration of trial in seconds
+    h.Settings.trialdur = 1.3; % if 0, consecutive stimuli will occur with no gap
+    % Tactile: number of pulses per trial
+    h.Settings.nstim_trial = 1; % set to zero to be determined by stimdur
+    % Tactile: within-trial frequency (Hz) 
+    h.Settings.wait=[0]; % one value per nstim 
+    
+    %% first stimulus: audio
+    % duration of stimulus in seconds
+    h.Settings.stim(1).dur = [0.15 0.15]; % duration of stimulus in seconds; modified by oddball settings
+    h.Settings.stim(1).patternmethod = 'pitch';% Pattern type method: intensity, pitch. Not supported: channel, duration
+    h.Settings.stim(1).patternvalue = {[540 500],[500 540]}; % one per stimdur in each cell; one cell per oddball value
+    h.Settings.stim(1).durtype = 'reg'; % not needed unless 'rand'
+    h.Settings.stim(1).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).maxinten = 0; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
+    h.Settings.stim(1).f0 = 500; % pitch
+    h.Settings.stim(1).inten_type = 'dB'; % either 'dB' or 'abs'
+    h.Settings.stim(1).df = 0;
+    h.Settings.stim(1).atten = {'inten_diff',1}; % attenuation level in decibels
+    h.Settings.stim(1).attenchan = [1 2]; % apply attenuation (e.g. during thresholding) to these chans
+    h.Settings.stim(1).control='PsychPortAudio'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
+    h.Settings.stim(1).chan = [1 2]; 
+    h.Settings.stim(1).nrchannels = 2; % total number of channels, e.g. on sound card
+    h.Settings.stim(1).Tukey = 0.25; % Apply Tukey window?
+    h.Settings.stim(1).Tukeytype = 2; % 1 = apply to each tone within pattern; 2 = apply to whole pattern
+
+    %% CHANGING STIMULUS INTENSITY EVERY X PULSES
+    % REFER TO "TIMER STOP": https://labjack.com/support/ud/df-lj-app-guide/10.5
+    
+   %% Condition-dependent stimulus parameters
+    % Condition method: intensity, pitch, channel
+    h.Settings.conditionmethod = {};
+    h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
+    
+    % Oddball method: intensity, index, pitch, channel
+    h.Settings.PL.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
+    h.Settings.PL.oddballvalue = {[1 2],[1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.PL.oddballtype = 'classical'; % options: 'roving', 'classical'
+
+     %% SEQUENCES: PL
+    % Change probablity (CP): each condition is in rows
+    h.Settings.PL.oddprob = [
+        % standard (left) vs oddball (right)
+        0.5 0.5
+        ];
+    % index of cols of oddprob that are standards and oddballs. Can be
+    % overridden by h.Settings.oddballvalue if using index
+    h.Settings.PL.standardind = 1; 
+    h.Settings.PL.oddind = 2; 
+    % keep oddball trials apart by at least sep_odd standards
+    h.Settings.PL.sep_odd = [0];%[0 2 0 2 0 2 0 2 0 2 0 2]; % for each CP condition
+    % for sep_odd, which indices of h.Settings.oddballvalue to consider
+    % each time? (each list will be considered separately)
+    h.Settings.PL.sep_odd_ind = {[1 2]};
+    h.Settings.PL.sep_odd_tol = [1]; % set these to be as high as possible (max 1)
+    % for each set, ensure a number of leading standards 
+    h.Settings.PL.std_lead = [0]; % for each CP condition
+    % number of sets to randomise together
+    h.Settings.PL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
+    % min number of oddballs within each CP condition
+    h.Settings.PL.n_odd = [100]; % overrides h.Settings.totdur
+    % min number of oddballs per randomised set, per CP
+    h.Settings.PL.n_odd_set = [100]; % overrides h.Settings.totdur
+    % randomise sets?
+    h.Settings.PL.rand_set = [1]; 
+    % condition numbers
+    h.Settings.PL.condnum = [
+        1 2
+        ]; 
+    
+    
+    %% RESPONSE PARAMETERS
+    % record responses during experiment? 0 or 1
+    h.Settings.record_response = 0;
+   
     
     case 'Ascend'
 
