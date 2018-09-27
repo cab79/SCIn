@@ -31,13 +31,13 @@ switch opt
         %    keyIsDown = KbCheck;
         %end
         try % if there is already a queue
-            KbQueueWait; 
-            KbQueueFlush;
+            KbQueueWait(h.k_ind); 
+            KbQueueFlush(h.k_ind);
         catch
-            KbQueueCreate;	
-            KbQueueStart;
-            KbQueueWait; 
-            KbQueueRelease;
+            KbQueueCreate(h.k_ind);	
+            KbQueueStart(h.k_ind);
+            KbQueueWait(h.k_ind); 
+            KbQueueRelease(h.k_ind);
         end
         disp('Button pressed: Starting experiment');
         set(GUIh.info, 'String', 'Running sequence...');
@@ -56,7 +56,7 @@ switch opt
             disp(['Waiting for scanner trigger ' num2str(i)])
             while scantrig==0 
                 keyIsDown=0;
-                [keyIsDown, presstime, keyCode, deltaSecs] = KbCheck;
+                [keyIsDown, presstime, keyCode, deltaSecs] = KbCheck(h.k_ind);
                 if keyIsDown
                     btnstr = KbName(keyCode);
                     if ismember(btnstr,h.Settings.triggeropt)

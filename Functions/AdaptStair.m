@@ -376,10 +376,13 @@ switch h.Settings.adaptive(atype).method
 %         end
 %         if ~nochange
             if s.trial>h.Settings.adaptive(atype).ignoretrials 
-                if s.trial>h.Settings.adaptive(atype).ignoretrials+1
+                if s.trial>h.Settings.adaptive(atype).ignoretrials+1 && ~isnan(s.a(atype).expthresholds(s.block))
                     s.a(atype).eta = s.a(atype).expthresholds(s.block);% dynamically update the sweat factor to be the previous thresh estimate
                 end
                 [thresh,s] = ZEST_marvit(go_down,[],s,atype);
+                if isnan(thresh)
+                    error('threshold value is a NaN!')
+                end
                 s.a(atype).expthresholds(s.block)=thresh;
                 if strcmp(h.Settings.stim(h.sn).inten_type,'dB')
                     s.a(atype).expthresholds(s.block)=-s.a(atype).expthresholds(s.block);

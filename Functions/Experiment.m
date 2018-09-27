@@ -17,6 +17,13 @@ if ~isfield(h.Settings,'pauseeachblock')
     h.Settings.pauseeachblock=1;
 end
 
+
+%[k_ind,~,~] = GetKeyboardIndices;
+%if max(k_ind)>12
+    h.k_ind=-1;
+%else
+%    h.k_ind=[];
+%end
 switch opt
     
     case 'setup'
@@ -913,7 +920,7 @@ switch opt
         if isfield(h.Settings,'buttontype')
             if ~isempty(h.Settings.buttontype)
                 if h.Settings.record_response
-                    [h.pressedlasttrial, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck;
+                    [h.pressedlasttrial, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(h.k_ind);
                     if h.pressedlasttrial
                         h.out.firstpressbutton{h.i} = KbName(firstPress);
                         h.out.firstpress{h.i} = firstPress(firstPress>0);
@@ -940,7 +947,7 @@ switch opt
                   %      if ~strcmp(btnstr,'Waiting')
 
                     % OPTION 2: get kbcheck data
-                    [keyIsDown,presstime, keyCode, deltaSecs] = KbCheck;
+                    [keyIsDown,presstime, keyCode, deltaSecs] = KbCheck(h.k_ind);
                     btnstr = KbName(keyCode);
 
                     if keyIsDown && ~isempty(btnstr)
@@ -985,7 +992,7 @@ switch opt
         if isfield(h.Settings,'buttontype')
             if ~isempty(h.Settings.buttontype)
                 if h.Settings.record_response
-                    [h.pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck;
+                    [h.pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(h.k_ind);
                     
                     % quit PTB Screen
                     if h.pressed

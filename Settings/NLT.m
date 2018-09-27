@@ -343,7 +343,7 @@ case 'Adaptive'
     h.Settings.adaptive(2).levelmin = 0;
     h.Settings.adaptive(2).maxtrial = inf;
     h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
-    h.Settings.adaptive(1).ignoretrials = 0;
+    h.Settings.adaptive(2).ignoretrials = 0;
     
     case 'RO' % roving oddball (EEG)
 
