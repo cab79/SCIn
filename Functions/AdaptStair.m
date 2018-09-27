@@ -697,7 +697,7 @@ if setup
     if strcmp(h.Settings.adaptive(atype).type,'discrim')
         s.p(atype).init.zestfa = 0.5; %gamma in the text, false alarm rate (guess rate for 2AFC)
     else
-        s.p(atype).init.zestfa = 0;
+        s.p(atype).init.zestfa = 0; % for detect, making this larger decreases the incremental change. Can get it "wrong" as it is just relative to last stimulus.
     end
     s.p(atype).init.zestmiss = 0.25; %delta in the text, miss rate (1/2 inattention rate for 2AFC)
     s.p(atype).init.zestbeta = slope; %10;    %beta in the text, slope of response function. controls the rate of change throughout the whole expt
