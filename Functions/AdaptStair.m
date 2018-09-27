@@ -191,12 +191,41 @@ elseif strcmp(opt,'responded')
     if isempty(resi)
         return
     end
+    s.SubjectInaccuracyRatio(s.trial)=1;
     if resfun == correctsignal && strcmp(h.Settings.adaptive(atype).type,'discrim')
     %s.SubjectAccuracy(s.trial)= EvaluateAnswer(CorrectAnswer,s.feedback,Question);   %evaluing the subject answer (right or wrong)
         s.SubjectAccuracy(s.trial)= 1;
-    else
+    elseif strcmp(h.Settings.adaptive(atype).type,'discrim')
         s.SubjectAccuracy(s.trial)= 0;
+    elseif strcmp(h.Settings.adaptive(atype).type,'detect') && strcmp(h.Settings.adaptive(atype).subtype,'ratio') 
+        s.SubjectAccuracy(s.trial)= NaN;
+        if numel(s.out.adaptive)>1
+            % Ratio of accuracy over last X trials for each stimulus level
+            sigval = h.Settings.adaptive(atype).signalval;
+            trial_ind = s.out.adaptive(:,1);
+            all_stim = h.Seq.signal(stim,trial_ind);
+            min_trials = h.Settings.adaptive(atype).ratio_trials;
+            ind1 = find(all_stim==sigval(1));
+            ind2 = find(all_stim==sigval(2));
+            if length(ind1)>min_trials && length(ind2)>min_trials
+                ind1 = ind1(end-min_trials+1:end);
+                ind2 = ind2(end-min_trials+1:end);
+                if length(ind1)==min_trials && length(ind2)==min_trials
+                    all_resp = s.out.adaptive(:,8)';
+                    correct_all = all_stim==all_resp;
+                    inaccuracy_ratio=sum(~correct_all(ind1))/sum(~correct_all(ind2));
+                    s.SubjectInaccuracyRatio(s.trial)= inaccuracy_ratio;
+                end
+            end
+        end
+        if s.SubjectInaccuracyRatio(s.trial) > 1/h.Settings.adaptive(atype).accuracy_ratio && s.SubjectInaccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
+            disp(['ratio within normal range: ' num2str(s.SubjectInaccuracyRatio(s.trial))])
+            return
+        end
+    else
+        s.SubjectAccuracy(s.trial)= NaN;
     end
+    
 end
 
 disp(['Running Adaptive: ' h.Settings.adaptive(atype).type])
@@ -313,8 +342,12 @@ switch h.Settings.adaptive(atype).method
         go_down=0;go_up=0;
         if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
             go_down=1;
-        elseif strcmp(h.Settings.adaptive(atype).type,'detect') && resfun == 2
-            go_down=1;
+        elseif strcmp(h.Settings.adaptive(atype).type,'detect') 
+            if strcmp(h.Settings.adaptive(atype).subtype,'ratio') && s.SubjectInaccuracyRatio(s.trial) > h.Settings.adaptive(atype).accuracy_ratio
+                go_down=1;
+            elseif resfun == 2
+                go_down=1;
+            end
         else
             go_up=1;
         end
@@ -376,8 +409,8 @@ switch h.Settings.adaptive(atype).method
 %         end
 %         if ~nochange
             if s.trial>h.Settings.adaptive(atype).ignoretrials 
-                if s.trial>h.Settings.adaptive(atype).ignoretrials+1 && ~isnan(s.a(atype).expthresholds(s.block))
-                    s.a(atype).eta = s.a(atype).expthresholds(s.block);% dynamically update the sweat factor to be the previous thresh estimate
+                if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.trial>h.Settings.adaptive(atype).ignoretrials+1 && ~isnan(s.a(atype).expthresholds(s.block))
+                    s.a(atype).eta = s.a(atype).expthresholds(s.block)/h.Settings.adaptive(atype).eta_divide;% dynamically update the sweat factor to be half the previous thresh estimate
                 end
                 [thresh,s] = ZEST_marvit(go_down,[],s,atype);
                 if isnan(thresh)
@@ -409,6 +442,7 @@ s.rowofoutput (1, 10) = atype;
 s.rowofoutput (1, 11) = nan; % mean of moving averages - populated later if trend ends
 s.rowofoutput (1, 12) = nan; % % corr for discrim
 s.rowofoutput (1, 13) = h.Seq.blocks(h.i);
+s.rowofoutput (1, 14) = s.SubjectInaccuracyRatio(s.trial-1);
 
 % UPDATE THE GLOBAL OUTPUT VARIABLE
 s.out.adaptive = [s.out.adaptive; s.rowofoutput];

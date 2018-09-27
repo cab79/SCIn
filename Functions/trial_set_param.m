@@ -99,7 +99,7 @@ switch h.Settings.stim(h.sn).control
                 end
 
                 % only do this if it's a discrim trial, not a detect trial
-                if h.Seq.adapttype(h.i) == discrim
+                if h.Seq.adapttype(h.i)==discrim || (h.Seq.adapttype(h.i)==detect && strcmp(h.Settings.adaptive(detect).subtype,'ratio'))
                     % calculate intensity
                     if h.Seq.signal(h.sn,h.i)==h.sn
                         h.stim(h.sn).inten = h.stim(h.sn).inten_mean + h.Settings.adaptive(discrim).stepdir * h.stim(h.sn).inten_diff / 2;
