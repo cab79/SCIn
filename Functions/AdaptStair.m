@@ -207,7 +207,7 @@ elseif strcmp(opt,'responded')
             min_trials = h.Settings.adaptive(atype).ratio_trials;
             ind1 = find(all_stim==sigval(1));
             ind2 = find(all_stim==sigval(2));
-            if length(ind1)>min_trials && length(ind2)>min_trials
+            if length(ind1)>=min_trials && length(ind2)>=min_trials
                 ind1 = ind1(end-min_trials+1:end);
                 ind2 = ind2(end-min_trials+1:end);
                 if length(ind1)==min_trials && length(ind2)==min_trials
@@ -343,8 +343,10 @@ switch h.Settings.adaptive(atype).method
         if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.SubjectAccuracy(s.trial) == 1
             go_down=1;
         elseif strcmp(h.Settings.adaptive(atype).type,'detect') 
-            if strcmp(h.Settings.adaptive(atype).subtype,'ratio') && s.SubjectInaccuracyRatio(s.trial) > h.Settings.adaptive(atype).accuracy_ratio
-                go_down=1;
+            if strcmp(h.Settings.adaptive(atype).subtype,'ratio') 
+                if sigval(1)==2 && s.SubjectInaccuracyRatio(s.trial) >= h.Settings.adaptive(atype).accuracy_ratio
+                    go_down=1;
+                end
             elseif resfun == 2
                 go_down=1;
             end

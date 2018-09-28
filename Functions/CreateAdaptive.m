@@ -3,7 +3,7 @@ function h = CreateAdaptive(h)
 %% create Adaptive type order
 
 if ~isfield(h.Settings.adaptive,'subtype')
-    h.Settings.adaptive.subtype = [];
+    [h.Settings.adaptive(:).subtype] = deal([]);
 end
 
 if length(h.Settings.adaptive)>1 && isfield(h.Settings,'adaptive_general')
