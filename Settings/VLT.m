@@ -317,7 +317,7 @@ case 'Adaptive_new'
     h.Settings.adaptive(1).buttonfun = {'LeftArrow','RightArrow'}; 
     % adaptive staircase: corresponding signal values that would signify a
     % correct answer
-    h.Settings.adaptive(1).signalval = [1 2];
+    h.Settings.adaptive(1).signalval = [2 1];
     % starting level of adaptive staircase
     h.Settings.adaptive(1).startinglevel = 0.5; % should be a value in mA. 
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
@@ -327,10 +327,11 @@ case 'Adaptive_new'
     h.Settings.adaptive(1).levelmax = 1; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
-    h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(1).ignoretrials = 0;
     h.Settings.adaptive(1).accuracy_ratio = 2; % for ratio subtype
-    h.Settings.adaptive(1).ratio_trials = 5; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).ratio_trials = 12; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).slope_stimratio = 4; % number to divide stimulus level by, to calculate slope of ZEST
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -376,9 +377,11 @@ case 'Adaptive_new'
     h.Settings.adaptive(2).levelmax = 1; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
     h.Settings.adaptive(2).maxtrial = inf;
-    h.Settings.adaptive(2).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(2).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(2).ignoretrials = 0;
     h.Settings.adaptive(2).eta_divide = 2;
+    h.Settings.adaptive(2).slope_stimratio = 2; % number to divide stimulus level by, to calculate slope of ZEST. Should be larger for thresholding, smaller for adjustments during an expt
+    
     
 case 'Adaptive'
 
@@ -634,8 +637,11 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmax = 1; % should be a DIFFERENCE value. 
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
-    h.Settings.adaptive(1).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(1).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(1).ignoretrials = 0;
+    h.Settings.adaptive(1).eta_divide = 2;
+    h.Settings.adaptive(1).slope_stimratio = 2; % number to divide stimulus level by, to calculate slope of ZEST. Should be larger for thresholding, smaller for adjustments during an expt
+    
     
     case 'AL'
 
@@ -1243,7 +1249,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).buttonfun = {'LeftArrow','RightArrow'}; 
     % adaptive staircase: corresponding signal values that would signify a
     % correct answer
-    h.Settings.adaptive(1).signalval = [1 2];
+    h.Settings.adaptive(1).signalval = [2 1];
     % starting level of adaptive staircase
     h.Settings.adaptive(1).startinglevel = 0.5; % should be a value in mA. 
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
@@ -1253,10 +1259,11 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmax = 1; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
-    h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(1).ignoretrials = 0;
     h.Settings.adaptive(1).accuracy_ratio = 2; % for ratio subtype
-    h.Settings.adaptive(1).ratio_trials = 5; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).ratio_trials = 12; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).slope_stimratio = 16; % number to divide stimulus level by, to calculate slope of ZEST
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -1302,9 +1309,10 @@ case 'Adaptive'
     h.Settings.adaptive(2).levelmax = 1; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
     h.Settings.adaptive(2).maxtrial = inf;
-    h.Settings.adaptive(2).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(2).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(2).ignoretrials = 5;
     h.Settings.adaptive(2).eta_divide = 2;
+    h.Settings.adaptive(2).slope_stimratio = 4; % number to divide stimulus level by, to calculate slope of ZEST. Should be larger for thresholding, smaller for adjustments during an expt
     
 end
 

@@ -416,7 +416,8 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
-    h.Settings.adaptive(1).expected_change = 10; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    h.Settings.adaptive(1).slope_stimratio = 4; % number to divide stimulus level by, to calculate slope of ZEST
+    %h.Settings.adaptive(1).expected_change = 10; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(1).ignoretrials = 0;
     
     %% ADAPTIVE 2
@@ -463,8 +464,11 @@ case 'Adaptive'
     h.Settings.adaptive(2).levelmax = 100; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
     h.Settings.adaptive(2).maxtrial = inf;
-    h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(2).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(2).ignoretrials = 0;
+    h.Settings.adaptive(2).eta_divide = 2;
+    h.Settings.adaptive(2).slope_stimratio = 1; % number to divide stimulus level by, to calculate slope of ZEST. Should be larger for thresholding, smaller for adjustments during an expt
+    
     
     case 'RO' % roving oddball (EEG)
 
@@ -1203,6 +1207,7 @@ case 'Adaptive'
     
     %% ADAPTIVE 1
     h.Settings.adaptive(1).type = 'detect';
+    h.Settings.adaptive(1).subtype = 'ratio';
     h.Settings.adaptive(1).updown = [1 1];
     % how many of each to run?
     h.Settings.adaptive(1).nRuns = 100*12;
@@ -1245,8 +1250,11 @@ case 'Adaptive'
     % maximum amount - for safety
     h.Settings.adaptive(1).levelmax = 100; % should be value in mA. 
     h.Settings.adaptive(1).levelmin = 0;
-    h.Settings.adaptive(1).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(1).expected_change = 5; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(1).ignoretrials = 5;
+    h.Settings.adaptive(1).accuracy_ratio = 2; % for ratio subtype
+    h.Settings.adaptive(1).ratio_trials = 12; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).slope_stimratio = 16; % number to divide stimulus level by, to calculate slope of ZEST
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
@@ -1291,9 +1299,11 @@ case 'Adaptive'
     % maximum amount of the difference value (should be a small fraction, e.g. 1/5th, of the stimulus intensity)
     h.Settings.adaptive(2).levelmax = 100; % should be a DIFFERENCE value in mA.
     h.Settings.adaptive(2).levelmin = 0;
-    h.Settings.adaptive(2).expected_change = 2; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
+    %h.Settings.adaptive(2).expected_change = 2; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(2).ignoretrials = 5;
-   
+    h.Settings.adaptive(2).eta_divide = 2;
+    h.Settings.adaptive(2).slope_stimratio = 4; % number to divide stimulus level by, to calculate slope of ZEST. Should be larger for thresholding, smaller for adjustments during an expt
+    
    case 'ALPL_EEG'
 
     % set general options

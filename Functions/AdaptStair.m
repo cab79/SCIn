@@ -409,6 +409,9 @@ switch h.Settings.adaptive(atype).method
 %         end
 %         if ~nochange
             if s.trial>h.Settings.adaptive(atype).ignoretrials 
+                % update slope of psychometric function
+                s.a(atype).beta = 1/ (s.a(atype).StimulusLevel/h.Settings.adaptive(atype).slope_stimratio);
+                % update eta
                 if strcmp(h.Settings.adaptive(atype).type,'discrim') && s.trial>h.Settings.adaptive(atype).ignoretrials+1 && ~isnan(s.a(atype).expthresholds(s.block))
                     s.a(atype).eta = s.a(atype).expthresholds(s.block)/h.Settings.adaptive(atype).eta_divide;% dynamically update the sweat factor to be half the previous thresh estimate
                 end
@@ -718,9 +721,11 @@ if setup
     s.p(atype).init.zestinit_diffLvl = abs(h.Settings.adaptive(atype).startinglevel); %10; % initial difference level used for Fig 1A of Marvit et al.	was 3 db
 
     s.p(atype).init.zestmaxrange = abs(h.Settings.adaptive(atype).levelmax); % highest threshold value possible; 
-    s.p(atype).init.zestminrange = -s.p(atype).init.zestmaxrange;%abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; 
+    s.p(atype).init.zestminrange = abs(h.Settings.adaptive(atype).levelmin); % lowest threshold value possible; % -s.p(atype).init.zestmaxrange;
     %range = s.p(atype).init.zestmaxrange-s.p(atype).init.zestminrange;
-    slope = 1/h.Settings.adaptive(atype).expected_change;
+    
+    % initial slope
+    slope = 1/ (s.a(atype).StimulusLevel/h.Settings.adaptive(atype).slope_stimratio);
     
     % ZEST params for initial p.d.f.
     s.p(atype).init.zestA = 1;
