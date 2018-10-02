@@ -1261,8 +1261,8 @@ case 'Adaptive'
     h.Settings.adaptive(1).maxtrial = inf;
     %h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(1).ignoretrials = 0;
-    h.Settings.adaptive(1).accuracy_ratio = 2; % for ratio subtype
-    h.Settings.adaptive(1).ratio_trials = 12; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).accuracy_ratio = 3; % for ratio subtype
+    h.Settings.adaptive(1).ratio_trials = 20; % number of trials per intensity to use for calculating ratio
     h.Settings.adaptive(1).slope_stimratio = 32; % number to divide stimulus level by, to calculate slope of ZEST
     
     %% ADAPTIVE 2
