@@ -731,8 +731,8 @@ if setup
     
     % ZEST params for initial p.d.f.
     s.p(atype).init.zestA = 1;
-    s.p(atype).init.zestB = slope; % = .025; % B= 2.5 for Marvit et al., 2003. 
-    s.p(atype).init.zestC = slope; % = .1; %C = 2.5 for Marvit et al., 2003;
+    s.p(atype).init.zestB = slope*4; % = .025; % B= 2.5 for Marvit et al., 2003. 
+    s.p(atype).init.zestC = slope*4; % = .1; %C = 2.5 for Marvit et al., 2003;
 
     % Parameters for Response function (Weibull function) (P(yes) given stimulus)
     if strcmp(h.Settings.adaptive(atype).type,'discrim')
