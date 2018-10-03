@@ -43,7 +43,7 @@ switch opt
     % options to start sequence at beginning of every run
     % 'msgbox', 'labjack', 'buttonpress', 'audio' - can have more than one in
     % cell array
-    h.Settings.blockstart = {'buttonpress'}; % audio,labjack,audio
+    h.Settings.blockstart = {}; % audio,labjack,audio
     h.Settings.pauseeachblock = 0; % pause after every block?
     % names of any audiofiles
     h.Settings.audiofile = {};
@@ -363,7 +363,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.adapttypes = [1 2];
     % alternate or randomise runs over types? Alt must have equal number of
     % runs for each adapttype. Cond = one type per CP block
-    h.Settings.adaptive_general.seqtype = 'cond'; % 'alt', 'rand', 'cond' 
+    h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
     h.Settings.adaptive_general.seqtypecond = [1 2]; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = [1:2]; % which CP condition to run adaptive on?
