@@ -210,8 +210,8 @@ elseif strcmp(opt,'responded')
                 ind1 = find(select_stim==sigval(1));
                 ind2 = find(select_stim==sigval(2));
                 if length(ind1)>=min_trials/h.Settings.adaptive(atype).min_trial_percond_ratio && length(ind2)>=min_trials/h.Settings.adaptive(atype).min_trial_percond_ratio
-                    all_resp = s.out.adaptive(end-min_trials+1:end,8)';
-                    correct_all = all_stim==all_resp;
+                    select_resp = s.out.adaptive(end-min_trials+1:end,8)';
+                    correct_all = select_stim==select_resp;
                     accuracy_ratio=(sum(correct_all(ind1))/length(ind1)) / (sum(correct_all(ind2))/length(ind2));
                     s.SubjectAccuracyRatio(s.trial)= accuracy_ratio;
                 end
@@ -449,7 +449,7 @@ s.rowofoutput (1, 10) = atype;
 s.rowofoutput (1, 11) = nan; % mean of moving averages - populated later if trend ends
 s.rowofoutput (1, 12) = nan; % % corr for discrim
 s.rowofoutput (1, 13) = h.Seq.blocks(h.i);
-s.rowofoutput (1, 14) = s.SubjectInaccuracyRatio(s.trial-1);
+s.rowofoutput (1, 14) = s.SubjectAccuracyRatio(s.trial-1);
 
 % UPDATE THE GLOBAL OUTPUT VARIABLE
 s.out.adaptive = [s.out.adaptive; s.rowofoutput];

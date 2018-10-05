@@ -1255,7 +1255,9 @@ case 'Adaptive'
     h.Settings.adaptive(1).ignoretrials = 5;
     h.Settings.adaptive(1).accuracy_ratio = 3; % for ratio subtype
     h.Settings.adaptive(1).ratio_trials = 20; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).min_trial_percond_ratio = 5;
     h.Settings.adaptive(1).slope_stimratio = 32; % number to divide stimulus level by, to calculate slope of ZEST
+    
     
     %% ADAPTIVE 2
     h.Settings.adaptive(2).type = 'discrim';
