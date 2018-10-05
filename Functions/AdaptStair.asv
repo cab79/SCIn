@@ -205,20 +205,24 @@ elseif strcmp(opt,'responded')
             trial_ind = s.out.adaptive(:,1);
             all_stim = h.Seq.signal(stim,trial_ind);
             min_trials = h.Settings.adaptive(atype).ratio_trials;
+            
+%             ind1 = find(all_stim==sigval(1));
+%             ind2 = find(all_stim==sigval(2));
+            
             if length(all_stim)>=min_trials
                 select_stim = all_stim(end-min_trials+1:end);
                 ind1 = find(select_stim==sigval(1));
                 ind2 = find(select_stim==sigval(2));
-                if length(ind1)>=min_trials/h.Settings.adaptive(atype).min_trial_percond_ratio && length(ind2)>=min_trials/h.Settings.adaptive(atype).min_trial_percond_ratio
-                    all_resp = s.out.adaptive(end-min_trials+1:end,8)';
+                if length(ind1)>=min_trials/min_trial_percond_ratio && length(ind2)>=min_trials/min_trial_percond_ratio
+                    all_resp = s.out.adaptive(:,8)';
                     correct_all = all_stim==all_resp;
-                    accuracy_ratio=(sum(correct_all(ind1))/length(ind1)) / (sum(correct_all(ind2))/length(ind2));
-                    s.SubjectAccuracyRatio(s.trial)= accuracy_ratio;
+                    inaccuracy_ratio=sum(~correct_all(ind1))/sum(~correct_all(ind2));
+                    s.SubjectInaccuracyRatio(s.trial)= inaccuracy_ratio;
                 end
             end
         end
-        if s.SubjectAccuracyRatio(s.trial) > 1/h.Settings.adaptive(atype).accuracy_ratio && s.SubjectAccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
-            disp(['ratio within normal range: ' num2str(s.SubjectAccuracyRatio(s.trial))])
+        if s.SubjectInaccuracyRatio(s.trial) > 1/h.Settings.adaptive(atype).accuracy_ratio && s.SubjectInaccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
+            disp(['ratio within normal range: ' num2str(s.SubjectInaccuracyRatio(s.trial))])
             return
         end
     else
