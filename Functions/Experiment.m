@@ -350,7 +350,9 @@ end
 set(groot, 'DefaultFigureVisible', 'on');
 if isfield(h,'f')
     for f = 1:length(h.f)
-        figure(h.f(f))
+        try
+            figure(h.f(f))
+        end
     end
 end
 

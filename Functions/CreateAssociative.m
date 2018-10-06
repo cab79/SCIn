@@ -88,6 +88,7 @@ for b = 1:length(blockuni)
 end
 
 % update condnum so that there are unique values for high and low stims
+conduni=unique(h.Seq.condnum);
 sigrow=2;% stims
 siguni=unique(h.Seq.signal(sigrow,:)); 
 newcond=0;

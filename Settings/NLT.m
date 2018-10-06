@@ -1161,10 +1161,10 @@ case 'Adaptive'
         }; % more than one number per pairing/cue: will be randomly assigned to each cue
     % if there is more than one number per pairing/cue, what is their
     % percent representation?
-    h.Settings.AL.probstim = {1,1,1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
+    h.Settings.AL.probstim = {1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
     %h.Settings.assoc.probstim = {[0.2 0.8],[1 0],[0.5 0.5],[0.5 0.5],[0.2 0.8],[1 0]}; % e.g. low intensity diff vs. high intensity diff
     % for each condnum, which pair to use?
-    h.Settings.AL.pair = [1 2 1 2 2 1];
+    h.Settings.AL.pair = [1 2 2 1];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
     h.Settings.AL.intenstim = [1 -1];
