@@ -1258,7 +1258,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).buttonfun = {'LeftArrow','RightArrow'}; 
     % adaptive staircase: corresponding signal values that would signify a
     % correct answer
-    h.Settings.adaptive(1).signalval = [2 1];
+    h.Settings.adaptive(1).signalval = [1 2];
     % starting level of adaptive staircase
     h.Settings.adaptive(1).startinglevel = 0.5; % should be a value in mA. 
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
@@ -1269,9 +1269,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
     %h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
-    h.Settings.adaptive(1).ignoretrials = 0;
-    h.Settings.adaptive(1).accuracy_ratio = 2; % for ratio subtype
-    h.Settings.adaptive(1).ratio_trials = 12; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).ignoretrials = 5;
     h.Settings.adaptive(1).accuracy_ratio = 3; % for ratio subtype
     h.Settings.adaptive(1).ratio_trials = 4; % number of trials per intensity to use for calculating ratio
     h.Settings.adaptive(1).min_trial_percond_ratio = 2;
@@ -1333,11 +1331,11 @@ function h = setgeneral(h)
 %% EQUIPMENT CONTROL
 % record EEG, NS: netstation, BV: brainvision, 'serial': serial port
 % serial port
-h.Settings.serial = 'COM1';
-h.Settings.record_EEG='labjack_DB15';
+%h.Settings.serial = 'COM1';
+%h.Settings.record_EEG='labjack_DB15';
 %h.Settings.EEGport = 'COM3'; % only needed for 'serial' EEG triggers
 h.Settings.EEGMarkPattern = 0; % mark EEG for every change in stimulus pattern (0 = start of trial only)
-h.Settings.labjack=1; % Use labjack for controlling any equipment?
+h.Settings.labjack=0; % Use labjack for controlling any equipment?
 %h.Settings.stimcontrol='PsychPortAudio'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
 %h.Settings.labjack_DACport = 0;
 %h.Settings.DAC_multiply = 0; % multiply DAC output by this (e.g. to get mA on DS8R)

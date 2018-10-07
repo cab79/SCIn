@@ -347,7 +347,7 @@ switch h.Settings.adaptive(atype).method
                 % if the first part of sigval indicates high intensity, and
                 % the ratio of %correct for high vs. %correct for low is
                 % more than the accuracy_ratio, then decrease the intensity
-                if sigval(1)==2 && s.SubjectAccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
+                if resfun==2 && s.SubjectAccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
                     go_down=1;
                 end
             elseif resfun == 2
