@@ -408,7 +408,7 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'cond';
+    h.Settings.blockopt = '';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 1; % must integer-divide each value in h.Settings.cond_rep_init
@@ -542,7 +542,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.adapttypes = [1];
     % alternate or randomise runs over types? Alt must have equal number of
     % runs for each adapttype. Cond = one type per CP block
-    h.Settings.adaptive_general.seqtype = 'cond'; % 'alt', 'rand', 'cond' 
+    h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
     h.Settings.adaptive_general.seqtypecond = [1]; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
@@ -1331,11 +1331,11 @@ function h = setgeneral(h)
 %% EQUIPMENT CONTROL
 % record EEG, NS: netstation, BV: brainvision, 'serial': serial port
 % serial port
-%h.Settings.serial = 'COM1';
-%h.Settings.record_EEG='labjack_DB15';
+h.Settings.serial = 'COM1';
+h.Settings.record_EEG='labjack_DB15';
 %h.Settings.EEGport = 'COM3'; % only needed for 'serial' EEG triggers
 h.Settings.EEGMarkPattern = 0; % mark EEG for every change in stimulus pattern (0 = start of trial only)
-h.Settings.labjack=0; % Use labjack for controlling any equipment?
+h.Settings.labjack=1; % Use labjack for controlling any equipment?
 %h.Settings.stimcontrol='PsychPortAudio'; % How to control stimulator? Options: PsychPortAudio, audioplayer, labjack, spt
 %h.Settings.labjack_DACport = 0;
 %h.Settings.DAC_multiply = 0; % multiply DAC output by this (e.g. to get mA on DS8R)

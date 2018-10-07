@@ -603,9 +603,9 @@ if ~isempty(ind)
         if ~isnan(h.out.adaptive(end,11))
             scatter(h.i,h.out.adaptive(end,11),'k','filled');
             %highval=h.out.adaptive(end,11)+2*std(thresh);
-            title([h.Settings.adaptive(atype).type ', mean of moving averages: ' num2str(h.out.adaptive(end,11))]);
+            title([h.Settings.adaptive(atype).type ', final: ' num2str(h.out.adaptive(end,11))]);
         else
-            title([h.Settings.adaptive(atype).type ', moving average: ' num2str(ci_thresh(sd,1))]);
+            title([h.Settings.adaptive(atype).type ', incomplete: ' num2str(ci_thresh(sd,1))]);
         end
         if strcmp(h.Settings.adaptive(atype).type,'discrim')
             yyaxis right
