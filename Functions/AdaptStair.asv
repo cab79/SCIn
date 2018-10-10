@@ -608,7 +608,7 @@ if ~isempty(ind)
             if ~isnan(ci_thresh(sd,1))
                 title([h.Settings.adaptive(atype).type ', from moving average: ' num2str(ci_thresh(sd,1))]);
             else
-                title([h.Settings.adaptive(atype).type ', final value: ' num2str(thresh(end))]);
+                title([h.Settings.adaptive(atype).type ', final: ' num2str(thresh(end))]);
             end
         end
         if strcmp(h.Settings.adaptive(atype).type,'discrim')
