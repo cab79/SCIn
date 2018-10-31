@@ -41,14 +41,15 @@ else
     % it's a new block
     if strcmp(h.Settings.adaptive_general.terminate,'block') || strcmp(h.Settings.adaptive_general.reestimate,'block')
         if ~isempty(s.out.adaptive)
-            if h.Seq.blocks(h.i)>s.out.adaptive(end,13)
-                ind = find(s.out.adaptive(:,10)==atype & ~isnan(s.out.adaptive(:,7)) & s.out.adaptive(:,13)==h.Seq.blocks(h.i)-1);
+            prev_adapt_block = s.out.adaptive(end,13);
+            if h.Seq.blocks(h.i)>prev_adapt_block
+                ind = find(s.out.adaptive(:,10)==atype & ~isnan(s.out.adaptive(:,7)) & s.out.adaptive(:,13)==prev_adapt_block);
                 if ~isempty(ind)
                     currentthresh = s.out.adaptive(ind(end),7);
                     s.p(atype).init.zestinit_diffLvl = currentthresh;
-                    slope = max(5/(abs(h.Settings.adaptive(1).levelmax)-abs(h.Settings.adaptive(1).levelmin)),2/currentthresh); % make the prior tighter if thresh is near to zero
-                    s.p(atype).init.zestB = slope; 
-                    s.p(atype).init.zestC = slope; 
+                    %slope = 1/ (s.a(atype).StimulusLevel/h.Settings.adaptive(atype).slope_stimratio);
+                    %s.p(atype).init.zestB = slope; 
+                    %s.p(atype).init.zestC = slope; 
                     [~,s]=ZEST_marvit(NaN,s.p(atype).init,s,atype);
                 end
             end
@@ -346,7 +347,7 @@ switch h.Settings.adaptive(atype).method
                 % if the first part of sigval indicates high intensity, and
                 % the ratio of %correct for high vs. %correct for low is
                 % more than the accuracy_ratio, then decrease the intensity
-                if sigval(1)==2 && s.SubjectAccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
+                if resfun==2 && s.SubjectAccuracyRatio(s.trial) < h.Settings.adaptive(atype).accuracy_ratio
                     go_down=1;
                 end
             elseif resfun == 2
@@ -553,57 +554,66 @@ h.out.adaptive = s.out.adaptive;
 
 %% plot
 if ~isempty(ind) 
+    % does fig handle exist?
+    isfigfield = isfield(h,'f');
+    if strcmp(h.Settings.adaptive_general.seqtype,'cond')
+        s.fignum = h.Seq.blocks(h.i);
+    elseif strcmp(h.Settings.adaptive_general.seqtype,'rand') || strcmp(h.Settings.adaptive_general.seqtype,'alt')
+        s.fignum = atype;
+    end
+    if isfigfield && ismember(s.fignum,find(ishandle(h.f)))
+        %isfighandle = length(h.f(ishandle(h.f)))>=s.fignum;
+        figindex = s.fignum;
+    else
+        figindex=0;
+    end
+    if figindex
+        %eval(['fig = ishandle(h.f(' num2str(s.fignum) '));']);
+        %eval(['fig = ' num2str(s.fignum) ';']);
+        eval(['set(groot, ''CurrentFigure'', h.f(' num2str(figindex) '));']);
+    else
+        set(groot, 'DefaultFigureVisible', 'off');
+        eval(['h.f(' num2str(s.fignum) ')=figure;']);
+    %else
+        %eval(['figure(h.f' num2str(atype) ');']);
+    end
+    hold on
+    yyaxis left
+    scatter(h.i,thresh(end),'b','filled');
+    
     if ~isempty(av_para) || ~isempty(ci_para)
        
-        % does fig handle exist?
-        fig = isfield(h,'f');
-        if strcmp(h.Settings.adaptive_general.seqtype,'cond')
-            s.fignum = h.Seq.blocks(h.i);
-        elseif strcmp(h.Settings.adaptive_general.seqtype,'rand') || strcmp(h.Settings.adaptive_general.seqtype,'alt')
-            s.fignum = atype;
-        end
-        if fig
-            fig = fig && length(h.f(ishandle(h.f)))>=s.fignum;
-        end
-        if fig
-            eval(['fig = ishandle(h.f(' num2str(s.fignum) '));']);
-        end
-
-        if ~fig
-            set(groot, 'DefaultFigureVisible', 'off');
-            eval(['h.f(' num2str(s.fignum) ')=figure;']);
-        else
-            eval(['set(groot, ''CurrentFigure'', h.f(' num2str(s.fignum) '));']);
-            %eval(['figure(h.f' num2str(atype) ');']);
-        end
-        hold on
-        yyaxis left
-        scatter(length(ind),thresh(end),'b','filled');
         if ~isempty(av_para)
             col = {'r','m','y'};
             for av = 1:length(av_para)
                 if length(ind)>av_para(av)
-                    scatter(length(ind),av_thresh(av),col{av});
+                    scatter(h.i,av_thresh(av),col{av});
                 end
             end
         end
         if ~isempty(ci_para)
             for sd = 1:length(ci_para) 
                 if length(ind)>ci_para(sd)
-                    scatter(length(ind),ci_thresh(sd,1),'g','filled');
-                    scatter(length(ind),ci_thresh(sd,2),'g');
-                    scatter(length(ind),ci_thresh(sd,3),'g');
+                    scatter(h.i,ci_thresh(sd,1),'g','filled');
+                    scatter(h.i,ci_thresh(sd,2),'g');
+                    scatter(h.i,ci_thresh(sd,3),'g');
                 end
             end
         end
         if ~isnan(h.out.adaptive(end,11))
-            scatter(length(ind),h.out.adaptive(end,11),'k','filled');
+            scatter(h.i,h.out.adaptive(end,11),'k','filled');
             %highval=h.out.adaptive(end,11)+2*std(thresh);
-            title([h.Settings.adaptive(atype).type ': ' num2str(h.out.adaptive(end,11))]);
+            title([h.Settings.adaptive(atype).type ', from termination rule: ' num2str(h.out.adaptive(end,11))]);
+        else
+            if ~isnan(ci_thresh(sd,1))
+                title([h.Settings.adaptive(atype).type ', from moving average: ' num2str(ci_thresh(sd,1))]);
+            else
+                title([h.Settings.adaptive(atype).type ', final value: ' num2str(thresh(end))]);
+            end
         end
         if strcmp(h.Settings.adaptive(atype).type,'discrim')
             yyaxis right
-            scatter(length(ind),h.out.adaptive(end,12),'y','filled');
+            scatter(h.i,h.out.adaptive(end,12),'y','filled');
             ylim([0 100]);
         end
         hold off

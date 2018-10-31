@@ -20,11 +20,13 @@ switch h.Settings.stim(h.sn).control
 %             end
 %         end
         
-        if ~isunix
-            ljud_LoadDriver; % Loads LabJack UD Function Library
-            ljud_Constants; % Loads LabJack UD constant file
-        elseif isempty(h.ljHandle.cal)
-            getCal(h.ljHandle);
+        if h.Settings.labjack
+            if ~isunix
+                ljud_LoadDriver; % Loads LabJack UD Function Library
+                ljud_Constants; % Loads LabJack UD constant file
+            elseif isempty(h.ljHandle.cal)
+                getCal(h.ljHandle);
+            end
         end
         
         if h.Settings.stim(h.sn).chanforLJ
@@ -52,8 +54,8 @@ switch h.Settings.stim(h.sn).control
                     end
                 end
             
-            case 'create'
-                h=trial(h,'set&construct');
+            %case 'create'
+            %    h=trial(h,'set&construct');
                 
             case 'calc'
                 h=trial(h,'set');
@@ -80,27 +82,29 @@ switch h.Settings.stim(h.sn).control
                 
                 
                 %Set DACA 
-                if isunix
-                    h.ljHandle.setDAC(h.stim(h.sn).inten*h.Settings.DAC_multiply);
-                    WaitSecs(0.1);
-                else
-                    if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
-                        try
-                            Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0); 
-                            if Error~=0
-                                error('error')
+                if h.Settings.labjack
+                    if isunix
+                        h.ljHandle.setDAC(h.stim(h.sn).inten*h.Settings.DAC_multiply);
+                        WaitSecs(0.1);
+                    else
+                        if strcmp(h.Settings.stim(h.sn).control,'LJTick-DAQ')
+                            try
+                                Error = ljud_ePut(h.ljHandle, LJ_ioTDAC_COMMUNICATION, LJ_chTDAC_UPDATE_DACA, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0); 
+                                if Error~=0
+                                    error('error')
+                                end
+                            catch% to use DAC0 port
+                                Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
+                                Error_Message(Error)
+                                Error = ljud_GoOne(h.ljHandle);
+                                Error_Message(Error)
                             end
-                        catch% to use DAC0 port
+                        elseif strcmp(h.Settings.stim(h.sn).control,'labjack')
                             Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
                             Error_Message(Error)
                             Error = ljud_GoOne(h.ljHandle);
                             Error_Message(Error)
                         end
-                    elseif strcmp(h.Settings.stim(h.sn).control,'labjack')
-                        Error = ljud_AddRequest(h.ljHandle, LJ_ioPUT_DAC, 0, h.stim(h.sn).inten*h.Settings.DAC_multiply, 0,0);
-                        Error_Message(Error)
-                        Error = ljud_GoOne(h.ljHandle);
-                        Error_Message(Error)
                     end
                 end
 
@@ -111,6 +115,10 @@ switch h.Settings.stim(h.sn).control
                
                 
             case 'start'
+                
+                if ~h.Settings.labjack
+                    return
+                end
 
                 if h.Settings.stim(h.sn).labjack_timer && ~isempty(h.Settings.stim(h.sn).p_freq)
                     if h.Settings.stim(h.sn).p_freq>=h.LJfreqtable(1,1)

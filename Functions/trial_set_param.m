@@ -98,7 +98,8 @@ switch h.Settings.stim(h.sn).control
                     end
                 end
 
-                % only do this if it's a discrim trial, not a detect trial
+                % only do this if it's a discrim trial, or a ratio detect
+                % trial only
                 if h.Seq.adapttype(h.i)==discrim || (h.Seq.adapttype(h.i)==detect && strcmp(h.Settings.adaptive(detect).subtype,'ratio'))
                     % calculate intensity
                     if h.Seq.signal(h.sn,h.i)==h.sn
@@ -114,10 +115,20 @@ switch h.Settings.stim(h.sn).control
             elseif isnan(h.Seq.adapttype(h.i)) && h.Settings.adaptive_general.stim==h.sn
                 detect_thresh =  find(h.out.adaptive(:,10)==detect);
                 discrim_thresh =  find(h.out.adaptive(:,10)==discrim);
-                if h.Seq.signal(h.sn,h.i)==1
-                    h.stim(h.sn).inten = h.out.adaptive(detect_thresh(end),7) - h.out.adaptive(discrim_thresh(end),7) / 2;
+                if isempty(detect_thresh)
+                    meanval = h.stim(h.sn).inten_mean;
                 else
-                    h.stim(h.sn).inten = h.out.adaptive(detect_thresh(end),7) + h.out.adaptive(discrim_thresh(end),7) / 2;
+                    meanval = h.out.adaptive(detect_thresh(end),7);
+                end
+                if isempty(discrim_thresh)
+                    diffval = h.stim(h.sn).inten_diff;
+                else
+                    diffval = h.out.adaptive(discrim_thresh(end),7);
+                end
+                if h.Seq.signal(h.sn,h.i)==1
+                    h.stim(h.sn).inten = meanval - diffval / 2;
+                else
+                    h.stim(h.sn).inten = meanval + diffval / 2;
                 end
             end
         elseif h.seqtype.adapt && ~any(h.Settings.adaptive_general.stim==h.sn)

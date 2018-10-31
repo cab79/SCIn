@@ -54,7 +54,7 @@ if length(h.Settings.adaptive)>1 && isfield(h.Settings,'adaptive_general')
     % get condition numbers and their indices
     condind=[];
     if isfield(h.Settings.adaptive_general.selectcond,'cp') % use cp condition
-        condind = ismember(h.Seq.cp_cond,h.Settings.adaptive_general.selectcond.cp);
+        condind = find(ismember(h.Seq.cp_cond,h.Settings.adaptive_general.selectcond.cp));
 %         for cpi = 1:length(h.Settings.adaptive_general.selectcond.cp)
 %             condval = [condval unique(h.condnum{h.Settings.adaptive_general.selectcond.cp(cpi)}{1})];
 %         end

@@ -408,7 +408,7 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = 'cond';
+    h.Settings.blockopt = '';
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 1; % must integer-divide each value in h.Settings.cond_rep_init
@@ -542,7 +542,7 @@ case 'Adaptive'
     h.Settings.adaptive_general.adapttypes = [1];
     % alternate or randomise runs over types? Alt must have equal number of
     % runs for each adapttype. Cond = one type per CP block
-    h.Settings.adaptive_general.seqtype = 'cond'; % 'alt', 'rand', 'cond' 
+    h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
     h.Settings.adaptive_general.seqtypecond = [1]; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
     h.Settings.adaptive_general.selectcond.cp = [1]; % which CP condition to run adaptive on?
@@ -947,7 +947,7 @@ case 'Adaptive'
     %% BLOCKING/RUN OPTIONS
     % 'divide' = equally divide trials by nblocks; 
     % 'cond' = separate block for each condition
-    h.Settings.blockopt = ''; % cond or divide
+    h.Settings.blockopt = 'cond'; % cond or divide
     % further options for 'divide':
         % number of blocks (containing multiple conditions)
         %h.Settings.nblocks = 2; % must integer-divide each value in h.Settings.cond_rep_init
@@ -1049,7 +1049,7 @@ case 'Adaptive'
     
     % Oddball method: intensity, index, pitch, channel
     h.Settings.PL.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.PL.oddballvalue = {[1 2], [1 2], [1 2],[1 2], [1 2], [2 1], [1 2], [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.PL.oddballvalue = {[1 2], [1 2], [1 2], [2 1], [1 2], [2 1], [1 2], [1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.PL.oddballtype = 'classical'; % options: 'roving', 'classical'
 
      %% SEQUENCES: PL
@@ -1084,24 +1084,24 @@ case 'Adaptive'
     % min number of oddballs per randomised set, per CP
     h.Settings.PL.n_odd_set = [25 10 25 10 25 10 25 10]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.PL.rand_set = [0 1 0 1 0 1 0 1]; 
+    h.Settings.PL.rand_set = [0 0 0 0 0 0 0 0]; 
     % condition numbers
     h.Settings.PL.condnum = [
         5 6
-        1 2
+        3 4 % low intensity more likely
         5 6
-        1 2
+        1 2 % high intensity more likely
         5 6
-        3 4
+        1 2 % high intensity more likely
         5 6
-        3 4
+        3 4 % low intensity more likely
         ]; 
     
     %% SEQUENCE
     
     % Oddball method: intensity, index, pitch, channel
     h.Settings.AL.oddballmethod = 'index'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.AL.oddballvalue = {[1 2], [1 2], [2 1], [2 1],[1 2], [1 2],[2 1],  [2 1]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.AL.oddballvalue = {[2 1], [2 1], [1 2], [1 2], [2 1], [2 1], [1 2], [1 2]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
     h.Settings.AL.oddballtype = 'classical'; % options: 'roving', 'classical'
     % Change probablity (CP): each condition is in rows
     h.Settings.AL.oddprob = [
@@ -1165,17 +1165,26 @@ case 'Adaptive'
     % min number of oddballs per randomised set, per CP
     h.Settings.AL.n_odd_set = [10 10 10 10 10 10 10 10]; % overrides h.Settings.totdur
     % randomise sets?
-    h.Settings.AL.rand_set = [0 1 0 1 0 1 0 1]; 
+    h.Settings.AL.rand_set = [0 0 0 0 0 0 0 0]; 
     % condition numbers
     h.Settings.AL.condnum = [
-        1 2
-        1 2
-        3 4
-        3 4
-        1 2
-        1 2
-        3 4
-        3 4
+        
+        % block pair 1
+        3 4 % pairing 2, AL
+        3 4 % pairing 2, ALPL, PL low, AL prior pairing consistent
+        
+        % block pair 2
+        1 2 % pairing 1, AL
+        1 2 % pairing 1, ALPL, PL high, AL prior pairing consistent
+        
+        % block pair 3
+        3 4 % pairing 2, AL
+        3 4 % pairing 1, ALPL, PL high, AL prior pairing consistent
+        
+        % block pair 4
+        1 2 % pairing 1, AL
+        1 2 % pairing 2, ALPL, PL low, AL prior pairing consistent
+        
         ]; 
     
     
@@ -1187,10 +1196,10 @@ case 'Adaptive'
         }; % more than one number per pairing/cue: will be randomly assigned to each cue
     % if there is more than one number per pairing/cue, what is their
     % percent representation?
-    h.Settings.AL.probstim = {1,1,1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
+    h.Settings.AL.probstim = {1,1,1,1}; % e.g. low intensity diff vs. high intensity diff
     %h.Settings.assoc.probstim = {[0.2 0.8],[1 0],[0.5 0.5],[0.5 0.5],[0.2 0.8],[1 0]}; % e.g. low intensity diff vs. high intensity diff
     % for each condnum, which pair to use?
-    h.Settings.AL.pair = [1 2 1 2 2 1];
+    h.Settings.AL.pair = [1 1 2 2];
     % for each stimtype (unique value) within h.Settings.assoc.pairing, 
     % what inten_diff multiplier to use?
     h.Settings.AL.intenstim = [1 -1];
@@ -1227,11 +1236,11 @@ case 'Adaptive'
     h.Settings.adaptive_general.seqtype = 'rand'; % 'alt', 'rand', 'cond' 
     h.Settings.adaptive_general.seqtypecond = []; %if 'cond', associate each CP with an adaptive type
     h.Settings.adaptive_general.seqrandblocksize = 12; % should divide the number of trials in a set
-    h.Settings.adaptive_general.selectcond.cp = [1:8]; % which CP condition to run adaptive on?
+    h.Settings.adaptive_general.selectcond.cp = [1:2:7]; % which CP condition to run adaptive on? E.g. AL-only conds.
     h.Settings.adaptive_general.stim = 2; % which stim to run adaptive on?
     h.Settings.adaptive_general.stimpart = 1; % which part of that stim to run adaptive on?
     h.Settings.adaptive_general.terminate = ''; % terminate within each block only
-    h.Settings.adaptive_general.reestimate = ''; % 'block' to re-estimate with wider prior each block
+    h.Settings.adaptive_general.reestimate = 'block'; % 'block' to re-estimate with wider prior each block
     
     %% ADAPTIVE 1
     h.Settings.adaptive(1).type = 'detect';
@@ -1249,7 +1258,7 @@ case 'Adaptive'
     h.Settings.adaptive(1).buttonfun = {'LeftArrow','RightArrow'}; 
     % adaptive staircase: corresponding signal values that would signify a
     % correct answer
-    h.Settings.adaptive(1).signalval = [2 1];
+    h.Settings.adaptive(1).signalval = [1 2];
     % starting level of adaptive staircase
     h.Settings.adaptive(1).startinglevel = 0.5; % should be a value in mA. 
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
@@ -1260,11 +1269,10 @@ case 'Adaptive'
     h.Settings.adaptive(1).levelmin = 0;
     h.Settings.adaptive(1).maxtrial = inf;
     %h.Settings.adaptive(1).expected_change = 0.05; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
-    h.Settings.adaptive(1).ignoretrials = 0;
-    h.Settings.adaptive(1).accuracy_ratio = 2; % for ratio subtype
-    h.Settings.adaptive(1).ratio_trials = 12; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).ignoretrials = 5;
     h.Settings.adaptive(1).accuracy_ratio = 3; % for ratio subtype
-    h.Settings.adaptive(1).ratio_trials = 20; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).ratio_trials = 4; % number of trials per intensity to use for calculating ratio
+    h.Settings.adaptive(1).min_trial_percond_ratio = 2;
     h.Settings.adaptive(1).slope_stimratio = 32; % number to divide stimulus level by, to calculate slope of ZEST
     
     %% ADAPTIVE 2
@@ -1281,7 +1289,7 @@ case 'Adaptive'
     h.Settings.adaptive(2).buttonfun = {'LeftArrow','RightArrow'}; 
     % adaptive staircase: corresponding signal values that would signify a
     % correct answer
-    h.Settings.adaptive(2).signalval = [2 1];
+    h.Settings.adaptive(2).signalval = [1 2];
     % reversals
     h.Settings.adaptive(2).reversals = [4;8;12];
     % stepsize
@@ -1289,7 +1297,7 @@ case 'Adaptive'
     % steptype 0 = multiple/divide by stepsize; steptype 1 = add/subtract
     h.Settings.adaptive(2).steptype = 0;
     % stepdir -1 = level decreases intensity; stepdir 1 = level increases intensity
-    h.Settings.adaptive(2).stepdir = -1;
+    h.Settings.adaptive(2).stepdir = 1;
     % starting level of adaptive staircase
     h.Settings.adaptive(2).startinglevel = 0.1; % should be a DIFFERENCE value in mA. Keep small as it will increase naturally over time.
     % adapt to omissions of response (not suitable for 2AFC tasks, so set to 0)
@@ -1314,7 +1322,7 @@ case 'Adaptive'
     %h.Settings.adaptive(2).expected_change = 0.07; % smaller value increases the precision of the prior for ZEST and reduces step size of changes in estimates
     h.Settings.adaptive(2).ignoretrials = 5;
     h.Settings.adaptive(2).eta_divide = 2;
-    h.Settings.adaptive(2).slope_stimratio = 4; % number to divide stimulus level by, to calculate slope of ZEST. Should be larger for thresholding, smaller for adjustments during an expt
+    h.Settings.adaptive(2).slope_stimratio = 2; % number to divide stimulus level by, to calculate slope of ZEST. Should be smaller for thresholding, larger for adjustments during an expt
     
 end
 
