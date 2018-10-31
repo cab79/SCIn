@@ -267,7 +267,7 @@ switch h.Settings.stim(h.sn).control
             if ~h.seqtype.adapt && ~h.seqtype.thresh
                 if iscell(h.Settings.oddballvalue)
                     if size(h.Settings.oddballvalue,1)==1
-                        oddval = h.Settings.oddballvalue{h.Seq.signal(h.sn,h.tr)};
+                        oddval = h.Settings.oddballvalue{1}(h.Seq.signal(h.sn,h.tr));
                     else
                         oddval = h.Settings.oddballvalue{h.Seq.signal(h.sn,h.tr),:};
                     end
