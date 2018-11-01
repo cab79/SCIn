@@ -146,7 +146,7 @@ switch h.Settings.stim(h.sn).control
                 else
                     h.stim(h.sn).inten = h.Settings.oddballvalue(h.Seq.signal(h.sn,h.tr),:);
                 end
-            elseif strcmp(h.Settings.oddballmethod,'index') && size(h.Seq.signal,1)>=h.sn
+            elseif strcmp(h.Settings.oddballmethod,'index') && h.sn
                 if isfield(h.Settings,'AL') && any(ismember(h.Settings.AL.stimnums, h.sn)) && isempty(h.stim(h.sn).inten_diff_max)
                     h.stim(h.sn).inten = h.stim(h.sn).inten_mean - h.Settings.AL.intenstim(h.Seq.signal(h.sn,h.i)) * h.stim(h.sn).inten_diff/2;
                 elseif isfield(h.Settings,'AL') && any(ismember(h.Settings.AL.stimnums, h.sn)) && ~isempty(h.stim(h.sn).inten_diff_max)

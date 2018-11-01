@@ -136,9 +136,9 @@ for dt = 1:length(dtypes)
     end
     if isempty(setn_set) && ~isempty(setn_odd)
         try
-            num_sets{dt} = setn_odd./min(mult);
-        catch
             num_sets{dt} = setn_odd./min(mult');
+        catch
+            num_sets{dt} = setn_odd./min(mult);
         end
     elseif ~isempty(setn_set)
         num_sets{dt} = setn_set;
