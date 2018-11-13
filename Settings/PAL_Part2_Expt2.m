@@ -57,10 +57,12 @@ case 'Pre_Discrim'
     h.Settings.wait=[2 2 2]; % one value per nstim 
     
     %% first stimulus: audio
-    h.Settings.stim(1).dur = repmat(0.1,1,10); % duration of stimulus in seconds; modified by oddball settings
     h.Settings.stim(1).patternmethod = 'pitch';% Pattern type method: intensity, pitch. Not supported: channel, duration
-    h.Settings.stim(1).stimrandind = [2 5 8];% index of stimdur to randomise. 
-    h.Settings.stim(1).patternvalue = [330:30:600]; % one per stimdur in each cell; one cell per oddball value
+    % play with these:
+    h.Settings.stim(1).dur = repmat(0.05,1,20); % duration of stimulus in seconds; modified by oddball settings
+    h.Settings.stim(1).stimrandind = [2 5 8 11 14 17];% index of stimdur to randomise. 
+    h.Settings.stim(1).patternvalue = [315:15:600]; % one per stimdur in each cell; one cell per oddball value
+    
     h.Settings.stim(1).durtype = 'sequence_rand'; 
     h.Settings.stim(1).inten = 0; % value between 2 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
@@ -89,13 +91,13 @@ case 'Pre_Discrim'
     h.Settings.conditionmethod = {};
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
-    h.Settings.oddballmethod = 'pattern'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {[1 2],[3 4]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
-    h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
+    h.Settings.PL.oddballmethod = 'pattern'; % can use same type for pattern only if oddball intensity is adaptive
+    h.Settings.PL.oddballvalue = {[1 2],[3 4]}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.PL.oddballtype = 'classical'; % options: 'roving', 'classical'
 
     %% SEQUENCE
     % Change probablity (CP): each condition is in rows
-    h.Settings.oddprob = [
+    h.Settings.PL.oddprob = [
         1/3 1/3 1/3
         1/3 1/3 1/3
         ];
@@ -216,13 +218,13 @@ case 'Pre_Discrim'
     h.Settings.conditionmethod = {};
     h.Settings.conditionvalue = [];% Rows: methods. Columns: each stimtype
     % Oddball method: intensity, index, pitch, channel
-    h.Settings.oddballmethod = 'pattern'; % can use same type for pattern only if oddball intensity is adaptive
-    h.Settings.oddballvalue = {1,2,3,4}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
-    h.Settings.oddballtype = 'classical'; % options: 'roving', 'classical'
+    h.Settings.PL.oddballmethod = 'pattern'; % can use same type for pattern only if oddball intensity is adaptive
+    h.Settings.PL.oddballvalue = {1,2,3,4}; % values to go into h.Seq.signal. One per oddprob row, or leave blank if determined from GUI
+    h.Settings.PL.oddballtype = 'classical'; % options: 'roving', 'classical'
 
     %% SEQUENCE
     % Change probablity (CP): each condition is in rows
-    h.Settings.oddprob = [
+    h.Settings.PL.oddprob = [
         1/4 1/4 1/4 1/4;
         1/4 1/4 1/4 1/4;
         1/4 1/4 1/4 1/4;

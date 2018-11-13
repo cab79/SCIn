@@ -8,10 +8,10 @@ h.Seq.condnum = [];
 seq=[];
 
 % create list of which stim to present on each trial   
-switch length(h.Settings.oddballvalue)
+switch length(h.Settings.PL.oddballvalue)
     case 2
-        for i = 1:size(h.Settings.oddprob,1)
-            ntrial_per_stimtype(i,:) = floor(h.Settings.ntrials(i)*h.Settings.oddprob(i,:));
+        for i = 1:size(h.Settings.PL.oddprob,1)
+            ntrial_per_stimtype(i,:) = floor(h.Settings.ntrials(i)*h.Settings.PL.oddprob(i,:));
             thisseq=[];
             for ns = 1:size(ntrial_per_stimtype,2)
                 thisseq = [thisseq repmat(ns,1,ntrial_per_stimtype(i,ns))];
@@ -23,12 +23,12 @@ switch length(h.Settings.oddballvalue)
         seq = seq(randind);
         h.Seq.condnum = h.Seq.condnum(randind);
 
-        for i = 1:size(h.Settings.oddprob,1)
+        for i = 1:size(h.Settings.PL.oddprob,1)
             condind = h.Seq.condnum==i;
-            h.Seq.signal(1:3,condind)=h.Settings.oddballvalue{i}(1)*ones(3,sum(condind));
-            h.Seq.signal(1,seq==1 & condind) = h.Settings.oddballvalue{i}(2);
-            h.Seq.signal(2,seq==2 & condind) = h.Settings.oddballvalue{i}(2);
-            h.Seq.signal(3,seq==3 & condind) = h.Settings.oddballvalue{i}(2);
+            h.Seq.signal(1:3,condind)=h.Settings.PL.oddballvalue{i}(1)*ones(3,sum(condind));
+            h.Seq.signal(1,seq==1 & condind) = h.Settings.PL.oddballvalue{i}(2);
+            h.Seq.signal(2,seq==2 & condind) = h.Settings.PL.oddballvalue{i}(2);
+            h.Seq.signal(3,seq==3 & condind) = h.Settings.PL.oddballvalue{i}(2);
         end
     case 4
         for i = 1:size(h.Settings.oddprob,1)
