@@ -34,6 +34,8 @@ if ~isfield(h,'pahandle')
         %outdevices = find(cell2mat({h.edevices.NrOutputChannels})>0 & ~cellfun(@isempty,(strfind({h.edevices.DeviceName},'Speakers'))));
         %h.DeviceN = h.DeviceIndex(outdevices(2));
         h.DeviceN = []; % default sound device
+    elseif length(h.DeviceN)>1
+        h.DeviceN = h.DeviceN(end);
     end
 else
     try

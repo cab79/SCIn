@@ -189,8 +189,8 @@ switch opt
         % cell array]%]%]
         h.Settings.blockstart = {'buttonpress','audio','scannertrig'}; % audio,labjack,audio,
         % names of any audiofiles
-        h.Settings.audiofile = {'instruct.wav'}; % labjack
-        h.Settings.audiochan = [5 6]; % labjack
+        h.Settings.audiofile = {'instruct.wav'}; 
+        h.Settings.audiochan = [5 6]; %
         % number of scanner triggers to wait for before starting the
         % sequence
         

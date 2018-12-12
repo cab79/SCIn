@@ -384,6 +384,9 @@ if get(hObject, 'Value') == get(hObject, 'Max')
     opt = 'setup';
     eval(['h = ' h.exptFun '(h,opt);']);
     d = h.d;
+    if ~isfield(h.Settings,'labjack')
+        h.Settings.labjack = 0;
+    end
     if h.Settings.labjack
         set(h.ljhandle, 'Value', 0);
     end

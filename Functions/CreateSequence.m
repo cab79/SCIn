@@ -509,3 +509,15 @@ if strcmp(dtype,'X') || dt==1
     h.Seq.condnum=h.Seq.(dtype).condnum;
     h.Seq.cp_cond=h.Seq.(dtype).cp_cond;
 end
+
+
+% response probe sequence
+if isfield(h.Settings,'RPconds')
+    RPconds = h.Settings.RPconds;
+    RPi = find(ismember(h.Seq.condnum,RPconds)); % indices of all possible stims to use
+    nSelect = round(h.Settings.RPprob*length(RPi));
+    RPrand = RPi(randperm(length(RPi)));
+    RPselect = RPrand(1:nSelect);
+    h.Seq.RP = zeros(1,length(h.Seq.condnum));
+    h.Seq.RP(RPselect) = 1;
+end
