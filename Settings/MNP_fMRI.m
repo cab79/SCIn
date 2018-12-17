@@ -5,7 +5,7 @@ switch opt
     case 'setoptions'
         
     % settings options
-    h.SettingsOptions = {'practiceTACTILE','thresholdAUDIO','TACTILE_EXPT'};
+    h.SettingsOptions = {'practiceTACTILE','TACTILE_EXPT'};
     
     
     case 'TACTILE_EXPT'
@@ -42,7 +42,7 @@ switch opt
     % options to start sequence at beginning of every run
     % 'msgbox', 'labjack', 'buttonpress', 'audio' - can have more than one in
     % cell array
-    h.Settings.blockstart = {};%'buttonpress','audio','scannertrig'}; % audio,labjack,audio
+    h.Settings.blockstart = {'buttonpress','scannertrig'};%'buttonpress','audio','scannertrig'}; % audio,labjack,audio
     h.Settings.pauseeachblock = 0; % pause after every block?
     % names of any audiofiles
     h.Settings.audiofile = {'instruct.wav'};
@@ -75,7 +75,7 @@ switch opt
     h.Settings.stim(1).inten_diff = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).inten_diff_max = []; % value between 0 and 1000mA for Digitimer DS8R
     h.Settings.stim(1).maxinten = 0; % max output value for safety purposes. Value between 2 and 1000mA for Digitimer DS8R
-    h.Settings.stim(1).f0 = 500; % pitch
+    h.Settings.stim(1).f0 = 23; % pitch
     h.Settings.stim(1).inten_type = 'abs'; % either 'dB' or 'abs'
     h.Settings.stim(1).df = 0;
     h.Settings.stim(1).atten = {}; % attenuation level in decibels
@@ -127,7 +127,7 @@ switch opt
     % number of sets to randomise together
     h.Settings.PL.n_set = []; % Leave blank to calculate automatically; or one nunmber per CP condition
     % min number of oddballs within each CP condition
-    h.Settings.PL.n_odd = [80 80]; % overrides h.Settings.totdur
+    h.Settings.PL.n_odd = [40 40]; % overrides h.Settings.totdur
     % min number of oddballs per randomised set, per CP
     h.Settings.PL.n_odd_set = [20 20]; % overrides h.Settings.totdur
     % randomise sets?
